@@ -1,9 +1,6 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.server.launchMode": "Standard",
-  "files.associations": {
-    "*.java.template": "java"
-  },
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -60,6 +57,5 @@
     "edu.wpi.first.math.**.proto.*",
     "edu.wpi.first.math.**.struct.*",
   ],
-  "git.enabled": false,
-  "java.debug.settings.onBuildFailureProceed": true
+  "java.dependency.enableDependencyCheckup": false
 }
