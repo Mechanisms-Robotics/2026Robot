@@ -131,7 +131,7 @@ public class RobotContainer {
             "Test Path"
         );
 
-        autoChooser.setDefaultCommand("Wheel Characterization", DriveCommands.wheelRadiusCharacterization(drivetrain));
+        autoChooser.setDefaultOption("Wheel Characterization", DriveCommands.wheelRadiusCharacterization(drivetrain));
         autoChooser.addOption("Drive Feedforward Characterization", DriveCommands.feedforwardCharacterization(drivetrain));
         autoChooser.addOption("Test Path", new FollowPath(trajectory.get(), this.drivetrain, true));
     }
