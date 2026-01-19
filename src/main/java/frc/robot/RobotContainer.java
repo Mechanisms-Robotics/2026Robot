@@ -64,7 +64,7 @@ public class RobotContainer {
         this.drivetrainController = new DrivetrainController(this.drivetrain);
 
         configureBindings();
-        generateAutos();
+        //generateAutos();
     }
 
     private void configureBindings() {
