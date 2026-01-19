@@ -15,6 +15,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,11 +28,15 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+import frc.robot.subsystems.vision.PoseCamera;
+import frc.robot.subsystems.vision.PoseCameraIOPhoton;
+
 import java.util.Optional;
 
 public class RobotContainer {
 
     private final Drivetrain drivetrain;
+    private final PoseCamera poseCamera;
     private final DrivetrainController drivetrainController;
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -56,7 +61,14 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
             );
-        }
+       }
+
+        this.poseCamera = new PoseCamera(
+            new PoseCameraIOPhoton("Photon_Camera1", Transform3d.kZero),
+            "Photon_Camera1",
+            this.drivetrain.poseEstimator
+        );
+
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         configureBindings();
         generateAutos();

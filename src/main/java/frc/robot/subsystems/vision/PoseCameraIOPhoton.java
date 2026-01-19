@@ -16,14 +16,15 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.CONSTANTS;
 
-public class PoseCameraIOMiniPC implements PoseCameraIO {
+public class PoseCameraIOPhoton implements PoseCameraIO {
     private final PhotonCamera camera;
     private final String cameraName;
     private final Transform3d cameraToRobot;
 
     private PhotonPoseEstimator photonEstimator;
 
-    public PoseCameraIOMiniPC(String cameraName, Transform3d cameraToRobot) {
+    // The cameraName here is used to identify the camera in network tables
+    public PoseCameraIOPhoton(String cameraName, Transform3d cameraToRobot) {
         this.camera = new PhotonCamera(cameraName);
         this.cameraName = cameraName;
         this.cameraToRobot = cameraToRobot;

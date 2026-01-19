@@ -13,6 +13,7 @@ public class PoseCamera extends SubsystemBase {
     private final String cameraName;
     private final PoseEstimator8736 poseEstimator;
 
+    // The cameraName here is used for logging purposes
     public PoseCamera(PoseCameraIO io, String cameraName, PoseEstimator8736 poseEstimator) {
         this.io = io;
         this.cameraName = cameraName;
