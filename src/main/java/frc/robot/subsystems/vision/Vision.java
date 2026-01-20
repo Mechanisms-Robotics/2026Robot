@@ -17,6 +17,10 @@ public class Vision extends SubsystemBase {
         this.ios = ios;
         this.poseEstimator = poseEstimator;
         this.inputs = new PoseCameraIOInputsAutoLogged[ios.length];
+
+        for (int i = 0; i < ios.length; i++) {
+            inputs[i] = new PoseCameraIOInputsAutoLogged();
+        }
     }
 
     @Override

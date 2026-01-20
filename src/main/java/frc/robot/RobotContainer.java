@@ -29,6 +29,7 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.PoseCameraIO;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 
 import java.util.Optional;
@@ -53,6 +54,11 @@ public class RobotContainer {
                 new ModuleIOSim(DriveConstants.BACK_LEFT),
                 new ModuleIOSim(DriveConstants.BACK_RIGHT)
             );
+
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIO() {}
+            );
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -61,15 +67,15 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
             );
-        }
 
-        // TODO: move this to the proper constants file (in src/config/constants)
-        final String photonCameraName = "Photon_Camera1";
-       
-        this.vision = new Vision(
-            this.drivetrain.poseEstimator,
-            new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero)
-        );
+            // TODO: move this to the proper constants file (in src/config/constants)
+            final String photonCameraName = "Photon_Camera1";
+           
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero)
+            );
+        }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         configureBindings();
