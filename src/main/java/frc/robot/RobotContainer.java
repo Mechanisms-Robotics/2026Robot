@@ -61,11 +61,14 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
             );
-       }
+        }
 
+        // TODO: move this to the proper constants file (in src/config/constants)
+        final String photonCameraName = "Photon_Camera1";
+       
         this.poseCamera = new PoseCamera(
-            new PoseCameraIOPhoton("Photon_Camera1", Transform3d.kZero),
-            "Photon_Camera1",
+            new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero),
+            photonCameraName,
             this.drivetrain.poseEstimator
         );
 

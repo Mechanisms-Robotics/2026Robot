@@ -53,10 +53,7 @@ public class PoseCameraIOPhoton implements PoseCameraIO {
             if (visionEstimate.isPresent()) {
                 Pose3d poseEstimate = visionEstimate.get().estimatedPose;
 
-                Logger.recordOutput(cameraName + "/pose/x", poseEstimate.getX());
-                Logger.recordOutput(cameraName + "/pose/y", poseEstimate.getY());
-                Logger.recordOutput(cameraName + "/pose/heading", poseEstimate.getRotation().getAngle());
-                Logger.recordOutput(cameraName + "/timestamp", visionEstimate.get().timestampSeconds);
+                Logger.recordOutput(cameraName + "/pose", poseEstimate);
 
                 // Push each unread input to the arrays
                 timestampSecondsArray.add(visionEstimate.get().timestampSeconds);
