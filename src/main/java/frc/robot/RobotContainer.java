@@ -28,7 +28,7 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
-import frc.robot.subsystems.vision.PoseCamera;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 
 import java.util.Optional;
@@ -36,7 +36,7 @@ import java.util.Optional;
 public class RobotContainer {
 
     private final Drivetrain drivetrain;
-    private final PoseCamera poseCamera;
+    private final Vision vision;
     private final DrivetrainController drivetrainController;
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -66,10 +66,9 @@ public class RobotContainer {
         // TODO: move this to the proper constants file (in src/config/constants)
         final String photonCameraName = "Photon_Camera1";
        
-        this.poseCamera = new PoseCamera(
-            new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero),
-            photonCameraName,
-            this.drivetrain.poseEstimator
+        this.vision = new Vision(
+            this.drivetrain.poseEstimator,
+            new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero)
         );
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
