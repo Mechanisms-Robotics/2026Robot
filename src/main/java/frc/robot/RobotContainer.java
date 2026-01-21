@@ -29,6 +29,7 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+import frc.robot.subsystems.LED;
 
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public class RobotContainer {
 
     private final Drivetrain drivetrain;
     private final DrivetrainController drivetrainController;
+    private final LED LED = new LED();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
         CONSTANTS.CONTROLLER_PORT
@@ -76,6 +78,14 @@ public class RobotContainer {
                 })
             );
 
+        this.controller
+            .circle()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.LED.sendMessage1();
+                })
+            );
+            
         this.drivetrain.setDefaultCommand(
             new RunCommand(
                 () -> {
