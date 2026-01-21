@@ -5,12 +5,13 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static frc.robot.CONSTANTS.*;
-import static frc.robot.CONSTANTS.DriveConstants;
+
+import frc.robot.CONSTANTS.DriveConstants;
 
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+
 import java.util.Optional;
 
 public class RobotContainer {
@@ -38,7 +40,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
-        CONTROLLER_PORT
+        CONSTANTS.CONTROLLER_PORT
     );
 
     public RobotContainer() {
@@ -60,13 +62,15 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
             );
         }
+
         this.drivetrainController = new DrivetrainController(this.drivetrain);
+
         configureBindings();
-        generateAutos();
+        //generateAutos();
     }
 
     private void configureBindings() {
-        controller
+        this.controller
             .cross()
             .onTrue(
                 new InstantCommand(() -> {

@@ -8,11 +8,14 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.CONSTANTS;
 import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.PoseEstimator8736;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -24,23 +27,25 @@ public class Drivetrain extends SubsystemBase {
     SwerveDriveKinematics kinematics;
     ChassisSpeeds desiredChassisSpeeds;
     PoseEstimator8736 poseEstimator;
-    //private final StructArrayPublisher<SwerveModuleState> publisher;
 
     private final SwerveModule frontLeftModule;
     private final SwerveModule frontRightModule;
     private final SwerveModule backLeftModule;
     private final SwerveModule backRightModule;
 
-    private final GyroIO gyroIO;
+    private final GyroIO gyroIO; // may be a real gyro or a simulated gyro
     private final GyroIOInputsAutoLogged gyroInputs =
         new GyroIOInputsAutoLogged();
 
-    static final Lock odometryLock = new ReentrantLock();
+    public static final Lock odometryLock = new ReentrantLock();
 
     /**
-     * Remember that the front of the robot is +X and the left side of the robot is
-     * +Y.
+     * Remember that the forward direction of the robot is +X and the left direction is
+     * +Y. So if you give a ChassisSpeed of (+1, +1) the robot should translate diagonally
+     * forward and left. This also means that the swerve module positions are based
+     * on this coordinate system.
      */
+
     public Drivetrain(
         GyroIO gyroIO,
         ModuleIO frontLeftModuleIO,
@@ -58,7 +63,10 @@ public class Drivetrain extends SubsystemBase {
             frontRightModuleIO,
             "Front Right"
         );
-        this.backLeftModule = new SwerveModule(backLeftModuleIO, "Back Left");
+        this.backLeftModule = new SwerveModule(
+            backLeftModuleIO, 
+            "Back Left"
+        );
         this.backRightModule = new SwerveModule(
             backRightModuleIO,
             "Back Right"
@@ -82,6 +90,8 @@ public class Drivetrain extends SubsystemBase {
                 DriveConstants.BACK_RIGHT.LocationY
             )
         );
+
+        /* TODO: Ask Alex to add comments about the odometry thread when we do a code review. */
         PhoenixOdometryThread.getInstance().start();
 
         this.poseEstimator = new PoseEstimator8736(
@@ -116,31 +126,33 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        odometryLock.lock();
-        gyroIO.updateInputs(gyroInputs);
-        Logger.processInputs("Drive/Gyro", gyroInputs);
+        Drivetrain.odometryLock.lock();
 
-        // update module inputs
+        // gyroIO may be a real gyro or it may be simulated.
+        // These lines update gyroInputs from gyroIO
+        // gyroInputs will be used below
+        this.gyroIO.updateInputs(this.gyroInputs);
+        Logger.processInputs("Drive/Gyro", this.gyroInputs);
+
+        // calling SwerveModule.periodic() updates each module's inputs from the hardware or simulation
         this.frontLeftModule.periodic();
         this.frontRightModule.periodic();
         this.backLeftModule.periodic();
         this.backRightModule.periodic();
 
-        // Update odometry
+        // Send updated odometry to the pose estimator
+        // All signals are sampled together so only need timestamps from one
         double[] sampleTimestamps =
-            this.frontLeftModule.getOdometryTimestamps(); // All signals are sampled together
-        int sampleCount = sampleTimestamps.length;
-        for (int i = 0; i < sampleCount; i++) {
+            this.frontLeftModule.getOdometryTimestamps();
+        for (int i = 0; i < sampleTimestamps.length; i++) {
             // Read wheel positions from each module
-            SwerveModulePosition[] modulePositions =
-                new SwerveModulePosition[4];
+            SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
             modulePositions[0] = this.frontLeftModule.getOdometryPositions()[i];
-            modulePositions[1] =
-                this.frontRightModule.getOdometryPositions()[i];
+            modulePositions[1] = this.frontRightModule.getOdometryPositions()[i];
             modulePositions[2] = this.backLeftModule.getOdometryPositions()[i];
             modulePositions[3] = this.backRightModule.getOdometryPositions()[i];
 
-            // Update pose estimator with gyro rotation (or null to use kinematics)
+            // Update pose estimator with gyro rotation (or null to use kinematics only)
             Rotation2d gyroRotation = this.gyroInputs.connected
                 ? this.gyroInputs.odometryYawPositions[i]
                 : null;
@@ -152,13 +164,16 @@ public class Drivetrain extends SubsystemBase {
         }
 
         // send the new desired states down to the modules
+
         ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
             this.desiredChassisSpeeds,
             CONSTANTS.ROBOT_LOOP_PERIOD
         );
+
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
             this.desiredChassisSpeeds
         );
+        
         SwerveDriveKinematics.desaturateWheelSpeeds(
             moduleStates,
             CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
