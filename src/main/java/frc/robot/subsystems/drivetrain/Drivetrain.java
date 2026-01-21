@@ -140,6 +140,8 @@ public class Drivetrain extends SubsystemBase {
         this.backLeftModule.periodic();
         this.backRightModule.periodic();
 
+        Drivetrain.odometryLock.unlock();
+
         // Send updated odometry to the pose estimator
         // All signals are sampled together so only need timestamps from one
         double[] sampleTimestamps =
