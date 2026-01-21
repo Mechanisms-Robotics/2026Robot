@@ -14,6 +14,7 @@ import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -31,6 +32,7 @@ import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIO;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
+import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 import java.util.Optional;
 
@@ -57,8 +59,12 @@ public class RobotContainer {
 
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
-                new PoseCameraIO() {}
-            );
+                new PoseCameraIOSim(
+                    "Photon_Camera_Sim1", 
+                    Transform3d.kZero, 
+                    drivetrain.poseEstimator
+                ));
+
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
