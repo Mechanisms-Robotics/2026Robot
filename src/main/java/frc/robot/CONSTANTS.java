@@ -157,21 +157,21 @@ public class CONSTANTS {
         // This may need to be tuned to your individual robot
         private static final double COUPLE_RATIO = 0.0;
 
-        private static final double DRIVE_GEAR_RATIO = 6.75;
-        private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
+        public static final double DRIVE_GEAR_RATIO = 6.75;
+        public static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
         public static final Distance WHEEL_RADIUS = Inches.of(2.0);
 
         private static final boolean INVERT_LEFT_SIDE = false;
         private static final boolean INVERT_RIGHT_SIDE = true;
 
         // These are only used for simulation
-        private static final MomentOfInertia STEER_INERTIA =
-            KilogramSquareMeters.of(0.004);
-        private static final MomentOfInertia DRIVE_INERTIA =
+        public static final MomentOfInertia STEER_INERTIA =
+            KilogramSquareMeters.of(0.025);
+        public static final MomentOfInertia DRIVE_INERTIA =
             KilogramSquareMeters.of(0.025);
         // Simulated voltage necessary to overcome friction
-        private static final Voltage STEER_FRICTION_VOLTAGE = Volts.of(0.2);
-        private static final Voltage DRIVE_FRICTION_VOLTAGE = Volts.of(0.2);
+        public static final Voltage STEER_FRICTION_VOLTAGE = Volts.of(0.2);
+        public static final Voltage DRIVE_FRICTION_VOLTAGE = Volts.of(0.2);
 
         public static final SwerveDrivetrainConstants DRIVETRAIN_CONSTANTS =
             new SwerveDrivetrainConstants().withCANBusName(CAN_BUS.getName());

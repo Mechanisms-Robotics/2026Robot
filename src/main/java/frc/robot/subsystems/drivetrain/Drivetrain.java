@@ -15,6 +15,7 @@ import frc.robot.PoseEstimator8736;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -39,6 +40,8 @@ public class Drivetrain extends SubsystemBase {
 
     public static final Lock odometryLock = new ReentrantLock();
 
+    private final Consumer<Pose2d> resetSimulationPoseCallback;
+
     /**
      * Remember that the forward direction of the robot is +X and the left direction is
      * +Y. So if you give a ChassisSpeed of (+1, +1) the robot should translate diagonally
@@ -51,7 +54,8 @@ public class Drivetrain extends SubsystemBase {
         ModuleIO frontLeftModuleIO,
         ModuleIO frontRightModuleIO,
         ModuleIO backLeftModuleIO,
-        ModuleIO backRightModuleIO
+        ModuleIO backRightModuleIO,
+        Consumer<Pose2d> resetSimulationPoseCallback
     ) {
         this.gyroIO = gyroIO;
 
@@ -101,16 +105,20 @@ public class Drivetrain extends SubsystemBase {
         );
 
         this.desiredChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+
+        this.resetSimulationPoseCallback = resetSimulationPoseCallback;
     }
 
     public void setDesiredState(ChassisSpeeds desiredChassisSpeeds) {
         this.desiredChassisSpeeds = desiredChassisSpeeds;
     }
 
+    @AutoLogOutput(key = "DesiredState")
     public ChassisSpeeds getDesiredState() {
         return this.desiredChassisSpeeds;
     }
 
+    @AutoLogOutput(key = "Kinematics")
     public SwerveDriveKinematics getKinematics() {
         return this.kinematics;
     }
@@ -203,6 +211,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
+        this.resetSimulationPoseCallback.accept(pose);
         this.poseEstimator.resetPose(pose, getModulePositions());
     }
 

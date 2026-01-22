@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import frc.robot.CONSTANTS.DriveConstants;
@@ -18,23 +20,30 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
-
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
-import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
+import frc.robot.subsystems.drivetrain.GyroIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 
 import java.util.Optional;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+
 public class RobotContainer {
 
-    private final Drivetrain drivetrain;
+    public final Drivetrain drivetrain;
+    public final SwerveDriveSimulation drivetrainSim;
     private final DrivetrainController drivetrainController;
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -44,20 +53,52 @@ public class RobotContainer {
     public RobotContainer() {
         // TODO: Think about where to initialize all of this properly
         if (CONSTANTS.CURRENT_MODE == CONSTANTS.SIM_MODE) {
+            this.drivetrainSim = new SwerveDriveSimulation(
+                DriveTrainSimulationConfig.Default()
+                    .withGyro(COTS.ofPigeon2())
+                    .withRobotMass(Kilograms.of(DriveConstants.ROBOT_MASS_KG))
+                    .withBumperSize(Inches.of(30.0), Inches.of(30.0))
+                    .withTrackLengthTrackWidth(Inches.of(20.0), Inches.of(20.0))
+                    .withSwerveModule(new SwerveModuleSimulationConfig(
+                        DCMotor.getKrakenX60(1),
+                        DCMotor.getKrakenX60(1),
+                        DriveConstants.DRIVE_GEAR_RATIO,
+                        DriveConstants.STEER_GEAR_RATIO,
+                        DriveConstants.DRIVE_FRICTION_VOLTAGE,
+                        DriveConstants.STEER_FRICTION_VOLTAGE,
+                        DriveConstants.WHEEL_RADIUS,
+                        DriveConstants.STEER_INERTIA,
+                        1.5)),
+                new Pose2d(3, 3, Rotation2d.kZero));
+
+            SimulatedArena.getInstance().addDriveTrainSimulation(drivetrainSim);
+
+            final ModuleIOSim 
+                frontLeft = new ModuleIOSim(drivetrainSim.getModules()[0]),
+                frontRight = new ModuleIOSim(drivetrainSim.getModules()[1]),
+                backLeft = new ModuleIOSim(drivetrainSim.getModules()[2]),
+                backRight = new ModuleIOSim(drivetrainSim.getModules()[3]);
+            final GyroIOSim gyroIOSim = new GyroIOSim(drivetrainSim.getGyroSimulation());
+
             this.drivetrain = new Drivetrain(
-                new GyroIO() {},
-                new ModuleIOSim(DriveConstants.FRONT_LEFT),
-                new ModuleIOSim(DriveConstants.FRONT_RIGHT),
-                new ModuleIOSim(DriveConstants.BACK_LEFT),
-                new ModuleIOSim(DriveConstants.BACK_RIGHT)
+                gyroIOSim,
+                frontLeft,
+                frontRight,
+                backLeft,
+                backRight,
+                drivetrainSim::setSimulationWorldPose
             );
+            
+            SimulatedArena.getInstance().resetFieldForAuto();
         } else {
+            this.drivetrainSim = null;
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_RIGHT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
-                new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
+                new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT),
+                (pose) -> {}
             );
         }
 
