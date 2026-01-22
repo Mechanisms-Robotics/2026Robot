@@ -8,10 +8,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import frc.robot.CONSTANTS.DriveConstants;
 
-import choreo.Choreo;
-import choreo.trajectory.SwerveSample;
-import choreo.trajectory.Trajectory;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,6 +15,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -30,8 +27,6 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
-
-import java.util.Optional;
 
 public class RobotContainer {
 
@@ -66,7 +61,7 @@ public class RobotContainer {
         this.drivetrainController = new DrivetrainController(this.drivetrain);
 
         configureBindings();
-        //generateAutos();
+        generateAutos();
     }
 
     private void configureBindings() {
@@ -131,13 +126,15 @@ public class RobotContainer {
     }
 
     private void generateAutos() {
-        Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
-            "Test Path"
-        );
+        // Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
+        //     "Test Path"
+        // );
 
         autoChooser.setDefaultOption("Wheel Characterization", DriveCommands.wheelRadiusCharacterization(drivetrain));
         autoChooser.addOption("Drive Feedforward Characterization", DriveCommands.feedforwardCharacterization(drivetrain));
-        autoChooser.addOption("Test Path", new FollowPath(trajectory.get(), this.drivetrain, true));
+        // autoChooser.addOption("Test Path", new FollowPath(trajectory.get(), this.drivetrain, true));
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     public Command getAutonomousCommand() {
