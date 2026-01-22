@@ -101,7 +101,7 @@ public class RobotContainer {
                 new PoseCameraIOSim(
                     "Photon_Camera_Sim1", 
                     Transform3d.kZero, 
-                    drivetrain.poseEstimator
+                    this.drivetrainSim::getSimulatedDriveTrainPose
                 ));
 
         } else {

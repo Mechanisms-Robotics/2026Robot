@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -19,23 +20,23 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.CONSTANTS;
-import frc.robot.PoseEstimator8736;
 
 public class PoseCameraIOSim implements PoseCameraIO {
     private final VisionSystemSim visionSim;
     private final PhotonCameraSim cameraSim;
-    private final PoseEstimator8736 poseEstimator;
 
     private final PhotonCamera camera;
     private final String cameraName;
     private final Transform3d cameraToRobot;
 
     private final PhotonPoseEstimator photonEstimator;
+    // The actual simulated position of the robot
+    private final Supplier<Pose2d> simPose;
 
-    // PoseEstimator is passed in because the sim camera needs the robot's current position to update.
-    public PoseCameraIOSim(String cameraName, Transform3d cameraToRobot, PoseEstimator8736 poseEstimator) {
+    public PoseCameraIOSim(String cameraName, Transform3d cameraToRobot, Supplier<Pose2d> simPose) {
         this.cameraName = cameraName;
         this.cameraToRobot = cameraToRobot;
+        this.simPose = simPose;
 
         this.visionSim = new VisionSystemSim("visionSim");
         this.visionSim.addAprilTags(CONSTANTS.APRILTAG_FIELD_LAYOUT);
@@ -61,8 +62,6 @@ public class PoseCameraIOSim implements PoseCameraIO {
             this.cameraToRobot);
 
         this.photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
-        this.poseEstimator = poseEstimator;
     }
 
     @Override
@@ -93,6 +92,6 @@ public class PoseCameraIOSim implements PoseCameraIO {
         inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
         inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose2d[]::new);
 
-        visionSim.update(poseEstimator.getEstimatedPose());
+        visionSim.update(simPose.get());
     }
 }

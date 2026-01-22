@@ -11,6 +11,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Physics sim implementation of module IO. The sim models are configured using a set of module
@@ -115,6 +116,8 @@ public class ModuleIOSim implements ModuleIO {
         inputs.turnVelocityRadPerSec =
             this.moduleSimulation.getSteerAbsoluteEncoderSpeed().in(RadiansPerSecond);
 
+        // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't matter)
+        inputs.odometryTimestamps = new double[] { Timer.getFPGATimestamp() };
         inputs.odometryDrivePositionsRad = Arrays.stream(this.moduleSimulation.getCachedDriveWheelFinalPositions())
             .mapToDouble(angle -> angle.in(Radians))
             .toArray();
