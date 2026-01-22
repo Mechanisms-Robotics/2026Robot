@@ -26,7 +26,10 @@ public class Drivetrain extends SubsystemBase {
 
     SwerveDriveKinematics kinematics;
     ChassisSpeeds desiredChassisSpeeds;
-    PoseEstimator8736 poseEstimator;
+    
+    // Made this public so the PoseCamera could access it. This could be restructured if needed  -Luke
+    public PoseEstimator8736 poseEstimator;
+    //private final StructArrayPublisher<SwerveModuleState> publisher;
 
     private final SwerveModule frontLeftModule;
     private final SwerveModule frontRightModule;

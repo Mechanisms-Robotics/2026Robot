@@ -19,10 +19,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -33,6 +33,9 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.GyroIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.PoseCameraIOPhoton;
+import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 import java.util.Optional;
 
@@ -41,12 +44,12 @@ import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
 
 public class RobotContainer {
 
     public final Drivetrain drivetrain;
     public final SwerveDriveSimulation drivetrainSim;
+    private final Vision vision;
     private final DrivetrainController drivetrainController;
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -92,6 +95,15 @@ public class RobotContainer {
                 backLeft,
                 backRight
             );
+
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIOSim(
+                    "Photon_Camera_Sim1", 
+                    Transform3d.kZero, 
+                    drivetrain.poseEstimator
+                ));
+
         } else {
             this.drivetrainSim = null;
             this.drivetrain = new Drivetrain(
@@ -100,6 +112,14 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_RIGHT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
+            );
+
+            // TODO: move this to the proper constants file (in src/config/constants)
+            final String photonCameraName = "Photon_Camera1";
+           
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero)
             );
         }
 
@@ -129,7 +149,7 @@ public class RobotContainer {
                     );
                     double rotation;
                     if (CONSTANTS.CURRENT_MODE == CONSTANTS.Mode.SIM) {
-                        rotation = -this.controller.getRawAxis(4); // Why is sim different then driverstation?
+                        rotation = -this.controller.getRawAxis(3); // Why is sim different then driverstation?
                     } else {
                         rotation = -this.controller.getRightX();
                     }
