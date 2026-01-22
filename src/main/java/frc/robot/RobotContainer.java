@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import frc.robot.CONSTANTS.DriveConstants;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -39,6 +41,7 @@ import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
 
 public class RobotContainer {
 
@@ -55,13 +58,15 @@ public class RobotContainer {
         if (CONSTANTS.CURRENT_MODE == CONSTANTS.SIM_MODE) {
             this.drivetrainSim = new SwerveDriveSimulation(
                 DriveTrainSimulationConfig.Default()
-                    .withGyro(COTS.ofPigeon2())
+                    .withGyro(COTS.ofGenericGyro())
                     .withRobotMass(Kilograms.of(DriveConstants.ROBOT_MASS_KG))
                     .withBumperSize(Inches.of(30.0), Inches.of(30.0))
-                    .withTrackLengthTrackWidth(Inches.of(20.0), Inches.of(20.0))
+                    .withTrackLengthTrackWidth(
+                        Meters.of(DriveConstants.TRACK_LENGTH_METERS), Meters.of(DriveConstants.TRACK_WIDTH_METERS)
+                    )
                     .withSwerveModule(new SwerveModuleSimulationConfig(
-                        DCMotor.getKrakenX60(1),
-                        DCMotor.getKrakenX60(1),
+                        DCMotor.getKrakenX60Foc(1),
+                        DCMotor.getKrakenX60Foc(1),
                         DriveConstants.DRIVE_GEAR_RATIO,
                         DriveConstants.STEER_GEAR_RATIO,
                         DriveConstants.DRIVE_FRICTION_VOLTAGE,
@@ -85,11 +90,8 @@ public class RobotContainer {
                 frontLeft,
                 frontRight,
                 backLeft,
-                backRight,
-                drivetrainSim::setSimulationWorldPose
+                backRight
             );
-            
-            SimulatedArena.getInstance().resetFieldForAuto();
         } else {
             this.drivetrainSim = null;
             this.drivetrain = new Drivetrain(
@@ -97,8 +99,7 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_RIGHT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
-                new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT),
-                (pose) -> {}
+                new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
             );
         }
 
@@ -128,7 +129,7 @@ public class RobotContainer {
                     );
                     double rotation;
                     if (CONSTANTS.CURRENT_MODE == CONSTANTS.Mode.SIM) {
-                        rotation = -this.controller.getRawAxis(3); // Why is sim different then driverstation?
+                        rotation = -this.controller.getRawAxis(4); // Why is sim different then driverstation?
                     } else {
                         rotation = -this.controller.getRightX();
                     }

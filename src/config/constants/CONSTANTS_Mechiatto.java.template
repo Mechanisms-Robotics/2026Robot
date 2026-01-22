@@ -206,8 +206,8 @@ public class CONSTANTS {
             .withSteerFrictionVoltage(STEER_FRICTION_VOLTAGE)
             .withDriveFrictionVoltage(DRIVE_FRICTION_VOLTAGE);
 
-        private static final double TRACK_WIDTH_METERS = 0.48;
-        private static final double TRACK_LENGTH_METERS = 0.74;
+        public static final double TRACK_WIDTH_METERS = 0.48;
+        public static final double TRACK_LENGTH_METERS = 0.74;
     
         // Front Left
         private static final int FRONT_LEFT_DRIVE_MOTOR_ID = 1;

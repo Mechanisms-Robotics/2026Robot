@@ -10,7 +10,6 @@ import org.ironmaple.simulation.motorsims.SimulatedMotorController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -28,8 +27,8 @@ public class ModuleIOSim implements ModuleIO {
         1.0 / Units.rotationsToRadians(1.0 / DRIVE_KV_ROT);
     private static final double TURN_KP = 8.0;
     private static final double TURN_KD = 0.0;
-    private static final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60Foc(1);
-    private static final DCMotor TURN_GEARBOX = DCMotor.getKrakenX60Foc(1);
+    // private static final DCMotor DRIVE_GEARBOX = DCMotor.getKrakenX60Foc(1);
+    // private static final DCMotor TURN_GEARBOX = DCMotor.getKrakenX60Foc(1);
 
     private final SwerveModuleSimulation moduleSimulation;
     private final SimulatedMotorController.GenericMotorController driveMotor;
@@ -104,10 +103,12 @@ public class ModuleIOSim implements ModuleIO {
 
         // Update turn inputs
         inputs.turnConnected = true;
-        inputs.turnAppliedVolts = this.moduleSimulation.getDriveMotorAppliedVoltage().in(Volts);
+        inputs.turnAppliedVolts = this.moduleSimulation.getSteerMotorAppliedVoltage().in(Volts);
         inputs.turnCurrentAmps = this.moduleSimulation.getSteerMotorStatorCurrent().in(Amps);
 
-        inputs.turnAbsolutePosition = Rotation2d.fromRotations(this.moduleSimulation.getSteerAbsoluteAngle().in(Rotations));
+        inputs.turnAbsolutePosition = Rotation2d.fromRotations(
+            this.moduleSimulation.getSteerAbsoluteAngle().in(Rotations)
+        );
         inputs.turnPosition = Rotation2d.fromRotations(
             this.moduleSimulation.getSteerAbsoluteAngle().in(Rotations)
         );

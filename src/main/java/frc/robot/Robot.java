@@ -5,6 +5,7 @@
 package frc.robot;
 
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -12,6 +13,9 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -55,7 +59,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {
     SimulatedArena.getInstance().simulationPeriodic();
-    Logger.recordOutput("SimulationPosition", this.robotContainer.drivetrainSim.getSimulatedDriveTrainPose());
+    Logger.recordOutput("Simulation/Robot", this.robotContainer.drivetrainSim.getSimulatedDriveTrainPose());
+    Pose3d[] fuelPoses = SimulatedArena.getInstance()
+      .getGamePiecesArrayByType("Fuel");
+    Logger.recordOutput("Simulation/Fuel", fuelPoses);
   }
 
   @Override
@@ -75,6 +82,9 @@ public class Robot extends LoggedRobot {
     if (this.autonomousCommand != null) {
       this.autonomousCommand.schedule();
     }
+
+    if (Robot.isSimulation())
+      resetFieldSim();
   }
 
   @Override
@@ -88,6 +98,8 @@ public class Robot extends LoggedRobot {
     if (this.autonomousCommand != null) {
       this.autonomousCommand.cancel();
     }
+    if (Robot.isSimulation())
+      resetFieldSim();
   }
 
   @Override
@@ -106,4 +118,16 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testExit() {}
+
+  private void resetFieldSim() {
+    SimulatedArena.getInstance().clearGamePieces();
+    final double centerX = 16.541 / 2.0, centerY = 8.09 / 2.0;
+    final double width = 1.8, height = 4.45;
+
+    for (double x = centerX - width / 2.0; x < centerX + width / 2.0; x += Units.inchesToMeters(6.0)) {
+        for (double y = centerY - height / 2.0; y < centerY + height / 2.0; y += Units.inchesToMeters(6.0)) {
+            SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(new Translation2d(x, y)));
+        }
+    }
+  }
 }
