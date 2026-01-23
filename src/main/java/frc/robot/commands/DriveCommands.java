@@ -78,7 +78,7 @@ public class DriveCommands {
 
     /** Measures the robot's wheel radius by spinning in a circle. */
     public static Command wheelRadiusCharacterization(Drivetrain drivetrain) {
-        SlewRateLimiter limiter = new SlewRateLimiter(0.05);
+        SlewRateLimiter limiter = new SlewRateLimiter(0.1);
         WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
         return Commands.parallel(
@@ -86,7 +86,7 @@ public class DriveCommands {
                 Commands.runOnce(() -> limiter.reset(0.0)),
                 Commands.run(
                     () -> {
-                        double speed = limiter.calculate(0.25);
+                        double speed = limiter.calculate(2.0);
                         drivetrain.setDesiredState(new ChassisSpeeds(0.0, 0.0, speed));
                     },
                     drivetrain
