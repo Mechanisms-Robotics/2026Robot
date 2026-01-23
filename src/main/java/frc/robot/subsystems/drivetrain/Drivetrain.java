@@ -38,6 +38,7 @@ public class Drivetrain extends SubsystemBase {
         new GyroIOInputsAutoLogged();
 
     public static final Lock odometryLock = new ReentrantLock();
+    private boolean driveClosedLoop = true;
 
     /**
      * Remember that the forward direction of the robot is +X and the left direction is
@@ -104,6 +105,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void setDesiredState(ChassisSpeeds desiredChassisSpeeds) {
+        this.driveClosedLoop = true;
         this.desiredChassisSpeeds = desiredChassisSpeeds;
     }
 
@@ -162,35 +164,37 @@ public class Drivetrain extends SubsystemBase {
                 sampleTimestamps[i]
             );
         }
+        if (this.driveClosedLoop) {
 
-        // send the new desired states down to the modules
+            // send the new desired states down to the modules
 
-        ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
-            this.desiredChassisSpeeds,
-            CONSTANTS.ROBOT_LOOP_PERIOD
-        );
+            ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
+                this.desiredChassisSpeeds,
+                CONSTANTS.ROBOT_LOOP_PERIOD
+            );
 
-        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
-            this.desiredChassisSpeeds
-        );
-        
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            moduleStates,
-            CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
-        );
+            SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
+                this.desiredChassisSpeeds
+            );
+            
+            SwerveDriveKinematics.desaturateWheelSpeeds(
+                moduleStates,
+                CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
+            );
 
-        Logger.recordOutput("SwerveStates/Setpoints", moduleStates);
-        Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+            Logger.recordOutput("SwerveStates/Setpoints", moduleStates);
+            Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
 
-        SwerveModuleState frontLeftState = moduleStates[0];
-        SwerveModuleState frontRightState = moduleStates[1];
-        SwerveModuleState backLeftState = moduleStates[2];
-        SwerveModuleState backRightState = moduleStates[3];
+            SwerveModuleState frontLeftState = moduleStates[0];
+            SwerveModuleState frontRightState = moduleStates[1];
+            SwerveModuleState backLeftState = moduleStates[2];
+            SwerveModuleState backRightState = moduleStates[3];
 
-        this.frontLeftModule.setModuleState(frontLeftState);
-        this.frontRightModule.setModuleState(frontRightState);
-        this.backLeftModule.setModuleState(backLeftState);
-        this.backRightModule.setModuleState(backRightState);
+            this.frontLeftModule.setModuleState(frontLeftState);
+            this.frontRightModule.setModuleState(frontRightState);
+            this.backLeftModule.setModuleState(backLeftState);
+            this.backRightModule.setModuleState(backRightState);
+        }
     }
 
     public void zeroGyro() {
@@ -218,6 +222,7 @@ public class Drivetrain extends SubsystemBase {
     
     /** Runs the drive in a straight line with the specified drive output. */
     public void runCharacterization(double output) {
+        this.driveClosedLoop = false;
         this.frontLeftModule.runCharacterization(output);
         this.frontRightModule.runCharacterization(output);
         this.backLeftModule.runCharacterization(output);
