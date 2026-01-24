@@ -31,7 +31,7 @@ public class GyroIORedux implements GyroIO {
             Timeouts.STD_TIMEOUT_LONG,
             Timeouts.STD_RETRY_ATTEMPTS
         );
-        gyro.setYaw(0.0, Timeouts.STD_TIMEOUT);
+        gyro.setYaw(0.0);
         gyro.clearStickyFaults();
 
         // Register the gyro signals

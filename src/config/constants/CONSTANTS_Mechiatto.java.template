@@ -85,7 +85,7 @@ public class CONSTANTS {
         // The steer motor uses any SwerveModule.SteerRequestType control request with the
         // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
         private static final Slot0Configs STEER_GAINS = new Slot0Configs()
-            .withKP(25.0)
+            .withKP(60.0)
             .withKI(0)
             .withKD(0)
             .withKS(0)
@@ -157,7 +157,7 @@ public class CONSTANTS {
         // This may need to be tuned to your individual robot
         private static final double COUPLE_RATIO = 0.0;
 
-        private static final double DRIVE_GEAR_RATIO = 7.363636363636365;
+        private static final double DRIVE_GEAR_RATIO = 6.75;
         private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
         public static final Distance WHEEL_RADIUS = Inches.of(2.0);
 
@@ -206,6 +206,9 @@ public class CONSTANTS {
             .withSteerFrictionVoltage(STEER_FRICTION_VOLTAGE)
             .withDriveFrictionVoltage(DRIVE_FRICTION_VOLTAGE);
 
+        private static final double TRACK_WIDTH_METERS = 0.48;
+        private static final double TRACK_LENGTH_METERS = 0.74;
+    
         // Front Left
         private static final int FRONT_LEFT_DRIVE_MOTOR_ID = 1;
         private static final int FRONT_LEFT_STEER_MOTOR_ID = 5;
@@ -216,8 +219,8 @@ public class CONSTANTS {
         private static final boolean FRONT_LEFT_STEER_MOTOR_INVERTED = true;
         private static final boolean FRONT_LEFT_ENCODER_INVERTED = true;
 
-        private static final Distance FRONT_LEFT_X_POS = Meters.of(0.33);
-        private static final Distance FRONT_LEFT_Y_POS = Meters.of(0.23);
+        private static final Distance FRONT_LEFT_X_POS = Meters.of(TRACK_LENGTH_METERS / 2);
+        private static final Distance FRONT_LEFT_Y_POS = Meters.of(TRACK_WIDTH_METERS / 2);
 
         // Front Right
         private static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 2;
@@ -229,8 +232,8 @@ public class CONSTANTS {
         private static final boolean FRONT_RIGHT_STEER_MOTOR_INVERTED = true;
         private static final boolean FRONT_RIGHT_ENCODER_INVERTED = true;
 
-        private static final Distance FRONT_RIGHT_X_POS = Meters.of(0.33);
-        private static final Distance FRONT_RIGHT_Y_POS = Meters.of(-0.23);
+        private static final Distance FRONT_RIGHT_X_POS = Meters.of(TRACK_LENGTH_METERS / 2);
+        private static final Distance FRONT_RIGHT_Y_POS = Meters.of(-TRACK_WIDTH_METERS / 2);
 
         // Back Left
         private static final int BACK_LEFT_DRIVE_MOTOR_ID = 8;
@@ -242,8 +245,8 @@ public class CONSTANTS {
         private static final boolean BACK_LELFT_STEER_MOTOR_INVERTED = true;
         private static final boolean BACK_LEFT_ENCODER_INVERTED = true;
 
-        private static final Distance BACK_LEFT_X_POS = Meters.of(-0.33);
-        private static final Distance BACK_LEFT_Y_POS = Meters.of(0.23);
+        private static final Distance BACK_LEFT_X_POS = Meters.of(-TRACK_LENGTH_METERS / 2);
+        private static final Distance BACK_LEFT_Y_POS = Meters.of(TRACK_WIDTH_METERS / 2);
 
         // Back Right
         private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 7;
@@ -255,8 +258,8 @@ public class CONSTANTS {
         private static final boolean BACK_RIGHT_STEER_MOTOR_INVERTED = true;
         private static final boolean BACK_RIGHT_ENCODER_INVERTED = true;
 
-        private static final Distance BACK_RIGHT_X_POS = Meters.of(-0.33);
-        private static final Distance BACK_RIGHT_Y_POS = Meters.of(-0.23);
+        private static final Distance BACK_RIGHT_X_POS = Meters.of(-TRACK_LENGTH_METERS / 2);
+        private static final Distance BACK_RIGHT_Y_POS = Meters.of(-TRACK_WIDTH_METERS / 2);
 
         public static final SwerveModuleConstants<
             TalonFXConfiguration,

@@ -5,12 +5,13 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static frc.robot.CONSTANTS.*;
-import static frc.robot.CONSTANTS.DriveConstants;
+
+import frc.robot.CONSTANTS.DriveConstants;
 
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
 import frc.robot.subsystems.drivetrain.GyroIO;
@@ -43,7 +45,7 @@ public class RobotContainer {
     private final DrivetrainController drivetrainController;
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
-        CONTROLLER_PORT
+        CONSTANTS.CONTROLLER_PORT
     );
 
     public RobotContainer() {
@@ -84,12 +86,13 @@ public class RobotContainer {
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
+
         configureBindings();
-        generateAutos();
+        //generateAutos();
     }
 
     private void configureBindings() {
-        controller
+        this.controller
             .cross()
             .onTrue(
                 new InstantCommand(() -> {
@@ -149,7 +152,7 @@ public class RobotContainer {
         );
     }
 
-    private Command testAuto = null;
+    private Command testAuto = null; // this should be replaced when we start developing real autos
 
     private void generateAutos() {
         Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
