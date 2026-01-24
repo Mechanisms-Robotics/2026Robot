@@ -47,6 +47,7 @@ public class SwerveModule {
         // set the drive velocity (convert m/s to rad/s)
         double driveVelocityRadPerSec =
             (state.speedMetersPerSecond * scaleFactor) / DriveConstants.WHEEL_RADIUS.in(Meters);
+        Logger.recordOutput("Module " + this.moduleName + "/Desired Drive Radians Per Second", driveVelocityRadPerSec);
         this.io.setDriveVelocity(driveVelocityRadPerSec);
 
         // set the turn position

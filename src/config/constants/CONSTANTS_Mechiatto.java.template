@@ -100,8 +100,8 @@ public class CONSTANTS {
             .withKP(1.6)
             .withKI(0)
             .withKD(0)
-            .withKS(0)
-            .withKV(0);
+            .withKS(0.129)
+            .withKV(0.753);
 
         // The closed-loop output type to use for the steer motors;
         // This affects the PID/FF gains for the steer motors
