@@ -38,6 +38,8 @@ public class Drivetrain extends SubsystemBase {
         new GyroIOInputsAutoLogged();
 
     public static final Lock odometryLock = new ReentrantLock();
+    
+    private boolean driveClosedLoop = true;
 
     /**
      * Remember that the forward direction of the robot is +X and the left direction is
@@ -104,6 +106,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void setDesiredState(ChassisSpeeds desiredChassisSpeeds) {
+        this.driveClosedLoop = true;
         this.desiredChassisSpeeds = desiredChassisSpeeds;
     }
 
@@ -164,35 +167,37 @@ public class Drivetrain extends SubsystemBase {
                 sampleTimestamps[i]
             );
         }
+        if (this.driveClosedLoop) {
 
-        // send the new desired states down to the modules
+            // send the new desired states down to the modules
 
-        ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
-            this.desiredChassisSpeeds,
-            CONSTANTS.ROBOT_LOOP_PERIOD
-        );
+            ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
+                this.desiredChassisSpeeds,
+                CONSTANTS.ROBOT_LOOP_PERIOD
+            );
 
-        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
-            this.desiredChassisSpeeds
-        );
-        
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            moduleStates,
-            CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
-        );
+            SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
+                this.desiredChassisSpeeds
+            );
+            
+            SwerveDriveKinematics.desaturateWheelSpeeds(
+                moduleStates,
+                CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
+            );
 
-        Logger.recordOutput("SwerveStates/Setpoints", moduleStates);
-        Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+            Logger.recordOutput("SwerveStates/Setpoints", moduleStates);
+            Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
 
-        SwerveModuleState frontLeftState = moduleStates[0];
-        SwerveModuleState frontRightState = moduleStates[1];
-        SwerveModuleState backLeftState = moduleStates[2];
-        SwerveModuleState backRightState = moduleStates[3];
+            SwerveModuleState frontLeftState = moduleStates[0];
+            SwerveModuleState frontRightState = moduleStates[1];
+            SwerveModuleState backLeftState = moduleStates[2];
+            SwerveModuleState backRightState = moduleStates[3];
 
-        this.frontLeftModule.setModuleState(frontLeftState);
-        this.frontRightModule.setModuleState(frontRightState);
-        this.backLeftModule.setModuleState(backLeftState);
-        this.backRightModule.setModuleState(backRightState);
+            this.frontLeftModule.setModuleState(frontLeftState);
+            this.frontRightModule.setModuleState(frontRightState);
+            this.backLeftModule.setModuleState(backLeftState);
+            this.backRightModule.setModuleState(backRightState);
+        }
     }
 
     public void zeroGyro() {
@@ -216,5 +221,41 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         this.periodic();
+    }
+    
+    /** Runs the drive in a straight line with the specified drive output. */
+    public void runCharacterization(double output) {
+        this.driveClosedLoop = false;
+        this.frontLeftModule.runCharacterization(output);
+        this.frontRightModule.runCharacterization(output);
+        this.backLeftModule.runCharacterization(output);
+        this.backRightModule.runCharacterization(output);
+    }
+
+    /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
+    public double getFFCharacterizationVelocity() {
+        double output = 0.0;
+        output += this.frontLeftModule.getFFCharacterizationVelocity();
+        output += this.frontRightModule.getFFCharacterizationVelocity();
+        output += this.backLeftModule.getFFCharacterizationVelocity();
+        output += this.backRightModule.getFFCharacterizationVelocity();
+        output /= 4;
+        /** TODO: get Feed Forward characterization velocity from modules */
+        return output;
+    }
+
+    /** Returns the position of each module in radians. */
+    public double[] getWheelRadiusCharacterizationPositions() {
+        double[] values = new double[4];
+        values[0] = this.frontLeftModule.getWheelRadiusCharacterizationPosition();
+        values[1] = this.frontRightModule.getWheelRadiusCharacterizationPosition();
+        values[2] = this.backLeftModule.getWheelRadiusCharacterizationPosition();
+        values[3] = this.backRightModule.getWheelRadiusCharacterizationPosition();
+        return values;
+    }
+
+    /** Returns the raw gyro rotation read by the IMU */
+    public Rotation2d getGyroRotation() {
+        return gyroInputs.yawPosition;
     }
 }

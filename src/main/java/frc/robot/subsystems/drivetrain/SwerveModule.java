@@ -3,8 +3,10 @@ package frc.robot.subsystems.drivetrain;
 import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.CONSTANTS.DriveConstants;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -52,6 +54,12 @@ public class SwerveModule {
         this.io.setTurnPosition(state.angle);
     }
 
+    /** Runs the module with the specified output while controlling to zero degrees. */
+    public void runCharacterization(double output) {
+        io.setDriveOpenLoop(output);
+        io.setTurnPosition(Rotation2d.kZero);
+    }
+
     public double[] getOdometryTimestamps() {
         return this.inputs.odometryTimestamps;
     }
@@ -66,5 +74,15 @@ public class SwerveModule {
             );
         }
         return positions;
+    }
+
+    /** Returns the module position in radians. */
+    public double getWheelRadiusCharacterizationPosition() {
+        return inputs.drivePositionRad;
+    }
+
+    /** Returns the module velocity in rotations/sec (Phoenix native units). */
+    public double getFFCharacterizationVelocity() {
+        return Units.radiansToRotations(inputs.driveVelocityRadPerSec);
     }
 }
