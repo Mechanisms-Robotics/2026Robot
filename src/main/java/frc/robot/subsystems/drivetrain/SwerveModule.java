@@ -51,7 +51,7 @@ public class SwerveModule {
 
         // set the turn position
         Logger.recordOutput("Module " + this.moduleName + "/Optimised Angle", state.angle);
-        io.setTurnPosition(state.angle);
+        this.io.setTurnPosition(state.angle);
     }
 
     /** Runs the module with the specified output while controlling to zero degrees. */

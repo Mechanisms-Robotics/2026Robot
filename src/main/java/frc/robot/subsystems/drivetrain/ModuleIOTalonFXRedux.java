@@ -280,10 +280,11 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
         inputs.turnConnected = this.turnConnectedDebounce.calculate(
             turnStatus.isOK()
         );
-        // inputs.turnEncoderConnected =
-        //     this.turnEncoderConnectedDebounce.calculate(
-        //         turnEncoderStatus != null
-        //     );
+        inputs.turnEncoderConnected =
+            this.turnEncoderConnectedDebounce.calculate(
+                true
+                //turnEncoderStatus != null
+            );
         inputs.turnAbsolutePosition = Rotation2d.fromRotations(
             this.cancoder.getAbsPosition()
         );

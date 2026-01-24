@@ -38,6 +38,7 @@ public class Drivetrain extends SubsystemBase {
         new GyroIOInputsAutoLogged();
 
     public static final Lock odometryLock = new ReentrantLock();
+    
     private boolean driveClosedLoop = true;
 
     /**
@@ -141,6 +142,8 @@ public class Drivetrain extends SubsystemBase {
         this.frontRightModule.periodic();
         this.backLeftModule.periodic();
         this.backRightModule.periodic();
+
+        Drivetrain.odometryLock.unlock();
 
         // Send updated odometry to the pose estimator
         // All signals are sampled together so only need timestamps from one
