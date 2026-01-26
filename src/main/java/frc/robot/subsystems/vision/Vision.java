@@ -33,8 +33,6 @@ public class Vision extends SubsystemBase {
             for (int j = 0; j < inputs[i].timestampSeconds.length; j++) {
                 this.poseEstimator.addVisionMeasurement(inputs[i].poseEstimates[j], inputs[i].timestampSeconds[j]);
             }
-            // inputs[i].timestampSeconds = new double[] {};
-            // inputs[i].poseEstimates = new Pose2d[] {};
         }
     }
 }
