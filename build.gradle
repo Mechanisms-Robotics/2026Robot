@@ -158,6 +158,13 @@ def targetRobot = project.hasProperty('targetRobot') ? project.getProperty('targ
 // Validate that CONSTANTS.java hasn't been modified before overwriting
 task validateConstantsNotModified {
     doLast {
+        // If the developer explicitly asked to update the template from the current CONSTANTS.java,
+        // skip the pre-validation — we'll overwrite the template below.
+        if (project.hasProperty('updateTemplate') && project.getProperty('updateTemplate').toString().toLowerCase() == 'true') {
+            println "INFO: updateTemplate=true — skipping validation and will copy CONSTANTS.java back to the selected template."
+            return
+        }
+
         def destinationFile = file("src/main/java/frc/robot/CONSTANTS.java")
         
         if (!destinationFile.exists()) {
@@ -249,11 +256,26 @@ task prepareConstants {
         println "  Path: ${destinationFile.absolutePath}"
         println "  Exists (before copy): ${destinationFile.exists()}"
         
-        // Copy the selected constants file to CONSTANTS.java
-        copy {
-            from sourceFile
-            into destinationFile.parent
-            rename { "CONSTANTS.java" }
+        // If updateTemplate=true, copy CONSTANTS.java back to the selected template instead of
+        // copying the template to CONSTANTS.java.
+        if (project.hasProperty('updateTemplate') && project.getProperty('updateTemplate').toString().toLowerCase() == 'true') {
+            if (!destinationFile.exists()) {
+                throw new GradleException("CONSTANTS.java not found: cannot update template from missing file: ${destinationFile.absolutePath}")
+            }
+            println "Updating template ${sourceFile.name} from existing CONSTANTS.java"
+            copy {
+                from destinationFile
+                into sourceFile.parent
+                rename { sourceFile.name }
+            }
+            println "Wrote ${sourceFile.absolutePath} from ${destinationFile.absolutePath}"
+        } else {
+            // Copy the selected constants file to CONSTANTS.java
+            copy {
+                from sourceFile
+                into destinationFile.parent
+                rename { "CONSTANTS.java" }
+            }
         }
 
         println "-----------------------------------------"
@@ -264,7 +286,7 @@ task prepareConstants {
         }
         println "  Copy Status: SUCCESS"
         println "========================================="
-        println "Copied ${sourceFile.name} to CONSTANTS.java"
+        println "Aligned ${sourceFile.name} and CONSTANTS.java"
         println "========================================="
     }
 }
