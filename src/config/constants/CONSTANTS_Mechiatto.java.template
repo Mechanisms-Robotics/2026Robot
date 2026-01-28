@@ -50,7 +50,7 @@ public class CONSTANTS {
 
     // Vision Constants
     public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     //Localization
     public static final int GYRO_CAN_ID = 9;
@@ -97,11 +97,11 @@ public class CONSTANTS {
         // When using closed-loop control, the drive motor uses the control
         // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
         private static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
-            .withKP(0.1)
+            .withKP(1.6)
             .withKI(0)
             .withKD(0)
-            .withKS(0)
-            .withKV(0);
+            .withKS(0.129)
+            .withKV(0.753);
 
         // The closed-loop output type to use for the steer motors;
         // This affects the PID/FF gains for the steer motors
@@ -159,7 +159,7 @@ public class CONSTANTS {
 
         private static final double DRIVE_GEAR_RATIO = 6.75;
         private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
-        public static final Distance WHEEL_RADIUS = Inches.of(2.0);
+        public static final Distance WHEEL_RADIUS = Inches.of(1.9093523214148822);
 
         private static final boolean INVERT_LEFT_SIDE = false;
         private static final boolean INVERT_RIGHT_SIDE = true;
