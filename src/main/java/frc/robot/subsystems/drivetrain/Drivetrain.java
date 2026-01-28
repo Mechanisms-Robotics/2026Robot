@@ -196,6 +196,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void zeroGyro() {
+        System.out.println("Drivetrain: Zeroing Gyro");
         this.resetPose(
             new Pose2d(
                 this.poseEstimator.getEstimatedPose().getTranslation(),
