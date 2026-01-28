@@ -1,34 +1,33 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.vision;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS;
-import frc.robot.PoseEstimator8736;
 
-public class PoseCamera extends SubsystemBase {
+public class PoseCameraIOPhoton implements PoseCameraIO {
     private final PhotonCamera camera;
     private final String cameraName;
     private final Transform3d cameraToRobot;
 
-    private PoseEstimator8736 poseEstimator;
     private PhotonPoseEstimator photonEstimator;
 
-    public PoseCamera(String cameraName, Transform3d cameraToRobot, PoseEstimator8736 poseEstimator) {
+    // The cameraName here is used to identify the camera in network tables
+    public PoseCameraIOPhoton(String cameraName, Transform3d cameraToRobot) {
         this.camera = new PhotonCamera(cameraName);
         this.cameraName = cameraName;
         this.cameraToRobot = cameraToRobot;
-
-        this.poseEstimator = poseEstimator;
 
         this.photonEstimator = new PhotonPoseEstimator(
             CONSTANTS.APRILTAG_FIELD_LAYOUT, 
@@ -39,24 +38,31 @@ public class PoseCamera extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
+    public void updateInputs(PoseCameraIOInputs inputs) {
+        inputs.isConnected = camera.isConnected();
+
         List<PhotonPipelineResult> results = this.camera.getAllUnreadResults();
         Optional<EstimatedRobotPose> visionEstimate = Optional.empty();
 
-        for (PhotonPipelineResult result : results) {
+        List<Double> timestampSecondsArray = new ArrayList<>();
+        List<Pose2d> poseEstimatesArray = new ArrayList<>();
 
-            visionEstimate = this.photonEstimator.update(result);        
+        for (PhotonPipelineResult result : results) {
+            visionEstimate = this.photonEstimator.update(result);    
+
             if (visionEstimate.isPresent()) {
                 Pose3d poseEstimate = visionEstimate.get().estimatedPose;
 
-                SmartDashboard.putNumber(cameraName + "/pose/x", poseEstimate.getX());
-                SmartDashboard.putNumber(cameraName + "/pose/y", poseEstimate.getY());
-                SmartDashboard.putNumber(cameraName + "/pose/heading", poseEstimate.getRotation().getAngle());
-                SmartDashboard.putNumber(cameraName + "/timestamp", visionEstimate.get().timestampSeconds);
+                Logger.recordOutput(cameraName + "/pose", poseEstimate);
 
-                this.poseEstimator.addVisionMeasurement(poseEstimate.toPose2d(),
-                    visionEstimate.get().timestampSeconds);
+                // Push each unread input to the arrays
+                timestampSecondsArray.add(visionEstimate.get().timestampSeconds);
+                poseEstimatesArray.add(poseEstimate.toPose2d());
             }
         }
+
+        // Finally, push all estimates to the inputs
+        inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
+        inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose2d[]::new);
     }
 }

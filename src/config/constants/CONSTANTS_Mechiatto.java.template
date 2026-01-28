@@ -50,7 +50,7 @@ public class CONSTANTS {
 
     // Vision Constants
     public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     //Localization
     public static final int GYRO_CAN_ID = 9;
