@@ -6,7 +6,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -22,7 +21,7 @@ public class PoseEstimator8736 {
     private final SwerveDriveKinematics kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
 
-    private Pose2d simulatedPose2d; // only for simulation
+    private final SwerveDrivePoseEstimator simulatedPoseEstimator; // only use in simulation
 
     private Rotation2d rawGyroRotation = Rotation2d.kZero;
     private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -54,7 +53,12 @@ public class PoseEstimator8736 {
             initialPose
         );
 
-        simulatedPose2d = initialPose; // only for simulation
+        this.simulatedPoseEstimator = new SwerveDrivePoseEstimator(
+            kinematics,
+            rawGyroRotation,
+            lastModulePositions,
+            initialPose
+        );
     }
 
     /**
@@ -92,8 +96,6 @@ public class PoseEstimator8736 {
             );
         }
 
-        Pose2d lastPose = poseEstimator.getEstimatedPosition();
-
         // Apply update to pose estimator
         poseEstimator.updateWithTime(
             timestamp,
@@ -101,13 +103,11 @@ public class PoseEstimator8736 {
             modulePositions
         );
 
-        /* Sets the simulated position based purely on odometry.
-         * To calculate the odometry position, it calculates the difference in position from 
-         * adding the odometry and applies it to the simulated position. Setting the simulated
-         * position to the estimated position does not work when vision measurements are
-         * updating the estimated position. */
-        Transform2d odometryTransform = poseEstimator.getEstimatedPosition().minus(lastPose);
-        this.simulatedPose2d = simulatedPose2d.plus(odometryTransform);
+        this.simulatedPoseEstimator.updateWithTime(
+            timestamp,
+            rawGyroRotation,
+            modulePositions
+        );
     }
 
     /**
@@ -172,7 +172,7 @@ public class PoseEstimator8736 {
      */
     @AutoLogOutput(key = "Simulation/ActualPosition")
     public Pose2d getSimulatedPose() {
-        return this.simulatedPose2d;
+        return this.simulatedPoseEstimator.getEstimatedPosition();
     }
 
     /**
