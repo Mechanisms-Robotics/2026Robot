@@ -1,9 +1,12 @@
 package frc.robot;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -18,6 +21,8 @@ public class PoseEstimator8736 {
 
     private final SwerveDriveKinematics kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
+
+    private Pose2d simulatedPose2d; // only for simulation
 
     private Rotation2d rawGyroRotation = Rotation2d.kZero;
     private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -48,6 +53,8 @@ public class PoseEstimator8736 {
             lastModulePositions,
             initialPose
         );
+
+        simulatedPose2d = initialPose; // only for simulation
     }
 
     /**
@@ -85,12 +92,22 @@ public class PoseEstimator8736 {
             );
         }
 
+        Pose2d lastPose = poseEstimator.getEstimatedPosition();
+
         // Apply update to pose estimator
         poseEstimator.updateWithTime(
             timestamp,
             rawGyroRotation,
             modulePositions
         );
+
+        /* Sets the simulated position based purely on odometry.
+         * To calculate the odometry position, it calculates the difference in position from 
+         * adding the odometry and applies it to the simulated position. Setting the simulated
+         * position to the estimated position does not work when vision measurements are
+         * updating the estimated position. */
+        Transform2d odometryTransform = poseEstimator.getEstimatedPosition().minus(lastPose);
+        this.simulatedPose2d = simulatedPose2d.plus(odometryTransform);
     }
 
     /**
@@ -145,6 +162,17 @@ public class PoseEstimator8736 {
      */
     public Pose2d getEstimatedPose() {
         return poseEstimator.getEstimatedPosition();
+    }
+
+    /**
+     * Only use this in simulation to get the actual simulated position of the robot.
+     * This position is determined by odometry.
+     * 
+     * @return actual simulated position
+     */
+    @AutoLogOutput(key = "Simulation/ActualPosition")
+    public Pose2d getSimulatedPose() {
+        return this.simulatedPose2d;
     }
 
     /**

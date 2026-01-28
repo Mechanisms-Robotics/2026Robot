@@ -93,6 +93,6 @@ public class PoseCameraIOSim implements PoseCameraIO {
         inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
         inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose2d[]::new);
 
-        visionSim.update(poseEstimator.getEstimatedPose());
+        visionSim.update(poseEstimator.getSimulatedPose());
     }
 }
