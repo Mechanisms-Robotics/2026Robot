@@ -38,11 +38,13 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIO;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
+import frc.robot.subsystems.Climber;
 
 public class RobotContainer {
 
     private final Drivetrain drivetrain;
     private final Vision vision;
+    private final Climber climber = new Climber();
     private final DrivetrainController drivetrainController;
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -99,6 +101,32 @@ public class RobotContainer {
             .onTrue(
                 new InstantCommand(() -> {
                     this.drivetrain.zeroGyro();
+                })
+            );
+        
+        this.controller
+            .L2()
+            .whileTrue(
+                new InstantCommand(() -> {
+                    this.climber.setClimberSpeed(0.5);
+                })
+            )
+            .onFalse(
+                new InstantCommand(() -> {
+                    this.climber.setClimberSpeed(0.0);
+                })
+            );
+
+        this.controller
+            .R2()
+            .whileTrue(
+                new InstantCommand(() -> {
+                    this.climber.setClimberSpeed(-0.5);
+                })
+            )
+            .onFalse(
+                new InstantCommand(() -> {
+                    this.climber.setClimberSpeed(0.0);
                 })
             );
 
