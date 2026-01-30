@@ -5,17 +5,14 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static frc.robot.CONSTANTS.CAMERA1_NAME;
+import static frc.robot.CONSTANTS.CAMERA1_TRANSFORM3D;
 
 import frc.robot.CONSTANTS.DriveConstants;
-
-import choreo.Choreo;
-import choreo.trajectory.SwerveSample;
-import choreo.trajectory.Trajectory;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -35,7 +32,6 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.PoseCameraIO;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
 
@@ -77,13 +73,10 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
             );
-
-            // TODO: move this to the proper constants file (in src/config/constants)
-            final String photonCameraName = "Photon_Camera1";
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
-                new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero)
+                new PoseCameraIOPhoton(CAMERA1_NAME, CAMERA1_TRANSFORM3D)
             );
         }
 

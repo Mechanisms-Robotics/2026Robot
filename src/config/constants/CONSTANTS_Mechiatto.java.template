@@ -35,6 +35,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
@@ -51,6 +54,14 @@ public class CONSTANTS {
     // Vision Constants
     public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
+    public static final String CAMERA1_NAME = "PhotonCamera1";
+    public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
+        Units.inchesToMeters(34.125 / 2.0 - 5.5), // forward distances from the center of the robot
+        Units.inchesToMeters(13.375), // leftward distance from the center of the robot
+        Units.inchesToMeters(14.5), // height off the ground
+        Rotation3d.kZero
+    );
 
     //Localization
     public static final int GYRO_CAN_ID = 9;

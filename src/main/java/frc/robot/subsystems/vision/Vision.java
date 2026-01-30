@@ -27,7 +27,7 @@ public class Vision extends SubsystemBase {
     public void periodic() {
         for (int i = 0; i < ios.length; i++) {
             ios[i].updateInputs(inputs[i]);
-            Logger.processInputs("Vision/" + inputs[i], inputs[i]);
+            Logger.processInputs("Vision/" + i, inputs[i]);
 
             // Constantly feed vision measurements into the pose estimator
             for (int j = 0; j < inputs[i].timestampSeconds.length; j++) {
