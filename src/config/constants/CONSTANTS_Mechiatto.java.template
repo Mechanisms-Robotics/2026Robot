@@ -58,7 +58,7 @@ public class CONSTANTS {
     public static final String CAMERA1_NAME = "PhotonCamera1";
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(34.125 / 2.0 - 5.5), // forward distances from the center of the robot
-        Units.inchesToMeters(13.375), // leftward distance from the center of the robot
+        Units.inchesToMeters(5.0/16.0), // leftward distance from the center of the robot
         Units.inchesToMeters(14.5), // height off the ground
         Rotation3d.kZero
     );

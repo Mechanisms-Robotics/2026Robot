@@ -37,7 +37,7 @@ import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 public class RobotContainer {
 
-    private final Drivetrain drivetrain;
+    public final Drivetrain drivetrain;
     private final Vision vision;
     private final DrivetrainController drivetrainController;
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();

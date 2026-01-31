@@ -34,7 +34,7 @@ public class Vision extends SubsystemBase {
                 this.poseEstimator.addVisionMeasurement(
                     inputs[i].poseEstimates[j],
                     inputs[i].timestampSeconds[j],
-                    VecBuilder.fill(0.001, 0.001, 0.01)
+                    VecBuilder.fill(0.9, 0.9, 0.9)
                 );
             }
         }
