@@ -11,6 +11,7 @@ public interface PoseCameraIO {
 
         public double[] timestampSeconds = new double[] {};
         public Pose2d[] poseEstimates = new Pose2d[] {};
+        public double[][] aprilTagsDistancesMeters = new double[][] {};
     }
 
     public default void updateInputs(PoseCameraIOInputs inputs) {}

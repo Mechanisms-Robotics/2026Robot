@@ -2,7 +2,7 @@ package frc.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PoseEstimator8736;
 
@@ -11,6 +11,8 @@ public class Vision extends SubsystemBase {
     private final PoseCameraIOInputsAutoLogged[] inputs;
 
     private final PoseEstimator8736 poseEstimator;
+    public static final double xyStdDevCoefficient = 0.01;
+    public static final double thetaStdDevCoefficient = 0.03;
 
     // The cameraName here is used for logging purposes
     public Vision(PoseEstimator8736 poseEstimator, PoseCameraIO... ios) {
@@ -31,7 +33,29 @@ public class Vision extends SubsystemBase {
 
             // Constantly feed vision measurements into the pose estimator
             for (int j = 0; j < inputs[i].timestampSeconds.length; j++) {
-                this.poseEstimator.addVisionMeasurement(inputs[i].poseEstimates[j], inputs[i].timestampSeconds[j]);
+                double totalDistance = 0;
+                for (double distance : inputs[i].aprilTagsDistancesMeters[j]) {
+                    totalDistance += distance;
+                }
+
+                int aprilTagCount = inputs[i].aprilTagsDistancesMeters[j].length;
+                double averageDistance = totalDistance / (double) aprilTagCount;
+    
+                double xyStdDevs =
+                    xyStdDevCoefficient
+                        * Math.pow(averageDistance, 1.2)
+                        / Math.pow(aprilTagCount, 2.0);
+                double thetaStdDev =
+                    thetaStdDevCoefficient
+                        * Math.pow(averageDistance, 1.2)
+                        / Math.pow(aprilTagCount, 2.0);
+
+                Logger.recordOutput("Vision/stddevs/" + i + "/" + j, xyStdDevs);
+                this.poseEstimator.addVisionMeasurement(
+                    inputs[i].poseEstimates[j],
+                    inputs[i].timestampSeconds[j],
+                    VecBuilder.fill(xyStdDevs, xyStdDevs, thetaStdDev)
+                );
             }
         }
     }

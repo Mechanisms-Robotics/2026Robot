@@ -74,24 +74,41 @@ public class PoseCameraIOSim implements PoseCameraIO {
 
         List<Double> timestampSecondsArray = new ArrayList<>();
         List<Pose2d> poseEstimatesArray = new ArrayList<>();
+        List<List<Double>> aprilTagsDistancesArray = new ArrayList<>();
 
-        for (PhotonPipelineResult result : results) {
+        for (int i = 0; i < results.size(); i++) {
+            PhotonPipelineResult result = results.get(i);
             visionEstimate = this.photonEstimator.update(result);    
 
             if (visionEstimate.isPresent()) {
                 Pose3d poseEstimate = visionEstimate.get().estimatedPose;
-
+                
                 Logger.recordOutput(cameraName + "/simPose", poseEstimate);
-
+                
                 // Push each unread input to the arrays
                 timestampSecondsArray.add(visionEstimate.get().timestampSeconds);
                 poseEstimatesArray.add(poseEstimate.toPose2d());
+
+                // Save all of the distances from the camera to all of the april tags in this result
+                aprilTagsDistancesArray.add(new ArrayList<>());
+                int tagCount = visionEstimate.get().targetsUsed.size();
+                for (int j = 0; j < tagCount; j++) {
+                    double tagDistance = visionEstimate.get().targetsUsed.get(j)
+                        .getBestCameraToTarget()
+                        .getTranslation()
+                        .getNorm();
+                    aprilTagsDistancesArray.get(i).add(tagDistance);
+                }
             }
         }
 
-        // Finally, push all estimates to the inputs
+        // Hand off data to Vision.java by saving to the inputs
         inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
         inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose2d[]::new);
+        inputs.aprilTagsDistancesMeters = new double[aprilTagsDistancesArray.size()][32];
+        for (int i = 0; i < aprilTagsDistancesArray.size(); i++) {
+            inputs.aprilTagsDistancesMeters[i] = aprilTagsDistancesArray.get(i).stream().mapToDouble(Double::doubleValue).toArray();
+        }
 
         visionSim.update(poseEstimator.getSimulatedPose());
     }
