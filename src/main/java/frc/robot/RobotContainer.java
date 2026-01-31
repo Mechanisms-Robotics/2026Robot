@@ -15,13 +15,18 @@ import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import frc.robot.commands.DriveCommands;
 
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
@@ -36,11 +41,17 @@ import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
 
 import java.util.Optional;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.PoseCameraIO;
+import frc.robot.subsystems.vision.PoseCameraIOPhoton;
+import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 public class RobotContainer {
 
     private final Drivetrain drivetrain;
+    private final Vision vision;
     private final DrivetrainController drivetrainController;
+    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     private final Feeder feeder; 
 
@@ -61,6 +72,15 @@ public class RobotContainer {
             this.feeder = new Feeder(
                 new FeederIOSim()
             );
+
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIOSim(
+                    "Photon_Camera_Sim1", 
+                    Transform3d.kZero, 
+                    drivetrain.poseEstimator
+                ));
+
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -73,12 +93,20 @@ public class RobotContainer {
             this.feeder = new Feeder(
                 new FeederIONeo()
             );
+
+            // TODO: move this to the proper constants file (in src/config/constants)
+            final String photonCameraName = "Photon_Camera1";
+           
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIOPhoton(photonCameraName, Transform3d.kZero)
+            );
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
 
         configureBindings();
-        //generateAutos();
+        generateAutos();
     }
 
     private void configureBindings() {
@@ -150,20 +178,20 @@ public class RobotContainer {
             );
     }
 
-    private Command testAuto = null; // this should be replaced when we start developing real autos
-
     private void generateAutos() {
-        Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
-            "Test Path"
-        );
-        this.testAuto = new FollowPath(trajectory.get(), this.drivetrain, true);
+        // Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
+        //     "Test Path"
+        // );
 
-        System.out.println("*** Loaded Test Path autonomous ***");
+        autoChooser.setDefaultOption("Wheel Characterization", DriveCommands.wheelRadiusCharacterization(drivetrain));
+        autoChooser.addOption("Drive Feedforward Characterization", DriveCommands.feedforwardCharacterization(drivetrain));
+        // autoChooser.addOption("Test Path", new FollowPath(trajectory.get(), this.drivetrain, true));
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     public Command getAutonomousCommand() {
-        return testAuto;
-        //return Commands.print("No autonomous command configured");
+        return autoChooser.getSelected();
     }
 
     private static Translation2d getDriveVelocity(double x, double y) {

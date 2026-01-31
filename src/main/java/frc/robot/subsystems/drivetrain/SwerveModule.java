@@ -3,8 +3,10 @@ package frc.robot.subsystems.drivetrain;
 import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.CONSTANTS.DriveConstants;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -45,11 +47,18 @@ public class SwerveModule {
         // set the drive velocity (convert m/s to rad/s)
         double driveVelocityRadPerSec =
             (state.speedMetersPerSecond * scaleFactor) / DriveConstants.WHEEL_RADIUS.in(Meters);
+        Logger.recordOutput("Module " + this.moduleName + "/Desired Drive Radians Per Second", driveVelocityRadPerSec);
         this.io.setDriveVelocity(driveVelocityRadPerSec);
 
         // set the turn position
         Logger.recordOutput("Module " + this.moduleName + "/Optimised Angle", state.angle);
         this.io.setTurnPosition(state.angle);
+    }
+
+    /** Runs the module with the specified output while controlling to zero degrees. */
+    public void runCharacterization(double output) {
+        io.setDriveOpenLoop(output);
+        io.setTurnPosition(Rotation2d.kZero);
     }
 
     public double[] getOdometryTimestamps() {
@@ -66,5 +75,15 @@ public class SwerveModule {
             );
         }
         return positions;
+    }
+
+    /** Returns the module position in radians. */
+    public double getWheelRadiusCharacterizationPosition() {
+        return inputs.drivePositionRad;
+    }
+
+    /** Returns the module velocity in rotations/sec (Phoenix native units). */
+    public double getFFCharacterizationVelocity() {
+        return Units.radiansToRotations(inputs.driveVelocityRadPerSec);
     }
 }
