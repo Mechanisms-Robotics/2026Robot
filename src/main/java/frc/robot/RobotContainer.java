@@ -140,6 +140,14 @@ public class RobotContainer {
                 this.drivetrain
             )
         );
+
+         this.controller
+            .square()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.feeder.setMotorOpenLoop(100);
+                })
+            );
     }
 
     private Command testAuto = null; // this should be replaced when we start developing real autos
