@@ -3,6 +3,7 @@ package frc.robot;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -50,7 +51,16 @@ public class PoseEstimator8736 {
             kinematics,
             rawGyroRotation,
             lastModulePositions,
-            initialPose
+            initialPose,
+            VecBuilder.fill(
+                CONSTANTS.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
+                CONSTANTS.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
+                CONSTANTS.STATE_ROTATION_STD_DEV_COEFFICIENT
+            ),
+            /* These vision std devs get overriden by Vision.java in periodic. 
+             * If you need to tune the std devs, go to CONSTANTS.VisionConstants.
+             * 0.9 is the default for SwerveDrivePoseEstimator. */
+            VecBuilder.fill(0.9, 0.9, 0.9)
         );
 
         this.simulatedPoseEstimator = new SwerveDrivePoseEstimator(

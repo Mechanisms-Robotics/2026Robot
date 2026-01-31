@@ -5,8 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static frc.robot.CONSTANTS.CAMERA1_NAME;
-import static frc.robot.CONSTANTS.CAMERA1_TRANSFORM3D;
+import static frc.robot.CONSTANTS.VisionConstants;
 
 import frc.robot.CONSTANTS.DriveConstants;
 
@@ -76,7 +75,7 @@ public class RobotContainer {
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
-                new PoseCameraIOPhoton(CAMERA1_NAME, CAMERA1_TRANSFORM3D)
+                new PoseCameraIOPhoton(VisionConstants.CAMERA1_NAME, VisionConstants.CAMERA1_TRANSFORM3D)
             );
         }
 

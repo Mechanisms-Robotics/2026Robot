@@ -5,14 +5,13 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PoseEstimator8736;
+import static frc.robot.CONSTANTS.VisionConstants;
 
 public class Vision extends SubsystemBase {
     private final PoseCameraIO[] ios;
     private final PoseCameraIOInputsAutoLogged[] inputs;
 
     private final PoseEstimator8736 poseEstimator;
-    public static final double xyStdDevCoefficient = 0.01;
-    public static final double thetaStdDevCoefficient = 0.03;
 
     // The cameraName here is used for logging purposes
     public Vision(PoseEstimator8736 poseEstimator, PoseCameraIO... ios) {
@@ -42,11 +41,11 @@ public class Vision extends SubsystemBase {
                 double averageDistance = totalDistance / (double) aprilTagCount;
     
                 double xyStdDevs =
-                    xyStdDevCoefficient
+                    VisionConstants.TRANSLATION_STD_DEV_COEFFICIENT
                         * Math.pow(averageDistance, 1.2)
                         / Math.pow(aprilTagCount, 2.0);
                 double thetaStdDev =
-                    thetaStdDevCoefficient
+                    VisionConstants.ROTATION_STD_DEV_COEFFICIENT
                         * Math.pow(averageDistance, 1.2)
                         / Math.pow(aprilTagCount, 2.0);
 

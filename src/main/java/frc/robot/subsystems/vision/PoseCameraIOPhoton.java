@@ -14,7 +14,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.VisionConstants;
 
 public class PoseCameraIOPhoton implements PoseCameraIO {
     private final PhotonCamera camera;
@@ -30,7 +30,7 @@ public class PoseCameraIOPhoton implements PoseCameraIO {
         this.cameraToRobot = cameraToRobot;
 
         this.photonEstimator = new PhotonPoseEstimator(
-            CONSTANTS.APRILTAG_FIELD_LAYOUT, 
+            VisionConstants.APRILTAG_FIELD_LAYOUT, 
             PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
             this.cameraToRobot);
 

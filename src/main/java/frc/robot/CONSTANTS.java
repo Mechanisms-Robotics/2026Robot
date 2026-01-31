@@ -52,19 +52,39 @@ public class CONSTANTS {
     public static final int CONTROLLER_PORT = 0;
 
     // Vision Constants
-    public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    public static class VisionConstants {
+        public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
+            AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    
+        public static final String CAMERA1_NAME = "PhotonCamera1";
+        public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
+            Units.inchesToMeters(34.125 / 2.0 - 5.5), // forward distances from the center of the robot
+            Units.inchesToMeters(13.375), // leftward distance from the center of the robot
+            Units.inchesToMeters(14.5), // height off the ground
+            Rotation3d.kZero
+        );
+    
+        
+        /* To trust vision measurements more for translation or rotation, lower the respective constant
+         * toward 0. 0 = absolute trust, Double.POSITIVE_INFINITY = no trust. Trust specifically means
+         * the degree to which the measurement is factored into the global estimated position.
+         * 
+         * In order to maximize performance, vision standard deviations are calculated based on how many
+         * April Tag targets a single camera saw, and how far away they are. More cameras causes the
+         * measurement to be trusted more (lower standard deviation). Closer April Tags also causes the
+         * vision measurement to be trusted more.
+         * 
+         * The translation standard deviation are in meters and the rotation standard deviation is in radians.
+         */
+        public static final double TRANSLATION_STD_DEV_COEFFICIENT = 0.01;
+        public static final double ROTATION_STD_DEV_COEFFICIENT = 0.03;
+    }
 
-    public static final String CAMERA1_NAME = "PhotonCamera1";
-    public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(34.125 / 2.0 - 5.5), // forward distances from the center of the robot
-        Units.inchesToMeters(13.375), // leftward distance from the center of the robot
-        Units.inchesToMeters(14.5), // height off the ground
-        Rotation3d.kZero
-    );
 
-    //Localization
+    // Localization
     public static final int GYRO_CAN_ID = 9;
+    public static final double STATE_TRANSLATION_STD_DEV_COEFFICIENT = 0.1;
+    public static final double STATE_ROTATION_STD_DEV_COEFFICIENT = 0.1;
 
     // Path Following Constants
     public static final double PATH_FOLLOWER_P_X = 2.0;
