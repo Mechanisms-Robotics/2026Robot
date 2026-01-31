@@ -15,7 +15,6 @@ public interface FeederIO {
         public double feederCurrentAmps = 0.0;
 
         // Sensors
-        public double feederPositionRotations = 0.0;
         public double feederVelocityRotationsPerSec = 0.0;
 
         // Simple health / status

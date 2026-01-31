@@ -30,12 +30,19 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.subsystems.feeder.FeederIONeo;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.feeder.Feeder;
+
 import java.util.Optional;
 
 public class RobotContainer {
 
     private final Drivetrain drivetrain;
     private final DrivetrainController drivetrainController;
+
+    private final Feeder feeder; 
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
         CONSTANTS.CONTROLLER_PORT
@@ -51,6 +58,9 @@ public class RobotContainer {
                 new ModuleIOSim(DriveConstants.BACK_LEFT),
                 new ModuleIOSim(DriveConstants.BACK_RIGHT)
             );
+            this.feeder = new Feeder(
+                new FeederIOSim()
+            );
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -58,6 +68,10 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_RIGHT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
+        
+            );
+            this.feeder = new Feeder(
+                new FeederIONeo()
             );
         }
 
