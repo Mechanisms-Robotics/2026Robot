@@ -14,12 +14,15 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private final RobotContainer robotContainer;
+  private final SendableChooser<Boolean> resetPoseChooser = new SendableChooser<>();
 
   public Robot() {
     SignalLogger.enableAutoLogging(false);
@@ -50,11 +53,18 @@ public class Robot extends LoggedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(true);
     this.robotContainer = new RobotContainer();
+
+    resetPoseChooser.setDefaultOption("None", false);
+    resetPoseChooser.addOption("All", true);
+    SmartDashboard.putData("Reset Pose", resetPoseChooser);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    if (resetPoseChooser.getSelected()) {
+      robotContainer.drivetrain.resetPose(robotContainer.drivetrain.getPose());
+    }
   }
 
   @Override
