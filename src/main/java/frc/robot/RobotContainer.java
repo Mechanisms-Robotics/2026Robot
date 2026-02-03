@@ -151,6 +151,10 @@ public class RobotContainer {
     }
 
     private void generateAutos() {
+
+        // TODO: We should make sure we don't keep in memory a lot of autos we don't actually need
+        // or whatever. This part of the code could be a real memory suck if we're not careful
+
         // Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
         //     "Test Path"
         // );
