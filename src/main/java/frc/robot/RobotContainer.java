@@ -111,12 +111,8 @@ public class RobotContainer {
                         forward,
                         strafe
                     );
-                    double rotation;
-                    if (CONSTANTS.CURRENT_MODE == CONSTANTS.Mode.SIM) {
-                        rotation = -this.controller.getRawAxis(3); // Why is sim different then driverstation?
-                    } else {
-                        rotation = -this.controller.getRightX();
-                    }
+                    
+                    double rotation = -this.controller.getRightX();
 
                     // apply deadbands and scaling
                     rotation = MathUtil.applyDeadband(
