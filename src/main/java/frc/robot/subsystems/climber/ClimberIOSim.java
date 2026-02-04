@@ -15,8 +15,6 @@ public class ClimberIOSim implements ClimberIO{
 
     private static final DCMotor CLIMBER_GEARBOX = DCMotor.getNEO(1);
     private static final double CLIMBER_INERTIA = 0.001;
-    private static final double CLIMBER_GEAR_RATIO = 1.0;
-
     private final DCMotorSim motorSim;
 
     private double motorCommand = 0.0;
@@ -24,7 +22,7 @@ public class ClimberIOSim implements ClimberIO{
 
     public ClimberIOSim() {
         this.motorSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(CLIMBER_GEARBOX, CLIMBER_INERTIA, CLIMBER_GEAR_RATIO),
+            LinearSystemId.createDCMotorSystem(CLIMBER_GEARBOX, CLIMBER_INERTIA, CONSTANTS.CLIMBER_GEAR_RATIO),
             CLIMBER_GEARBOX
         );
     }

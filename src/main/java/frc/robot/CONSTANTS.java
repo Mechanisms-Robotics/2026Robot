@@ -385,6 +385,12 @@ public class CONSTANTS {
         public static final double GRYO_CAN_FRAME_FREQUENCY = 0.01;
     }
 
+    
+    //Climber Constants
+    public static final int CLIMBER_MOTOR_ID = 13;
+    public static final double CLIMBER_GEAR_RATIO = 1.0;
+
+
     public static class Timeouts {
 
         public static final double STD_DEBOUNCE_TIME = 0.5; // Secs

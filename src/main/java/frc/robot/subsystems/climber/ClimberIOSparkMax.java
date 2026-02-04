@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
+import frc.robot.CONSTANTS;
 
 public class ClimberIOSparkMax implements ClimberIO {
     private final ClimberIOInputs inputs = new ClimberIOInputs();
@@ -16,7 +17,7 @@ public class ClimberIOSparkMax implements ClimberIO {
     }
 
     public ClimberIOSparkMax() {
-        this.climberMotor = new SparkMax(13, MotorType.kBrushless);
+        this.climberMotor = new SparkMax(CONSTANTS.CLIMBER_MOTOR_ID, MotorType.kBrushless);
         this.encoder = climberMotor.getEncoder();
     }
 
