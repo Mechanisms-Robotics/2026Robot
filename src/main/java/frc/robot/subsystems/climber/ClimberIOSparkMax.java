@@ -47,4 +47,22 @@ public class ClimberIOSparkMax implements ClimberIO {
             inputs.climberAppliedVolts = Double.NaN;
         }
     }
+
+    @Override
+    public void setMotorOpenLoop(double output) {
+        climberMotor.set(output);
+    }
+
+    @Override
+    public void setMotorVelocity(double speedRotPerSec) {
+        double speedRPM = speedRotPerSec * 60.0;
+        climberMotor.setVelocity(speedRPM); //Idk what the actual method is, so this is a placeholder
+    }
+
+    @Override
+    public void stopMotor() {
+        climberMotor.stopMotor();
+    }
+
+
 }
