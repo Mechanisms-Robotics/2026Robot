@@ -38,13 +38,13 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIO;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.climber.ClimberIOSparkMax;
 
 public class RobotContainer {
 
     private final Drivetrain drivetrain;
     private final Vision vision;
-    private final Climber climber = new Climber();
+    private final ClimberIOSparkMax climber = new ClimberIOSparkMax();
     private final DrivetrainController drivetrainController;
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -108,12 +108,12 @@ public class RobotContainer {
             .L2()
             .whileTrue(
                 new InstantCommand(() -> {
-                    this.climber.setClimberSpeed(0.5);
+                    this.climber.setMotorVelocity(5.0);
                 })
             )
             .onFalse(
                 new InstantCommand(() -> {
-                    this.climber.setClimberSpeed(0.0);
+                    this.climber.stopMotor();
                 })
             );
 
@@ -121,12 +121,12 @@ public class RobotContainer {
             .R2()
             .whileTrue(
                 new InstantCommand(() -> {
-                    this.climber.setClimberSpeed(-0.5);
+                    this.climber.setMotorVelocity(-5.0);
                 })
             )
             .onFalse(
                 new InstantCommand(() -> {
-                    this.climber.setClimberSpeed(0.0);
+                    this.climber.stopMotor();
                 })
             );
 
