@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.util.Optional;
+
 import frc.robot.CONSTANTS.DriveConstants;
 
 import choreo.Choreo;
@@ -151,17 +153,25 @@ public class RobotContainer {
     }
 
     private void generateAutos() {
-
         // TODO: We should make sure we don't keep in memory a lot of autos we don't actually need
         // or whatever. This part of the code could be a real memory suck if we're not careful
 
-        // Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
-        //     "Test Path"
-        // );
-
         autoChooser.setDefaultOption("Wheel Characterization", DriveCommands.wheelRadiusCharacterization(drivetrain));
         autoChooser.addOption("Drive Feedforward Characterization", DriveCommands.feedforwardCharacterization(drivetrain));
-        // autoChooser.addOption("Test Path", new FollowPath(trajectory.get(), this.drivetrain, true));
+
+
+
+        Optional<Trajectory<SwerveSample>> rotationTraj = Choreo.loadTrajectory(
+            "RotationTuning"
+        );
+
+        Optional<Trajectory<SwerveSample>> translationTraj = Choreo.loadTrajectory(
+            "TranslationTuning"
+        );
+
+        autoChooser.addOption("RotationTuning", new FollowPath(rotationTraj.get(), this.drivetrain, true));
+        autoChooser.addOption("TranslationTuning", new FollowPath(translationTraj.get(), this.drivetrain, true));
+
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }

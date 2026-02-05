@@ -58,7 +58,7 @@ public class CONSTANTS {
     // Path Following Constants
     public static final double PATH_FOLLOWER_P_X = 2.0;
     public static final double PATH_FOLLOWER_P_Y = PATH_FOLLOWER_P_X;
-    public static final double PATH_FOLLOWER_P_THETA = 4.0;
+    public static final double PATH_FOLLOWER_P_THETA = 8.0;
 
     public static final double ROBOT_LOOP_PERIOD = 0.02;
     public static final Mode SIM_MODE = Mode.SIM;
