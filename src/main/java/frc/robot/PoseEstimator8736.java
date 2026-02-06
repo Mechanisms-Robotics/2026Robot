@@ -122,11 +122,11 @@ public class PoseEstimator8736 {
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs
     ) {
-        poseEstimator.addVisionMeasurement(
-            visionRobotPoseMeters,
-            timestampSeconds,
-            visionMeasurementStdDevs
-        );
+        // poseEstimator.addVisionMeasurement(
+        //     visionRobotPoseMeters,
+        //     timestampSeconds,
+        //     visionMeasurementStdDevs
+        // );
     }
 
     /**
@@ -139,10 +139,10 @@ public class PoseEstimator8736 {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds
     ) {
-        poseEstimator.addVisionMeasurement(
-            visionRobotPoseMeters,
-            timestampSeconds
-        );
+        // poseEstimator.addVisionMeasurement(
+        //     visionRobotPoseMeters,
+        //     timestampSeconds
+        // );
     }
 
     /**
@@ -160,6 +160,7 @@ public class PoseEstimator8736 {
      *
      * @return The current pose estimate
      */
+    @AutoLogOutput(key = "PoseEstimator8736/EstimatedPosition")
     public Pose2d getEstimatedPose() {
         return poseEstimator.getEstimatedPosition();
     }
