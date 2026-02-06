@@ -76,8 +76,8 @@ public class CONSTANTS {
          * 
          * The translation standard deviation are in meters and the rotation standard deviation is in radians.
          */
-        public static final double TRANSLATION_STD_DEV_COEFFICIENT = 0.01;
-        public static final double ROTATION_STD_DEV_COEFFICIENT = 0.03;
+        public static final double TRANSLATION_STD_DEV_COEFFICIENT = 0.9;
+        public static final double ROTATION_STD_DEV_COEFFICIENT = 2;
     }
 
 
