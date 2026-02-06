@@ -10,6 +10,9 @@ import static frc.robot.CONSTANTS.CAMERA1_TRANSFORM3D;
 
 import java.util.Optional;
 
+import choreo.Choreo;
+import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
 import frc.robot.CONSTANTS.DriveConstants;
 
 import edu.wpi.first.math.MathUtil;
