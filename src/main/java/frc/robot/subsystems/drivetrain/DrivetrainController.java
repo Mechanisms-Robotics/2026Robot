@@ -15,7 +15,7 @@ public class DrivetrainController {
     ) {
         return ChassisSpeeds.fromFieldRelativeSpeeds(
             fieldOriented,
-            drivetrain.getPose().getRotation()
+            drivetrain.getGyroRotation()
         );
     }
 }
