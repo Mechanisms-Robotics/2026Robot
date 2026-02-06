@@ -68,8 +68,8 @@ public class CONSTANTS {
 
     // Path Following Constants
     public static final double PATH_FOLLOWER_P_X = 2.0;
-    public static final double PATH_FOLLOWER_P_Y = 2.0;
-    public static final double PATH_FOLLOWER_P_THETA = 4.0;
+    public static final double PATH_FOLLOWER_P_Y = PATH_FOLLOWER_P_X;
+    public static final double PATH_FOLLOWER_P_THETA = 8.0;
 
     public static final double ROBOT_LOOP_PERIOD = 0.02;
     public static final Mode SIM_MODE = Mode.SIM;
@@ -170,7 +170,7 @@ public class CONSTANTS {
 
         private static final double DRIVE_GEAR_RATIO = 6.75;
         private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
-        public static final Distance WHEEL_RADIUS = Inches.of(1.9093523214148822);
+        public static final Distance WHEEL_RADIUS = Inches.of(1.99);
 
         private static final boolean INVERT_LEFT_SIDE = false;
         private static final boolean INVERT_RIGHT_SIDE = true;
