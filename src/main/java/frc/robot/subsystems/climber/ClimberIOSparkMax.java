@@ -55,8 +55,48 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     @Override
     public void setMotorVelocity(double speedRotPerSec) {
-        double speedRPM = speedRotPerSec * 60.0;
-        climberMotor.setVelocity(speedRPM); //Idk what the actual method is, so this is a placeholder
+        // Convert requested speed to RPS/RPM
+        double desiredRPS = speedRotPerSec;
+        double desiredRPM = desiredRPS * 60.0;
+
+        // Read actual velocity (encoder returns RPM)
+        double actualRPM = Double.NaN;
+        try {
+            actualRPM = encoder.getVelocity();
+        } catch (Exception e) {
+            actualRPM = Double.NaN;
+        }
+        double actualRPS = !Double.isNaN(actualRPM) ? actualRPM / 60.0 : Double.NaN;
+
+        // Simple closed-loop: feedforward (kV * desiredRPS) + proportional (kP * errorRPS)
+        // Tweak these gains for your mechanism.
+        final double kV = 1.0;   // volts per RPS (feedforward)
+        final double kP = 0.2;   // volts per RPS error (proportional)
+
+        double ffVolts = kV * desiredRPS;
+        double errorRPS = !Double.isNaN(actualRPS) ? (desiredRPS - actualRPS) : 0.0;
+        double pVolts = kP * errorRPS;
+        double outputVolts = ffVolts + pVolts;
+
+        // Convert volts -> percent output using bus voltage
+        double busVolt = Double.NaN;
+        try {
+            busVolt = climberMotor.getBusVoltage();
+        } catch (Exception e) {
+            busVolt = Double.NaN;
+        }
+        if (Double.isNaN(busVolt) || Math.abs(busVolt) < 1e-6) {
+            busVolt = 12.0; // fallback
+        }
+
+        double percent = outputVolts / busVolt;
+        if (Double.isNaN(percent)) {
+            percent = 0.0;
+        }
+        // clamp
+        percent = Math.max(-1.0, Math.min(1.0, percent));
+
+        climberMotor.set(percent);
     }
 
     @Override
