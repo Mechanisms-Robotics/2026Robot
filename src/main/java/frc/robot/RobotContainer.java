@@ -164,9 +164,18 @@ public class RobotContainer {
         Optional<Trajectory<SwerveSample>> translationTraj = Choreo.loadTrajectory(
             "TranslationTuning"
         );
+    
+        Optional<Trajectory<SwerveSample>> testPath2026 = Choreo.loadTrajectory(
+            "TestPath2026"
+        );
+
+        Optional<Trajectory<SwerveSample>> acrossTheField = Choreo.loadTrajectory("AcrossTheField");
 
         autoChooser.addOption("RotationTuning", new FollowPath(rotationTraj.get(), this.drivetrain, true));
         autoChooser.addOption("TranslationTuning", new FollowPath(translationTraj.get(), this.drivetrain, true));
+        autoChooser.addOption("TestPath2026", new FollowPath(testPath2026.get(), this.drivetrain, true));
+        autoChooser.addOption("AcrossTheField", new FollowPath(acrossTheField.get(), this.drivetrain, true));
+
 
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
