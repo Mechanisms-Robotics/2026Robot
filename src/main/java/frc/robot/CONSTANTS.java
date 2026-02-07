@@ -87,7 +87,7 @@ public class CONSTANTS {
     public static final double STATE_ROTATION_STD_DEV_COEFFICIENT = 0.1;
 
     // Path Following Constants
-    public static final double PATH_FOLLOWER_P_X = 2.0;
+    public static final double PATH_FOLLOWER_P_X = 10.0;
     public static final double PATH_FOLLOWER_P_Y = PATH_FOLLOWER_P_X;
     public static final double PATH_FOLLOWER_P_THETA = 8.0;
 
