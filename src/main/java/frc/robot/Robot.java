@@ -12,11 +12,12 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.SignalLogger;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
@@ -55,6 +56,8 @@ public class Robot extends LoggedRobot {
     resetPoseChooser.setDefaultOption("None", false);
     resetPoseChooser.addOption("All", true);
     SmartDashboard.putData("Reset Pose", resetPoseChooser);
+    this.autonomousCommand = Commands.none();
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   @Override
@@ -70,6 +73,10 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    String autoName = this.robotContainer.autoChooser.getSelected();
+    if (!this.autonomousCommand.getName().equals(autoName)) {
+      this.autonomousCommand = this.robotContainer.getAutonomousCommand(autoName);
+    }
   }
 
   @Override
@@ -78,7 +85,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    this.autonomousCommand = this.robotContainer.getAutonomousCommand();
     if (this.autonomousCommand != null) {
       this.autonomousCommand.schedule();
     }
