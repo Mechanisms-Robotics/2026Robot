@@ -25,6 +25,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -45,7 +46,7 @@ public class RobotContainer {
     public final Drivetrain drivetrain;
     private final Vision vision;
     private final DrivetrainController drivetrainController;
-    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+    public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
         CONSTANTS.CONTROLLER_PORT
@@ -88,7 +89,7 @@ public class RobotContainer {
         this.drivetrainController = new DrivetrainController(this.drivetrain);
 
         configureBindings();
-        generateAutos();
+        publishAutoNames();
     }
 
     private void configureBindings() {
@@ -148,41 +149,65 @@ public class RobotContainer {
         );
     }
 
-    private void generateAutos() {
-        // TODO: We should make sure we don't keep in memory a lot of autos we don't actually need
-        // or whatever. This part of the code could be a real memory suck if we're not careful
-
-        autoChooser.setDefaultOption("Wheel Characterization", DriveCommands.wheelRadiusCharacterization(drivetrain));
-        autoChooser.addOption("Drive Feedforward Characterization", DriveCommands.feedforwardCharacterization(drivetrain));
-
-
-
-        Optional<Trajectory<SwerveSample>> rotationTraj = Choreo.loadTrajectory(
-            "RotationTuning"
-        );
-
-        Optional<Trajectory<SwerveSample>> translationTraj = Choreo.loadTrajectory(
-            "TranslationTuning"
-        );
-    
-        Optional<Trajectory<SwerveSample>> testPath2026 = Choreo.loadTrajectory(
-            "TestPath2026"
-        );
-
-        Optional<Trajectory<SwerveSample>> acrossTheField = Choreo.loadTrajectory("AcrossTheField");
-
-        autoChooser.addOption("RotationTuning", new FollowPath(rotationTraj.get(), this.drivetrain, true));
-        autoChooser.addOption("TranslationTuning", new FollowPath(translationTraj.get(), this.drivetrain, true));
-        autoChooser.addOption("TestPath2026", new FollowPath(testPath2026.get(), this.drivetrain, true));
-        autoChooser.addOption("AcrossTheField", new FollowPath(acrossTheField.get(), this.drivetrain, true));
+    private void publishAutoNames() {
+        String[] autoNames = {
+            "Wheel Characterization",
+            "Drive Feedforward Characterization",
+            "RotationTuning",
+            "TranslationTuning",
+            "TestPath2026",
+            "AcrossTheField"
+        };
 
 
+        for (String name : autoNames) {
+            autoChooser.addOption(name, name);
+        }
 
+        autoChooser.setDefaultOption("None", "None");
+        
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+    public Command getAutonomousCommand(String name) {
+        Command autoCommand = Commands.none();
+
+        switch (name) {
+            case "Wheel Characterization":
+                autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);
+                break;
+            case "Drive Feedforward Characterization":
+                autoCommand = DriveCommands.feedforwardCharacterization(this.drivetrain);
+                break;
+            case "RotationTuning":
+                Optional<Trajectory<SwerveSample>> rotationTraj = Choreo.loadTrajectory(
+                    "RotationTuning"
+                );
+                autoCommand = new FollowPath(rotationTraj.get(), this.drivetrain, true);
+                break;
+            case "TranslationTuning":
+                Optional<Trajectory<SwerveSample>> translationTraj = Choreo.loadTrajectory(
+                    "TranslationTuning"
+                );
+                autoCommand = new FollowPath(translationTraj.get(), this.drivetrain, true);
+                break;
+            case "TestPath2026":
+                Optional<Trajectory<SwerveSample>> testPath2026 = Choreo.loadTrajectory(
+                    "TestPath2026"
+                );
+                autoCommand = new FollowPath(testPath2026.get(), this.drivetrain, true);
+                break;
+            case "AcrossTheField":
+                Optional<Trajectory<SwerveSample>> acrossTheField = Choreo.loadTrajectory(
+                    "AcrossTheField"
+                );
+                autoCommand = new FollowPath(acrossTheField.get(), this.drivetrain, true);
+                break;
+        }
+
+
+        autoCommand.setName(name);
+        return autoCommand;
     }
 
     private static Translation2d getDriveVelocity(double x, double y) {
