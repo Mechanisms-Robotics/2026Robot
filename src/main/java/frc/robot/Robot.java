@@ -59,6 +59,8 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putData("Reset Pose", resetPoseChooser);
     this.autonomousCommand = Commands.none();
     DriverStation.silenceJoystickConnectionWarning(true);
+    // Sets the selected command to None even if elastic already set the auto when the robot turns on
+    // Prevents the robot from running an auto that was not intentionally selected after the robot turned on
     SmartDashboard.putString("Auto Chooser/selected", "None");
   }
 
