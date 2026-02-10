@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,6 +59,7 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putData("Reset Pose", resetPoseChooser);
     this.autonomousCommand = Commands.none();
     DriverStation.silenceJoystickConnectionWarning(true);
+    SmartDashboard.putString("Auto Chooser/selected", "None");
   }
 
   @Override
