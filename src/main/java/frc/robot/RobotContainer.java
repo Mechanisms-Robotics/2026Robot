@@ -23,7 +23,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.LED.LEDIOSim;
+import frc.robot.subsystems.LED.LED;
+import frc.robot.subsystems.LED.LEDIO;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
 import frc.robot.subsystems.drivetrain.GyroIO;
@@ -37,7 +38,7 @@ public class RobotContainer {
 
     private final Drivetrain drivetrain;
     private final DrivetrainController drivetrainController;
-    private final LEDIOSim LEDSim = new LEDIOSim();
+    private final LED LED = new LED(new LEDIO() {});
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
         CONSTANTS.CONTROLLER_PORT
@@ -82,7 +83,7 @@ public class RobotContainer {
             .circle()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.LEDSim.sendMessage1();
+                    this.LED.sendMessage1();
                 })
             );
             
