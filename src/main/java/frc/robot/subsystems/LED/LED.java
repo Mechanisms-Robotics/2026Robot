@@ -9,7 +9,12 @@ public class LED {
         this.ledIO = ledio;
     }
 
+    public void updateInputs(LEDIO.LEDIOInputs inputs) {
+        this.ledIO.updateInputs(inputs);
+    }
+    
     public void sendMessage1() {
+        System.out.println("Message1 sent!");
         this.ledIO.sendMessage1();
     }
 }

@@ -6,8 +6,6 @@ public class LEDIOSim implements LEDIO {
         // Update any inputs you need to log here
     }
         
-    public void sendMessage1() {
-        System.out.println("Message1 sent!");
-    }
+    public void sendMessage1() {}
 
 }
