@@ -35,7 +35,7 @@ public class Turret extends SubsystemBase {
         double desiredAngle = turretToHubAngleAbsolute - robotPose.getRotation().getRadians();
 
 
-        Logger.recordOutput("Simulation/Turret/pose", new Pose2d(turretPose.getTranslation(), Rotation2d.fromRadians(turretToHubAngleAbsolute)));
+        Logger.recordOutput("Turret/pose", new Pose2d(turretPose.getTranslation(), Rotation2d.fromRadians(inputs.positionRadians)));
         Logger.recordOutput("Turret/desiredAngle", desiredAngle);
 
         io.setPosition(desiredAngle);
