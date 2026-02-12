@@ -3,11 +3,8 @@ package frc.robot.subsystems.turret;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS;
 import frc.robot.PoseEstimator8736;
@@ -18,7 +15,6 @@ public class Turret extends SubsystemBase {
     
     private Transform2d robotToTurret;
     private PoseEstimator8736 poseEstimator;
-    private double encoderOffset = 0;
 
     public Turret(TurretIO io, Transform2d robotToTurret, PoseEstimator8736 poseEstimator) {
         this.io = io;
@@ -46,6 +42,6 @@ public class Turret extends SubsystemBase {
     }
 
     public void zero() {
-        encoderOffset = inputs.positionRadians;
+        io.zero();
     }
 }

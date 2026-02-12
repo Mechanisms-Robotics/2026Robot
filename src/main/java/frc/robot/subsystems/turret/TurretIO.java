@@ -12,4 +12,6 @@ public interface TurretIO {
     public default void updateInputs(TurretIOInputs inputs) {}
 
     public default void setPosition(double positionRadians) {}
+
+    public default void zero() {}
 }
