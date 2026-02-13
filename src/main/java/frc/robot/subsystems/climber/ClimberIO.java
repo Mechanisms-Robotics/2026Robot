@@ -23,4 +23,6 @@ public interface ClimberIO {
     public default void setMotorVelocity(double speedRotPerSec) {}
 
     public default void stopMotor() {}
+
+    public default void update() {}
 }
