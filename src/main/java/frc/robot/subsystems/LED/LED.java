@@ -1,5 +1,7 @@
 package frc.robot.subsystems.LED;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class LED {
 
     private final LEDIO ledIO;
@@ -16,5 +18,11 @@ public class LED {
     public void sendMessage1() {
         System.out.println("Message1 sent!");
         this.ledIO.sendMessage1();
+    }
+
+    public void update() {
+        this.ledIO.updateInputs(this.inputs);
+        SmartDashboard.putBoolean("LED Connected", this.inputs.LEDConnected);
+        SmartDashboard.putString("Last LED Message", this.inputs.lastLEDMessage);
     }
 }
