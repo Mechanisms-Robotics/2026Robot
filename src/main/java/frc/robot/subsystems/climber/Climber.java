@@ -4,6 +4,8 @@ package frc.robot.subsystems.climber;
 *   We can swap this out for the actual motor controller we use for the climber later.
 */
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Climber {
 
     private final ClimberIO climberIO;
@@ -25,5 +27,10 @@ public class Climber {
         this.climberIO.stopMotor();
     }
 
+    public void update() {
+        this.climberIO.updateInputs(this.inputs);
+        SmartDashboard.putNumber("Climber Motor Velocity RPS", this.inputs.climberVelocityRotationsPerSec);
+        SmartDashboard.putBoolean("Climber Motor Connected", this.inputs.climberConnected);
+    }
 
 }
