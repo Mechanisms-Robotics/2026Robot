@@ -105,8 +105,8 @@ public class CONSTANTS {
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(0.2)
-                    .withKD(0.0)
+                    .withKP(17.0)
+                    .withKD(0.1)
                 )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()

@@ -16,7 +16,7 @@ public class TurretIOTalonFX implements TurretIO {
     private boolean useCurrentControl = false;
 
     public TurretIOTalonFX(TalonFXConfiguration config) {
-        motor = new TalonFX(99);
+        motor = new TalonFX(20);
 
         tryUntilOk(5, () -> 
             motor.getConfigurator().apply(config, 0.25)
