@@ -32,8 +32,8 @@ public class Climber extends SubsystemBase{
     @Override
     public void periodic() {
         this.climberIO.updateInputs(this.inputs);
-        Logger.recordOutput("Climber Motor Velocity RPS", this.inputs.climberVelocityRotationsPerSec);
-        Logger.recordOutput("Climber Motor Connected", this.inputs.climberConnected);
+        Logger.recordOutput("Climber/Motor Velocity RPS", this.inputs.climberVelocityRotationsPerSec);
+        Logger.recordOutput("Climber/Motor Connected", this.inputs.climberConnected);
     }
 
     // public void update() {
