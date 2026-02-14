@@ -6,7 +6,9 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.Logger;
 
-public class Climber {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Climber extends SubsystemBase{
 
     private final ClimberIO climberIO;
     private final ClimberIO.ClimberIOInputs inputs = new ClimberIO.ClimberIOInputs();
@@ -27,10 +29,17 @@ public class Climber {
         this.climberIO.stopMotor();
     }
 
-    public void update() {
+    @Override
+    public void periodic() {
         this.climberIO.updateInputs(this.inputs);
         Logger.recordOutput("Climber Motor Velocity RPS", this.inputs.climberVelocityRotationsPerSec);
         Logger.recordOutput("Climber Motor Connected", this.inputs.climberConnected);
     }
+
+    // public void update() {
+    //     this.climberIO.updateInputs(this.inputs);
+    //     Logger.recordOutput("Climber Motor Velocity RPS", this.inputs.climberVelocityRotationsPerSec);
+    //     Logger.recordOutput("Climber Motor Connected", this.inputs.climberConnected);
+    // }
 
 }
