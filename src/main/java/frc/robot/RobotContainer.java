@@ -14,7 +14,7 @@ import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import frc.robot.CONSTANTS.DriveConstants;
-
+import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -49,7 +49,7 @@ public class RobotContainer {
     public final Drivetrain drivetrain;
     private final Vision vision;
     private final DrivetrainController drivetrainController;
-    private final Turret turret;
+    public final Turret turret;
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -95,7 +95,7 @@ public class RobotContainer {
             );
 
             this.turret = new Turret(
-                new TurretIOTalonFX(),
+                new TurretIOTalonFX(TurretConstants.CONFIG),
                 Transform2d.kZero, 
                 this.drivetrain.poseEstimator);
         }

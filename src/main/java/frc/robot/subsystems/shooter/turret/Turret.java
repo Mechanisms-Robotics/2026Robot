@@ -3,11 +3,9 @@ package frc.robot.subsystems.turret;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS;
 import frc.robot.PoseEstimator8736;
@@ -18,7 +16,6 @@ public class Turret extends SubsystemBase {
     
     private Transform2d robotToTurret;
     private PoseEstimator8736 poseEstimator;
-    private double encoderOffset = 0;
 
     public Turret(TurretIO io, Transform2d robotToTurret, PoseEstimator8736 poseEstimator) {
         this.io = io;
@@ -33,19 +30,26 @@ public class Turret extends SubsystemBase {
         // calculate desired turret angle and feed it here 
         Pose2d robotPose = poseEstimator.getEstimatedPose();
         Pose2d turretPose = robotPose.plus(robotToTurret);
-        Transform2d turretToHub = CONSTANTS.Hub.CENTER_BLUE_POSE.minus(turretPose);
+        Translation2d turretToHub = CONSTANTS.Hub.CENTER_BLUE_POSE.getTranslation().minus(turretPose.getTranslation());
 
         double turretToHubAngleAbsolute = Math.atan2(turretToHub.getY(), turretToHub.getX());
         double desiredAngle = turretToHubAngleAbsolute - robotPose.getRotation().getRadians();
 
+        Logger.recordOutput("Simulation/Hub", CONSTANTS.Hub.CENTER_BLUE_POSE);
 
-        Logger.recordOutput("Simulation/Turret/pose", new Pose2d(turretPose.getTranslation(), Rotation2d.fromRadians(turretToHubAngleAbsolute)));
-        Logger.recordOutput("Turret/desiredAngle", desiredAngle);
+        Logger.recordOutput("Turret/pose", new Pose2d(
+            turretPose.getTranslation(),
+            turretPose.getRotation().plus(Rotation2d.fromRadians(inputs.positionRadians)))
+        );
+        Logger.recordOutput("Turret/desiredPose", new Pose2d(
+            turretPose.getTranslation(),
+            Rotation2d.fromRadians(turretToHubAngleAbsolute)
+        ));
 
         io.setPosition(desiredAngle);
     }
 
     public void zero() {
-        encoderOffset = inputs.positionRadians;
+        io.zero();
     }
 }
