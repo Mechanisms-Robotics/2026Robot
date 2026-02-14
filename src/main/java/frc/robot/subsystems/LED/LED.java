@@ -26,8 +26,8 @@ public class LED extends SubsystemBase{
     @Override
     public void periodic() {
         this.ledIO.updateInputs(this.inputs);
-        Logger.recordOutput("LED Connected", this.inputs.LEDConnected);
-        Logger.recordOutput("Last LED Message", this.inputs.lastLEDMessage);
+        Logger.recordOutput("/LED/LED Connected", this.inputs.LEDConnected);
+        Logger.recordOutput("/LED/Last LED Message", this.inputs.lastLEDMessage);
     }
     
     // public void update() {
