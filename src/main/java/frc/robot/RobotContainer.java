@@ -77,7 +77,7 @@ public class RobotContainer {
 
             this.turret = new Turret(
                 new TurretIOSim(), 
-                new Transform2d(0.5, 0.5, Rotation2d.kZero), 
+                TurretConstants.ROBOT_TO_TURRET, 
                 this.drivetrain.poseEstimator);
 
         } else {
@@ -96,7 +96,7 @@ public class RobotContainer {
 
             this.turret = new Turret(
                 new TurretIOTalonFX(TurretConstants.CONFIG),
-                Transform2d.kZero, 
+                TurretConstants.ROBOT_TO_TURRET, 
                 this.drivetrain.poseEstimator);
         }
 

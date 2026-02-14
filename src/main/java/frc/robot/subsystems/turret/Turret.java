@@ -5,19 +5,21 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS;
 import frc.robot.PoseEstimator8736;
+import frc.robot.CONSTANTS.Hub;
 
 public class Turret extends SubsystemBase {
     private final TurretIO io;
     private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
     
-    private Transform2d robotToTurret;
+    private Transform3d robotToTurret;
     private PoseEstimator8736 poseEstimator;
 
-    public Turret(TurretIO io, Transform2d robotToTurret, PoseEstimator8736 poseEstimator) {
+    public Turret(TurretIO io, Transform3d robotToTurret, PoseEstimator8736 poseEstimator) {
         this.io = io;
         this.robotToTurret = robotToTurret;
         this.poseEstimator = poseEstimator;
@@ -27,13 +29,21 @@ public class Turret extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Turret", inputs);
 
-        // calculate desired turret angle and feed it here 
+        // robot pose on the field
         Pose2d robotPose = poseEstimator.getEstimatedPose();
-        Pose2d turretPose = robotPose.plus(robotToTurret);
-        Translation2d turretToHub = CONSTANTS.Hub.CENTER_BLUE_POSE.getTranslation().minus(turretPose.getTranslation());
+        // turret pose on the field (robot pose + transform from robot to turret)
+        Pose2d turretPose = robotPose.plus(new Transform2d(
+            robotToTurret.getTranslation().toTranslation2d(),
+            robotToTurret.getRotation().toRotation2d())
+        );
 
-        double turretToHubAngleAbsolute = Math.atan2(turretToHub.getY(), turretToHub.getX());
-        double desiredAngle = turretToHubAngleAbsolute - robotPose.getRotation().getRadians();
+        // turret translation
+        Translation2d turretToHub = CONSTANTS.Hub.CENTER_BLUE_POSE.toPose2d().getTranslation().minus(turretPose.getTranslation());
+
+        // The angle from the turret to the hub, relative to the field
+        double turretToHubAngle = Math.atan2(turretToHub.getY(), turretToHub.getX());
+        // The angle that the turret should rotate to, relative to the drivetrain
+        double desiredAngle = turretToHubAngle - robotPose.getRotation().getRadians();
 
         Logger.recordOutput("Simulation/Hub", CONSTANTS.Hub.CENTER_BLUE_POSE);
 
@@ -43,7 +53,7 @@ public class Turret extends SubsystemBase {
         );
         Logger.recordOutput("Turret/desiredPose", new Pose2d(
             turretPose.getTranslation(),
-            Rotation2d.fromRadians(turretToHubAngleAbsolute)
+            Rotation2d.fromRadians(turretToHubAngle)
         ));
 
         io.setPosition(desiredAngle);

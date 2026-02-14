@@ -23,6 +23,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -65,7 +66,13 @@ public class CONSTANTS {
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static class Hub {
-        public static Pose2d CENTER_BLUE_POSE = new Pose2d(2, 2, Rotation2d.kZero);
+        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the hub.
+        public static Pose3d CENTER_BLUE_POSE = new Pose3d(
+            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
+            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
+            Units.inchesToMeters(72.0),
+            Rotation3d.kZero
+        );
     }
 
     public static final String CAMERA1_NAME = "PhotonCamera1";
@@ -102,16 +109,28 @@ public class CONSTANTS {
     }
 
     public static class TurretConstants {
+        public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
+            Units.inchesToMeters(8.0),
+            Units.inchesToMeters(8.0),
+            Units.inchesToMeters(33.5),
+            Rotation3d.kZero
+        );
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
             .withSlot0(
                 new Slot0Configs()
                     .withKP(17.0)
                     .withKD(0.1)
                 )
+            .withClosedLoopGeneral(
+                new ClosedLoopGeneralConfigs()
+                    .withContinuousWrap(true)
+            )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(60)
+                    .withStatorCurrentLimit(Amps.of(60))
                     .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(20))
+                    .withSupplyCurrentLimitEnable(true)
             )
             .withSoftwareLimitSwitch(
                 new SoftwareLimitSwitchConfigs()

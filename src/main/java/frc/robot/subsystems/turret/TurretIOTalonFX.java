@@ -25,6 +25,7 @@ public class TurretIOTalonFX implements TurretIO {
     
     @Override
     public void updateInputs(TurretIOInputs inputs) {
+
         inputs.positionRadians = Units.rotationsToRadians(motor.getPosition().getValueAsDouble());
         inputs.velocityRadiansPerSec = Units.rotationsToRadians(motor.getVelocity().getValueAsDouble());
     }
