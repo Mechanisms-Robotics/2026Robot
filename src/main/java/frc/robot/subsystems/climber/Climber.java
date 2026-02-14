@@ -4,7 +4,7 @@ package frc.robot.subsystems.climber;
 *   We can swap this out for the actual motor controller we use for the climber later.
 */
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber {
 
@@ -29,8 +29,8 @@ public class Climber {
 
     public void update() {
         this.climberIO.updateInputs(this.inputs);
-        SmartDashboard.putNumber("Climber Motor Velocity RPS", this.inputs.climberVelocityRotationsPerSec);
-        SmartDashboard.putBoolean("Climber Motor Connected", this.inputs.climberConnected);
+        Logger.recordOutput("Climber Motor Velocity RPS", this.inputs.climberVelocityRotationsPerSec);
+        Logger.recordOutput("Climber Motor Connected", this.inputs.climberConnected);
     }
 
 }
