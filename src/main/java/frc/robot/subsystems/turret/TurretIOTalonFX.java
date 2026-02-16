@@ -3,16 +3,19 @@ package frc.robot.subsystems.turret;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 public class TurretIOTalonFX implements TurretIO {
     private final TalonFX motor;
-    private final PositionVoltage positionVoltageRequest = new PositionVoltage(0);
+    private final double maxVoltage = 3.0;
+    private final double kP = 4.0;
+    private final double kD = 0.05;
+    private double currentMotorRotations = 0.0;
+    private double velocity = 0.0;
 
     public TurretIOTalonFX(TalonFXConfiguration config) {
         motor = new TalonFX(20);
@@ -24,15 +27,20 @@ public class TurretIOTalonFX implements TurretIO {
     
     @Override
     public void updateInputs(TurretIOInputs inputs) {
+        this.currentMotorRotations = motor.getPosition().getValueAsDouble();
+        this.velocity = motor.getVelocity().getValueAsDouble();
 
-        inputs.positionRadians = Units.rotationsToRadians(motor.getPosition().getValueAsDouble());
-        inputs.velocityRadiansPerSec = Units.rotationsToRadians(motor.getVelocity().getValueAsDouble());
+        inputs.positionRadians = Units.rotationsToRadians(this.currentMotorRotations);
+        inputs.velocityRadiansPerSec = Units.rotationsToRadians(this.velocity);
     }
     
     @Override
     public void setPosition(Rotation2d position) {
-        double rotations = position.getRotations();
-        motor.setControl(positionVoltageRequest.withPosition(rotations));
+        Rotation2d relative = position.relativeTo(Rotation2d.fromRotations(this.currentMotorRotations));
+        double error = relative.getRotations();
+        motor.setVoltage(MathUtil.clamp(
+            error * kP - this.velocity * kD, -maxVoltage, maxVoltage
+        ));
     }
 
     @Override
