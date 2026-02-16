@@ -5,23 +5,31 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static frc.robot.CONSTANTS.CAMERA1_NAME;
+import static frc.robot.CONSTANTS.CAMERA1_TRANSFORM3D;
 
-import frc.robot.CONSTANTS.DriveConstants;
+import java.util.Optional;
 
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
+import frc.robot.CONSTANTS.DriveConstants;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import frc.robot.commands.DriveCommands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.LED.LEDIO;
@@ -33,13 +41,16 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
-
-import java.util.Optional;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.PoseCameraIOPhoton;
+import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 public class RobotContainer {
 
-    private final Drivetrain drivetrain;
+    public final Drivetrain drivetrain;
+    private final Vision vision;
     private final DrivetrainController drivetrainController;
+    public final SendableChooser<String> autoChooser = new SendableChooser<>();
     private LED led;
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -56,6 +67,15 @@ public class RobotContainer {
                 new ModuleIOSim(DriveConstants.BACK_LEFT),
                 new ModuleIOSim(DriveConstants.BACK_RIGHT)
             );
+
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIOSim(
+                    "Photon_Camera_Sim1", 
+                    Transform3d.kZero, 
+                    drivetrain.poseEstimator
+                ));
+
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -63,6 +83,11 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_RIGHT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
+            );
+           
+            this.vision = new Vision(
+                this.drivetrain.poseEstimator,
+                new PoseCameraIOPhoton(CAMERA1_NAME, CAMERA1_TRANSFORM3D)
             );
         }
 
@@ -76,7 +101,7 @@ public class RobotContainer {
         }
 
         configureBindings();
-        //generateAutos();
+        publishAutoNames();
     }
 
     private void configureBindings() {
@@ -114,12 +139,8 @@ public class RobotContainer {
                         forward,
                         strafe
                     );
-                    double rotation;
-                    if (CONSTANTS.CURRENT_MODE == CONSTANTS.Mode.SIM) {
-                        rotation = -this.controller.getRawAxis(3); // Why is sim different then driverstation?
-                    } else {
-                        rotation = -this.controller.getRightX();
-                    }
+                    
+                    double rotation = -this.controller.getRightX();
 
                     // apply deadbands and scaling
                     rotation = MathUtil.applyDeadband(
@@ -157,20 +178,65 @@ public class RobotContainer {
         );
     }
 
-    private Command testAuto = null; // this should be replaced when we start developing real autos
+    private void publishAutoNames() {
+        String[] autoNames = {
+            "Wheel Characterization",
+            "Drive Feedforward Characterization",
+            "RotationTuning",
+            "TranslationTuning",
+            "TestPath2026",
+            "AcrossTheField"
+        };
 
-    private void generateAutos() {
-        Optional<Trajectory<SwerveSample>> trajectory = Choreo.loadTrajectory(
-            "Test Path"
-        );
-        this.testAuto = new FollowPath(trajectory.get(), this.drivetrain, true);
 
-        System.out.println("*** Loaded Test Path autonomous ***");
+        for (String name : autoNames) {
+            autoChooser.addOption(name, name);
+        }
+
+        autoChooser.setDefaultOption("None", "None");
+        
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
-    public Command getAutonomousCommand() {
-        return testAuto;
-        //return Commands.print("No autonomous command configured");
+    public Command getAutonomousCommand(String name) {
+        Command autoCommand = Commands.none();
+
+        switch (name) {
+            case "Wheel Characterization":
+                autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);
+                break;
+            case "Drive Feedforward Characterization":
+                autoCommand = DriveCommands.feedforwardCharacterization(this.drivetrain);
+                break;
+            case "RotationTuning":
+                Optional<Trajectory<SwerveSample>> rotationTraj = Choreo.loadTrajectory(
+                    "RotationTuning"
+                );
+                autoCommand = new FollowPath(rotationTraj.get(), this.drivetrain, true);
+                break;
+            case "TranslationTuning":
+                Optional<Trajectory<SwerveSample>> translationTraj = Choreo.loadTrajectory(
+                    "TranslationTuning"
+                );
+                autoCommand = new FollowPath(translationTraj.get(), this.drivetrain, true);
+                break;
+            case "TestPath2026":
+                Optional<Trajectory<SwerveSample>> testPath2026 = Choreo.loadTrajectory(
+                    "TestPath2026"
+                );
+                autoCommand = new FollowPath(testPath2026.get(), this.drivetrain, true);
+                break;
+            case "AcrossTheField":
+                Optional<Trajectory<SwerveSample>> acrossTheField = Choreo.loadTrajectory(
+                    "AcrossTheField"
+                );
+                autoCommand = new FollowPath(acrossTheField.get(), this.drivetrain, true);
+                break;
+        }
+
+
+        autoCommand.setName(name);
+        return autoCommand;
     }
 
     private static Translation2d getDriveVelocity(double x, double y) {
