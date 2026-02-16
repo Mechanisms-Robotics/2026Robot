@@ -12,4 +12,9 @@ public class LEDIOSim implements LEDIO {
         this.inputs.lastLEDMessage = "Message1 sent!";
     }
 
+    // Placeholder for testing
+    public void sendMessage2() {
+        this.inputs.lastLEDMessage = "Message2 sent!";
+    }
+
 }

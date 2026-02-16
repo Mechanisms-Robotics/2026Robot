@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.LED.LEDIO;
+import frc.robot.subsystems.LED.LEDIOHW;
+import frc.robot.subsystems.LED.LEDIOSim;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
 import frc.robot.subsystems.drivetrain.GyroIO;
@@ -38,7 +40,7 @@ public class RobotContainer {
 
     private final Drivetrain drivetrain;
     private final DrivetrainController drivetrainController;
-    private final LED LED = new LED(new LEDIO() {});
+    private LED led;
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
         CONSTANTS.CONTROLLER_PORT
@@ -66,6 +68,13 @@ public class RobotContainer {
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
 
+        // Create LED subsystem with the correct IO implementation for the current mode
+        if (CONSTANTS.CURRENT_MODE == CONSTANTS.Mode.SIM) {
+            this.led = new LED(new LEDIOSim());
+        } else {
+            this.led = new LED(new LEDIOHW());
+        }
+
         configureBindings();
         //generateAutos();
     }
@@ -83,7 +92,16 @@ public class RobotContainer {
             .circle()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.LED.sendMessage1();
+                    this.led.sendMessage1();
+                })
+            );
+
+        //Placeholder for testing
+        this.controller
+            .square()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.led.sendMessage2();
                 })
             );
             

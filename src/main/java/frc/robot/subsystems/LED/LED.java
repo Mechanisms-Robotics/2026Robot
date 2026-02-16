@@ -23,11 +23,17 @@ public class LED extends SubsystemBase{
         this.ledIO.sendMessage1();
     }
 
+    // Placeholder for testing
+    public void sendMessage2() {
+        System.out.println("Message2 sent!");
+        this.ledIO.sendMessage2();
+    }
+
     @Override
     public void periodic() {
         this.ledIO.updateInputs(this.inputs);
-        Logger.recordOutput("LED/Connected", this.inputs.LEDConnected);
         Logger.recordOutput("LED/Last Message", this.inputs.lastLEDMessage);
+        Logger.recordOutput("LED/Current Brightness", this.inputs.LEDBrightness);
     }
     
     // public void update() {
