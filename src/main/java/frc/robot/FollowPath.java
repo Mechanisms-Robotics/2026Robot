@@ -40,7 +40,6 @@ public class FollowPath extends Command {
         new ProfiledPIDController(CONSTANTS.PATH_FOLLOWER_P_THETA, 0, 0, thetaProfile);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    // TODO: Tune the controller.
     holonomicController = new HolonomicDriveController(
         new PIDController(CONSTANTS.PATH_FOLLOWER_P_X, 0, 0),
         new PIDController(CONSTANTS.PATH_FOLLOWER_P_Y, 0, 0),

@@ -35,6 +35,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
@@ -52,13 +55,21 @@ public class CONSTANTS {
     public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
+    public static final String CAMERA1_NAME = "PhotonCamera1";
+    public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
+        Units.inchesToMeters(34.125 / 2.0 - 5.5), // forward distances from the center of the robot
+        Units.inchesToMeters(5.0/16.0), // leftward distance from the center of the robot
+        Units.inchesToMeters(14.5), // height off the ground
+        Rotation3d.kZero
+    );
+
     //Localization
     public static final int GYRO_CAN_ID = 9;
 
     // Path Following Constants
-    public static final double PATH_FOLLOWER_P_X = 2.0;
-    public static final double PATH_FOLLOWER_P_Y = 2.0;
-    public static final double PATH_FOLLOWER_P_THETA = 4.0;
+    public static final double PATH_FOLLOWER_P_X = 10.0;
+    public static final double PATH_FOLLOWER_P_Y = PATH_FOLLOWER_P_X;
+    public static final double PATH_FOLLOWER_P_THETA = 8.0;
 
     public static final double ROBOT_LOOP_PERIOD = 0.02;
     public static final Mode SIM_MODE = Mode.SIM;
@@ -159,7 +170,7 @@ public class CONSTANTS {
 
         private static final double DRIVE_GEAR_RATIO = 6.75;
         private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
-        public static final Distance WHEEL_RADIUS = Inches.of(1.9093523214148822);
+        public static final Distance WHEEL_RADIUS = Inches.of(1.99);
 
         private static final boolean INVERT_LEFT_SIDE = false;
         private static final boolean INVERT_RIGHT_SIDE = true;
