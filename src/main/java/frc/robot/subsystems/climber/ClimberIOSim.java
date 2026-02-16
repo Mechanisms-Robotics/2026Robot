@@ -51,7 +51,7 @@ public class ClimberIOSim implements ClimberIO{
             table.getEntry("current_amps").setDouble(inputs.climberCurrentAmps);
             table.getEntry("output_percent").setDouble(inputs.climberOutputPercent);
         } catch (Exception e) {
-            // Ignore
+            //Ignore
         }
 
     }

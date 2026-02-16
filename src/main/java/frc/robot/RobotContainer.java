@@ -38,13 +38,15 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIO;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSparkMax;
 
 public class RobotContainer {
 
     private final Drivetrain drivetrain;
     private final Vision vision;
-    private final ClimberIOSparkMax climber = new ClimberIOSparkMax();
+    private final Climber climber;
     private final DrivetrainController drivetrainController;
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -90,6 +92,13 @@ public class RobotContainer {
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
+
+        // Create climber subsystem with the correct IO implementation for the current mode
+        if (CONSTANTS.CURRENT_MODE == CONSTANTS.Mode.SIM) {
+            this.climber = new Climber(new ClimberIOSim());
+        } else {
+            this.climber = new Climber(new ClimberIOSparkMax());
+        }
 
         configureBindings();
         generateAutos();
