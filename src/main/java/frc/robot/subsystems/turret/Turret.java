@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS;
 import frc.robot.PoseEstimator8736;
-import frc.robot.CONSTANTS.Hub;
 
 public class Turret extends SubsystemBase {
     private final TurretIO io;
@@ -41,9 +40,9 @@ public class Turret extends SubsystemBase {
         Translation2d turretToHub = CONSTANTS.Hub.CENTER_BLUE_POSE.toPose2d().getTranslation().minus(turretPose.getTranslation());
 
         // The angle from the turret to the hub, relative to the field
-        double turretToHubAngle = Math.atan2(turretToHub.getY(), turretToHub.getX());
+        Rotation2d turretToHubAngle = new Rotation2d(turretToHub.getX(), turretToHub.getY());
         // The angle that the turret should rotate to, relative to the drivetrain
-        double desiredAngle = turretToHubAngle - robotPose.getRotation().getRadians();
+        Rotation2d desiredAngle = turretToHubAngle.minus(robotPose.getRotation());
 
         Logger.recordOutput("Simulation/Hub", CONSTANTS.Hub.CENTER_BLUE_POSE);
 
@@ -53,7 +52,7 @@ public class Turret extends SubsystemBase {
         );
         Logger.recordOutput("Turret/desiredPose", new Pose2d(
             turretPose.getTranslation(),
-            Rotation2d.fromRadians(turretToHubAngle)
+            turretToHubAngle
         ));
 
         io.setPosition(desiredAngle);

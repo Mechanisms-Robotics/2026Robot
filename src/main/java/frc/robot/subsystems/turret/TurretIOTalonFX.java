@@ -7,13 +7,12 @@ import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 public class TurretIOTalonFX implements TurretIO {
     private final TalonFX motor;
     private final PositionVoltage positionVoltageRequest = new PositionVoltage(0);
-    private final PositionTorqueCurrentFOC positionCurrentRequest = new PositionTorqueCurrentFOC(0);
-    private boolean useCurrentControl = false;
 
     public TurretIOTalonFX(TalonFXConfiguration config) {
         motor = new TalonFX(20);
@@ -31,13 +30,9 @@ public class TurretIOTalonFX implements TurretIO {
     }
     
     @Override
-    public void setPosition(double positionRadians) {
-        double rotations = Units.radiansToRotations(positionRadians);
-        if (this.useCurrentControl) {
-            motor.setControl(positionCurrentRequest.withPosition(rotations));
-        } else {
-            motor.setControl(positionVoltageRequest.withPosition(rotations));
-        }
+    public void setPosition(Rotation2d position) {
+        double rotations = position.getRotations();
+        motor.setControl(positionVoltageRequest.withPosition(rotations));
     }
 
     @Override

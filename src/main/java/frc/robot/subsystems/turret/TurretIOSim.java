@@ -1,6 +1,9 @@
 package frc.robot.subsystems.turret;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -28,9 +31,10 @@ public class TurretIOSim implements TurretIO {
     }
 
     @Override
-    public void setPosition(double positionRadians) {
+    public void setPosition(Rotation2d position) {
+        double radians = position.getRadians();
         this.appliedVoltage = (
-            (positionRadians - this.motorSim.getAngularPositionRad()) * MOTOR_KP +
+            (radians - this.motorSim.getAngularPositionRad()) * MOTOR_KP +
             (-this.motorSim.getAngularVelocityRadPerSec() * MOTOR_KD)
         );
     }
