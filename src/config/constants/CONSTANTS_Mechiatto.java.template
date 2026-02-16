@@ -134,10 +134,8 @@ public class CONSTANTS {
             )
             .withSoftwareLimitSwitch(
                 new SoftwareLimitSwitchConfigs()
-                    .withForwardSoftLimitEnable(true)
-                    .withReverseSoftLimitEnable(true)
-                    .withForwardSoftLimitThreshold(Degrees.fromBaseUnits(60))
-                    .withReverseSoftLimitThreshold(Degrees.fromBaseUnits(-300))
+                    .withForwardSoftLimitEnable(false)
+                    .withReverseSoftLimitEnable(false)
             )
             .withMotorOutput(
                 new MotorOutputConfigs()
