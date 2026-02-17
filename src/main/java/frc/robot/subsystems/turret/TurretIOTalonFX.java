@@ -11,9 +11,11 @@ import edu.wpi.first.math.util.Units;
 
 public class TurretIOTalonFX implements TurretIO {
     private final TalonFX motor;
-    private final double maxVoltage = 3.0;
+    private final double maxVoltage = 0.5;
     private final double kP = 4.0;
     private final double kD = 0.05;
+    private final double forwardLimit = 3.2;
+    private final double reverseLimit = -3.2;
     private double currentMotorRotations = 0.0;
     private double velocity = 0.0;
 
@@ -38,6 +40,10 @@ public class TurretIOTalonFX implements TurretIO {
     public void setPosition(Rotation2d position) {
         Rotation2d relative = position.relativeTo(Rotation2d.fromRotations(this.currentMotorRotations));
         double error = relative.getRotations();
+        double target = Units.rotationsToRadians(this.currentMotorRotations) + relative.getRadians();
+        if (target > forwardLimit || target < reverseLimit) {
+            error -= Math.signum(error);
+        }
         motor.setVoltage(MathUtil.clamp(
             error * kP - this.velocity * kD, -maxVoltage, maxVoltage
         ));
