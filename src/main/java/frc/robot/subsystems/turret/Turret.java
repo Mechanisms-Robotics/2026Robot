@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS;
 import frc.robot.PoseEstimator8736;
@@ -40,11 +42,33 @@ public class Turret extends SubsystemBase {
         );
 
         Pose2d goal;
-        if (robotPose.getX() > Units.inchesToMeters(160)) {
-            goal = new Pose2d(Units.inchesToMeters(160), 1.0, Rotation2d.kZero);
+
+        // Logic to determine where the turret should aim depending on the alliance,
+        // if it's in the shuttling zone, and if it's in the top or bottom half of the
+        // field. This is mainly just testing
+        if (DriverStation.getAlliance().isPresent() && 
+            DriverStation.getAlliance().get() == Alliance.Red) {
+            if (robotPose.getX() < 12.5) {
+                if (robotPose.getY() > 4) {
+                    goal = new Pose2d(Units.inchesToMeters(490), 6.5, Rotation2d.kZero);
+                } else {
+                    goal = new Pose2d(Units.inchesToMeters(490), 1.5, Rotation2d.kZero);
+                }
+            } else {
+                goal = CONSTANTS.Hub.CENTER_RED_POSE.toPose2d();
+            }
         } else {
-            goal = CONSTANTS.Hub.CENTER_BLUE_POSE.toPose2d();
+            if (robotPose.getX() > 4) {
+                if (robotPose.getY() > 4) {
+                    goal = new Pose2d(Units.inchesToMeters(160), 6.5, Rotation2d.kZero);
+                } else {
+                    goal = new Pose2d(Units.inchesToMeters(160), 1.5, Rotation2d.kZero);
+                }
+            } else {
+                goal = CONSTANTS.Hub.CENTER_BLUE_POSE.toPose2d();
+            }
         }
+
 
         // turret translation
         Translation2d turretToGoal = goal.getTranslation().minus(turretPose.getTranslation());

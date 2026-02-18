@@ -60,10 +60,18 @@ public class CONSTANTS {
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static class Hub {
-        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the hub.
+        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
         public static Pose3d CENTER_BLUE_POSE = new Pose3d(
             (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
             (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
+            Units.inchesToMeters(72.0),
+            Rotation3d.kZero
+        );
+
+        // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
+        public static Pose3d CENTER_RED_POSE = new Pose3d(
+            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
+            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
             Units.inchesToMeters(72.0),
             Rotation3d.kZero
         );
