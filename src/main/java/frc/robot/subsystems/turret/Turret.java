@@ -88,8 +88,8 @@ public class Turret extends SubsystemBase {
             turretPose.getX(), turretPose.getY(), robotToTurret.getZ(),
             new Rotation3d(turretToGoalAngle)
         ));
-        Logger.recordOutput("Turret/angle", turretPose.getRotation().plus(Rotation2d.fromRadians(inputs.positionRadians)));
-        Logger.recordOutput("Turret/desiredAngle", turretPose.getRotation().plus(turretToGoalAngle));
+        Logger.recordOutput("Turret/angle", turretPose.getRotation().getRadians() + inputs.positionRadians);
+        Logger.recordOutput("Turret/desiredAngle", turretToGoalAngle.getRadians());
 
         io.setPosition(desiredAngle);
     }
