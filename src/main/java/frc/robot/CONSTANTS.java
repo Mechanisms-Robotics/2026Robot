@@ -397,8 +397,9 @@ public class CONSTANTS {
     }
 
     //Climber Constants
-    public static final int CLIMBER_MOTOR_ID = 13;
+    public static final int CLIMBER_MOTOR_ID = 20;
     public static final double CLIMBER_GEAR_RATIO = 1.0;
+    public static final int CLIMBER_ENCODER_ID = 21;
     
     public static class Timeouts {
 
