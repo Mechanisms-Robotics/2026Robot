@@ -20,42 +20,46 @@ public class ClimberIOTalonFX implements ClimberIO {
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.climberConnected = true;
 
-        try {
-            inputs.climberOutputPercent = this.climberMotor.getMotorOutputPercent();
-        } catch (Exception e) {
-            inputs.climberOutputPercent = Double.NaN;
-        }
+        // try {
+        //     inputs.climberOutputPercent = this.climberMotor.getMotorOutputPercent();
+        // } catch (Exception e) {
+        //     inputs.climberOutputPercent = Double.NaN;
+        // }
         
-        double busVolt = Double.NaN;
-        try {
-            busVolt = this.climberMotor.getBusVoltage();
-        } catch (Exception e) {
-            busVolt = Double.NaN;
-        }
+        // double busVolt = Double.NaN;
+        // try {
+        //     busVolt = this.climberMotor.getBusVoltage();
+        // } catch (Exception e) {
+        //     busVolt = Double.NaN;
+        // }
 
-        if (!Double.isNaN(busVolt) && !Double.isNaN(inputs.climberOutputPercent)) {
-            inputs.climberAppliedVolts = inputs.climberOutputPercent * busVolt;
-        } else if (!Double.isNaN(inputs.climberOutputPercent)) {
-            inputs.climberAppliedVolts = inputs.climberOutputPercent * 12.0;
-        } else {
-            inputs.climberAppliedVolts = Double.NaN;
-        }
+        // if (!Double.isNaN(busVolt) && !Double.isNaN(inputs.climberOutputPercent)) {
+        //     inputs.climberAppliedVolts = inputs.climberOutputPercent * busVolt;
+        // } else if (!Double.isNaN(inputs.climberOutputPercent)) {
+        //     inputs.climberAppliedVolts = inputs.climberOutputPercent * 12.0;
+        // } else {
+        //     inputs.climberAppliedVolts = Double.NaN;
+        // }
 
-        try {
-            double velocityRps = this.encoder.getVelocity() / CONSTANTS.CLIMBER_GEAR_RATIO;
-            inputs.climberVelocityRotationsPerSec = velocityRps;
-        } catch (Exception e) {
-            inputs.climberVelocityRotationsPerSec = Double.NaN;
-        }
+        // try {
+        //     double velocityRps = this.encoder.getVelocity() / CONSTANTS.CLIMBER_GEAR_RATIO;
+        //     inputs.climberVelocityRotationsPerSec = velocityRps;
+        // } catch (Exception e) {
+        //     inputs.climberVelocityRotationsPerSec = Double.NaN;
+        // }
     }
 
     @Override
-    public void setMotorOpenLoop(double output) {}
+    public void setMotorOpenLoop(double output) {
+        this.climberMotor.setVoltage(output);
+    }
 
     @Override
     public void setMotorVelocity(double speedRotPerSec) {}
 
     @Override
-    public void stopMotor() {}
+    public void stopMotor() {
+        climberMotor.stopMotor();
+    }
 
 }

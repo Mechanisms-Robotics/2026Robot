@@ -43,6 +43,7 @@ import frc.robot.subsystems.vision.PoseCameraIOSim;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSparkMax;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 
 public class RobotContainer {
 
@@ -96,7 +97,7 @@ public class RobotContainer {
         if (CONSTANTS.CURRENT_MODE == CONSTANTS.Mode.SIM) {
             this.climber = new Climber(new ClimberIOSim());
         } else {
-            this.climber = new Climber(new ClimberIOSparkMax());
+            this.climber = new Climber(new ClimberIOTalonFX());
         }
 
         configureBindings();
@@ -116,7 +117,7 @@ public class RobotContainer {
             .L2()
             .whileTrue(
                 new InstantCommand(() -> {
-                    this.climber.setMotorVelocity(5.0);
+                    this.climber.setMotorOpenLoop(0.5);
                 })
             )
             .onFalse(
@@ -129,7 +130,7 @@ public class RobotContainer {
             .R2()
             .whileTrue(
                 new InstantCommand(() -> {
-                    this.climber.setMotorVelocity(-5.0);
+                    this.climber.setMotorOpenLoop(-0.5);
                 })
             )
             .onFalse(
