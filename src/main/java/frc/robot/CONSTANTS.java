@@ -1,15 +1,16 @@
 /******************************************************************************
+ *         
+ *                 ** REBUILT **
+ *                                                                    *
+ *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE REBUILT COMPETITION BOT.          *
  *                                                                            *
- *                 ** MECHIATTO **                                            *
- *                                                                            *
- *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE MECHIATTO PRACTICE BOT.   *
- *                                                                            *
- *  DO NOT USE THIS FILE FOR THE COMPETITION BOT.                             *
+ *  DO NOT USE THIS FILE FOR THE MECHIATTO PRACTICE BOT.                      *
  *                                                                            *
  *  MAKE SURE TO UPDATE CONSTANTS HERE ONLY IF THEY ARE SPECIFIC TO THE       *
- *  MECHIATTO PRACTICE BOT.                                                   *
+ *  COMPETITION BOT.                                                          *
  *                                                                            *
  ******************************************************************************/
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -247,8 +248,8 @@ public class CONSTANTS {
         private static final Distance FRONT_RIGHT_Y_POS = Meters.of(-TRACK_WIDTH_METERS / 2);
 
         // Back Left
-        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 8;
-        private static final int BACK_LEFT_STEER_MOTOR_ID = 4;
+        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 4; // this is swapped with steer on Mechiatto for some reason
+        private static final int BACK_LEFT_STEER_MOTOR_ID = 8;
         private static final int BACK_LEFT_ENCODER_ID = 4;
         private static final Angle BACK_LEFT_ENCODER_OFFSET = Rotations.of(
             0
@@ -260,8 +261,8 @@ public class CONSTANTS {
         private static final Distance BACK_LEFT_Y_POS = Meters.of(TRACK_WIDTH_METERS / 2);
 
         // Back Right
-        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 7;
-        private static final int BACK_RIGHT_STEER_MOTOR_ID = 3;
+        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 3; // this is swapped with steer on Mechiatto for some reason
+        private static final int BACK_RIGHT_STEER_MOTOR_ID = 7;
         private static final int BACK_RIGHT_ENCODER_ID = 3;
         private static final Angle BACK_RIGHT_ENOCDER_OFFSET = Rotations.of(
             0
