@@ -204,12 +204,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void zeroGyro() {
-        this.resetPose(
-            new Pose2d(
-                this.poseEstimator.getEstimatedPose().getTranslation(),
-                Rotation2d.kZero
-            )
-        );
+        this.gyroIO.zeroGyro();
     }
 
     public void resetPose(Pose2d pose) {
