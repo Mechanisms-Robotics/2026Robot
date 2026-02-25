@@ -7,6 +7,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.CONSTANTS.CAMERA1_NAME;
 import static frc.robot.CONSTANTS.CAMERA1_TRANSFORM3D;
+import static frc.robot.CONSTANTS.CAMERA2_NAME;
+import static frc.robot.CONSTANTS.CAMERA2_TRANSFORM3D;
 
 import java.util.Optional;
 
@@ -82,7 +84,8 @@ public class RobotContainer {
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
-                new PoseCameraIOPhoton(CAMERA1_NAME, CAMERA1_TRANSFORM3D)
+                new PoseCameraIOPhoton(CAMERA1_NAME, CAMERA1_TRANSFORM3D),
+                new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
             );
         }
 
@@ -156,7 +159,9 @@ public class RobotContainer {
             "RotationTuning",
             "TranslationTuning",
             "TestPath2026",
-            "AcrossTheField"
+            "BackUpCenter",
+            "BackUpLeft",
+            "OverBump"
         };
 
 
@@ -197,11 +202,23 @@ public class RobotContainer {
                 );
                 autoCommand = new FollowPath(testPath2026.get(), this.drivetrain, true);
                 break;
-            case "AcrossTheField":
-                Optional<Trajectory<SwerveSample>> acrossTheField = Choreo.loadTrajectory(
-                    "AcrossTheField"
+            case "BackUpCenter":
+                Optional<Trajectory<SwerveSample>> backUpCenter = Choreo.loadTrajectory(
+                    "BackUpCenter"
                 );
-                autoCommand = new FollowPath(acrossTheField.get(), this.drivetrain, true);
+                autoCommand = new FollowPath(backUpCenter.get(), this.drivetrain, true);
+                break;
+            case "BackUpLeft":
+                Optional<Trajectory<SwerveSample>> backUpLeft = Choreo.loadTrajectory(
+                    "BackUpLeft"
+                );
+                autoCommand = new FollowPath(backUpLeft.get(), this.drivetrain, true);
+                break;
+            case "OverBump":
+                Optional<Trajectory<SwerveSample>> overBump = Choreo.loadTrajectory(
+                    "OverBump"
+                );
+                autoCommand = new FollowPath(overBump.get(), this.drivetrain, true);
                 break;
         }
 
