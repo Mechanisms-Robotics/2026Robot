@@ -38,7 +38,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -59,6 +61,24 @@ public class CONSTANTS {
     public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
+    public static class FieldConstants {
+        public static double WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
+        public static double LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
+        public static Pose2d CENTER = new Pose2d(LENGTH/2.0, WIDTH/2.0, Rotation2d.kZero);
+
+        /** X coordanite of the blue tape dividing blue alliance zone.
+         *  Uses the side of the tape on the neutral zone. */
+        public static double BLUE_ALLIANCE_ZONE = Units.inchesToMeters(158.61);
+        /** X coordanite of the red tape dividing red alliance zone.
+         *  Uses the side of the tape on the neutral zone. */
+        public static double RED_ALLIANCE_ZONE = Units.inchesToMeters(492.61);
+
+        public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 6.5, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 1.5, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(Units.inchesToMeters(490), 1.5, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(Units.inchesToMeters(490), 6.5, Rotation2d.kZero);
+
+    }
     public static class Hub {
         // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
         public static Pose3d CENTER_BLUE_POSE = new Pose3d(
@@ -111,6 +131,7 @@ public class CONSTANTS {
     }
 
     public static class TurretConstants {
+        // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
             Units.inchesToMeters(8.0),
             Units.inchesToMeters(8.0),

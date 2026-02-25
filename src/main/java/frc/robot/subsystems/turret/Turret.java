@@ -1,6 +1,7 @@
 package frc.robot.subsystems.turret;
 
 import org.littletonrobotics.junction.Logger;
+import static frc.robot.CONSTANTS.FieldConstants;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -9,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,21 +48,21 @@ public class Turret extends SubsystemBase {
         // field. This is mainly just testing
         if (DriverStation.getAlliance().isPresent() && 
             DriverStation.getAlliance().get() == Alliance.Red) {
-            if (robotPose.getX() < 12.5) {
-                if (robotPose.getY() > 4) {
-                    goal = new Pose2d(Units.inchesToMeters(490), 6.5, Rotation2d.kZero);
+            if (robotPose.getX() < FieldConstants.RED_ALLIANCE_ZONE) {
+                if (robotPose.getY() > FieldConstants.CENTER.getY()) {
+                    goal = FieldConstants.SHUTTLE_OUTPOST_RED_POSE;
                 } else {
-                    goal = new Pose2d(Units.inchesToMeters(490), 1.5, Rotation2d.kZero);
+                    goal = FieldConstants.SHUTTLE_DEPOT_RED_POSE;
                 }
             } else {
                 goal = CONSTANTS.Hub.CENTER_RED_POSE.toPose2d();
             }
         } else {
-            if (robotPose.getX() > 4) {
-                if (robotPose.getY() > 4) {
-                    goal = new Pose2d(Units.inchesToMeters(160), 6.5, Rotation2d.kZero);
+            if (robotPose.getX() > FieldConstants.BLUE_ALLIANCE_ZONE) {
+                if (robotPose.getY() > FieldConstants.CENTER.getY()) {
+                    goal = FieldConstants.SHUTTLE_DEPOT_BLUE_POSE;
                 } else {
-                    goal = new Pose2d(Units.inchesToMeters(160), 1.5, Rotation2d.kZero);
+                    goal = FieldConstants.SHUTTLE_OUTPOST_BLUE_POSE;
                 }
             } else {
                 goal = CONSTANTS.Hub.CENTER_BLUE_POSE.toPose2d();
