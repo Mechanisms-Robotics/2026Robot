@@ -23,8 +23,11 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -35,6 +38,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -54,6 +58,24 @@ public class CONSTANTS {
     // Vision Constants
     public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
+    public static class Hub {
+        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
+        public static Pose3d CENTER_BLUE_POSE = new Pose3d(
+            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
+            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
+            Units.inchesToMeters(72.0),
+            Rotation3d.kZero
+        );
+
+        // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
+        public static Pose3d CENTER_RED_POSE = new Pose3d(
+            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
+            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
+            Units.inchesToMeters(72.0),
+            Rotation3d.kZero
+        );
+    }
 
     public static final String CAMERA1_NAME = "PhotonCamera1";
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
@@ -102,6 +124,28 @@ public class CONSTANTS {
 
         /** Replaying from a log file. */
         REPLAY,
+    }
+
+    public static class TurretConstants {
+        public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
+            Units.inchesToMeters(8.0),
+            Units.inchesToMeters(8.0),
+            Units.inchesToMeters(33.5),
+            Rotation3d.kZero
+        );
+        public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(Amps.of(60))
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(20))
+                    .withSupplyCurrentLimitEnable(true)
+            )
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withInverted(InvertedValue.CounterClockwise_Positive)   
+                    .withNeutralMode(NeutralModeValue.Brake)
+            );
     }
 
     // NEW DRIVETRAIN CONSTANTS
