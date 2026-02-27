@@ -176,7 +176,12 @@ public class CONSTANTS {
         public static final TalonFXConfiguration LEADER_CONFIG = new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withSupplyCurrentLimit(Amps.of(5.0))
+                    .withSupplyCurrentLimit(Amps.of(60.0))
+            )
+            .withSlot0(
+                new Slot0Configs()
+                .withKP(0.2)
+                    .withKD(0.0)
             )
             .withMotorOutput(
                 new MotorOutputConfigs()

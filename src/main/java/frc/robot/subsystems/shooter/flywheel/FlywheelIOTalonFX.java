@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.util.Units;
 import frc.robot.CONSTANTS.FlywheelConstants;
+import frc.robot.util.PhoenixUtil;
 
 public class FlywheelIOTalonFX implements FlywheelIO {
     private final TalonFX leader = new TalonFX(FlywheelConstants.LEADER_ID);
@@ -15,7 +16,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
     public FlywheelIOTalonFX() {
-        this.leader.getConfigurator().apply(FlywheelConstants.LEADER_CONFIG);
+        PhoenixUtil.tryUntilOk(5, () -> this.leader.getConfigurator().apply(FlywheelConstants.LEADER_CONFIG));
         this.follower.setControl(new Follower(this.leader.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 

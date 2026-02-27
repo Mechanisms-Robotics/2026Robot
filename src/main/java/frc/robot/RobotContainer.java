@@ -28,6 +28,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -113,6 +114,7 @@ public class RobotContainer {
 
         configureBindings();
         publishAutoNames();
+        SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
 
     private void configureBindings() {
@@ -125,8 +127,9 @@ public class RobotContainer {
             );
 
         this.controller.R1()
-            .onTrue(Commands.run(() -> flywheel.setVelocity(0.2)))
-            .onFalse(Commands.run(() -> flywheel.setVelocity(0)));
+            .onTrue(new InstantCommand(() -> flywheel.setVelocity(5)));
+        this.controller.R1()
+            .onFalse(new InstantCommand(() -> flywheel.setVelocity(0)));
 
         this.drivetrain.setDefaultCommand(
             new RunCommand(
