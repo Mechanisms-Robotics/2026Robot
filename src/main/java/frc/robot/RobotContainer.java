@@ -14,7 +14,7 @@ import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import frc.robot.CONSTANTS.DriveConstants;
-
+import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,6 +37,9 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
@@ -46,6 +49,7 @@ public class RobotContainer {
     public final Drivetrain drivetrain;
     private final Vision vision;
     private final DrivetrainController drivetrainController;
+    public final Turret turret;
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -71,6 +75,11 @@ public class RobotContainer {
                     drivetrain.poseEstimator
                 ));
 
+            this.turret = new Turret(
+                new TurretIOSim(), 
+                TurretConstants.ROBOT_TO_TURRET, 
+                this.drivetrain.poseEstimator);
+
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -84,6 +93,11 @@ public class RobotContainer {
                 this.drivetrain.poseEstimator,
                 new PoseCameraIOPhoton(CAMERA1_NAME, CAMERA1_TRANSFORM3D)
             );
+
+            this.turret = new Turret(
+                new TurretIOTalonFX(TurretConstants.CONFIG),
+                TurretConstants.ROBOT_TO_TURRET, 
+                this.drivetrain.poseEstimator);
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);

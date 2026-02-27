@@ -1,6 +1,9 @@
 package frc.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class DrivetrainController {
 
@@ -15,7 +18,9 @@ public class DrivetrainController {
     ) {
         return ChassisSpeeds.fromFieldRelativeSpeeds(
             fieldOriented,
-            drivetrain.getGyroRotation()
+            DriverStation.getAlliance().isPresent() &&
+            DriverStation.getAlliance().get() == Alliance.Red
+                ? drivetrain.getPose().getRotation().rotateBy(Rotation2d.k180deg) : drivetrain.getPose().getRotation()
         );
     }
-}
+}   
