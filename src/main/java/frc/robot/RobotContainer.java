@@ -19,6 +19,7 @@ import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -39,8 +40,13 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
+import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.shooter.turret.TurretIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
@@ -52,6 +58,7 @@ public class RobotContainer {
     private final Vision vision;
     private final DrivetrainController drivetrainController;
     public final Turret turret;
+    private final Flywheel flywheel;
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -82,6 +89,7 @@ public class RobotContainer {
                 TurretConstants.ROBOT_TO_TURRET, 
                 this.drivetrain.poseEstimator);
 
+            this.flywheel = new Flywheel(new FlywheelIO() {});
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -97,10 +105,8 @@ public class RobotContainer {
                 new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
             );
 
-            this.turret = new Turret(
-                new TurretIOTalonFX(TurretConstants.CONFIG),
-                TurretConstants.ROBOT_TO_TURRET, 
-                this.drivetrain.poseEstimator);
+            this.flywheel = new Flywheel(new FlywheelIOTalonFX());
+            this.turret = new Turret(new TurretIO() {}, new Transform3d(), drivetrain.poseEstimator);
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
@@ -117,6 +123,10 @@ public class RobotContainer {
                     this.drivetrain.zeroGyro();
                 })
             );
+
+        this.controller.R1()
+            .onTrue(Commands.run(() -> flywheel.setVelocity(0.2)))
+            .onFalse(Commands.run(() -> flywheel.setVelocity(0)));
 
         this.drivetrain.setDefaultCommand(
             new RunCommand(
