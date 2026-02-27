@@ -1,15 +1,16 @@
 /******************************************************************************
+ *         
+ *                 ** REBUILT **
+ *                                                                    *
+ *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE REBUILT COMPETITION BOT.          *
  *                                                                            *
- *                 ** MECHIATTO **                                            *
- *                                                                            *
- *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE MECHIATTO PRACTICE BOT.   *
- *                                                                            *
- *  DO NOT USE THIS FILE FOR THE COMPETITION BOT.                             *
+ *  DO NOT USE THIS FILE FOR THE MECHIATTO PRACTICE BOT.                      *
  *                                                                            *
  *  MAKE SURE TO UPDATE CONSTANTS HERE ONLY IF THEY ARE SPECIFIC TO THE       *
- *  MECHIATTO PRACTICE BOT.                                                   *
+ *  COMPETITION BOT.                                                          *
  *                                                                            *
  ******************************************************************************/
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -38,7 +39,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -59,11 +62,37 @@ public class CONSTANTS {
     public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
+    public static class FieldConstants {
+        public static double WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
+        public static double LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
+        public static Pose2d CENTER = new Pose2d(LENGTH/2.0, WIDTH/2.0, Rotation2d.kZero);
+
+        /** X coordanite of the blue tape dividing blue alliance zone.
+         *  Uses the side of the tape on the neutral zone. */
+        public static double BLUE_ALLIANCE_ZONE = Units.inchesToMeters(158.61);
+        /** X coordanite of the red tape dividing red alliance zone.
+         *  Uses the side of the tape on the neutral zone. */
+        public static double RED_ALLIANCE_ZONE = Units.inchesToMeters(492.61);
+
+        public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 6.5, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 1.5, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(Units.inchesToMeters(490), 1.5, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(Units.inchesToMeters(490), 6.5, Rotation2d.kZero);
+
+    }
     public static class Hub {
-        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the hub.
+        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
         public static Pose3d CENTER_BLUE_POSE = new Pose3d(
             (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
             (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
+            Units.inchesToMeters(72.0),
+            Rotation3d.kZero
+        );
+
+        // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
+        public static Pose3d CENTER_RED_POSE = new Pose3d(
+            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
+            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
             Units.inchesToMeters(72.0),
             Rotation3d.kZero
         );
@@ -71,12 +100,27 @@ public class CONSTANTS {
 
     public static final String CAMERA1_NAME = "PhotonCamera1";
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(34.125 / 2.0 - 5.5), // forward distances from the center of the robot
-        Units.inchesToMeters(5.0/16.0), // leftward distance from the center of the robot
-        Units.inchesToMeters(14.5), // height off the ground
-        Rotation3d.kZero
+        Units.inchesToMeters(0.5), // forward distances from the center of the robot
+        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
+        Units.inchesToMeters(25.375), 
+        new Rotation3d(
+            0, 
+            0, 
+            Math.toRadians(-90)    // camera is mounted sideways
+        )
     );
 
+    public static final String CAMERA2_NAME = "PhotonCamera2";
+    public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
+        Units.inchesToMeters(0.5), // figure out these
+        Units.inchesToMeters(13.0), 
+        Units.inchesToMeters(25.375), 
+        new Rotation3d(
+            0,
+            0,
+            Math.toRadians(90)
+        )
+    );
     //Localization
     public static final int GYRO_CAN_ID = 9;
 
@@ -103,6 +147,7 @@ public class CONSTANTS {
     }
 
     public static class TurretConstants {
+        // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
             Units.inchesToMeters(8.0),
             Units.inchesToMeters(8.0),
@@ -206,7 +251,7 @@ public class CONSTANTS {
 
         private static final double DRIVE_GEAR_RATIO = 6.75;
         private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
-        public static final Distance WHEEL_RADIUS = Inches.of(1.99);
+        public static final Distance WHEEL_RADIUS = Inches.of(2.23);
 
         private static final boolean INVERT_LEFT_SIDE = false;
         private static final boolean INVERT_RIGHT_SIDE = true;
@@ -253,8 +298,8 @@ public class CONSTANTS {
             .withSteerFrictionVoltage(STEER_FRICTION_VOLTAGE)
             .withDriveFrictionVoltage(DRIVE_FRICTION_VOLTAGE);
 
-        private static final double TRACK_WIDTH_METERS = 0.48;
-        private static final double TRACK_LENGTH_METERS = 0.74;
+        private static final double TRACK_WIDTH_METERS = 0.55;
+        private static final double TRACK_LENGTH_METERS = 0.55;
     
         // Front Left
         private static final int FRONT_LEFT_DRIVE_MOTOR_ID = 1;
@@ -283,8 +328,8 @@ public class CONSTANTS {
         private static final Distance FRONT_RIGHT_Y_POS = Meters.of(-TRACK_WIDTH_METERS / 2);
 
         // Back Left
-        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 8;
-        private static final int BACK_LEFT_STEER_MOTOR_ID = 4;
+        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 4; // this is swapped with steer on Mechiatto for some reason
+        private static final int BACK_LEFT_STEER_MOTOR_ID = 8;
         private static final int BACK_LEFT_ENCODER_ID = 4;
         private static final Angle BACK_LEFT_ENCODER_OFFSET = Rotations.of(
             0
@@ -296,8 +341,8 @@ public class CONSTANTS {
         private static final Distance BACK_LEFT_Y_POS = Meters.of(TRACK_WIDTH_METERS / 2);
 
         // Back Right
-        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 7;
-        private static final int BACK_RIGHT_STEER_MOTOR_ID = 3;
+        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 3; // this is swapped with steer on Mechiatto for some reason
+        private static final int BACK_RIGHT_STEER_MOTOR_ID = 7;
         private static final int BACK_RIGHT_ENCODER_ID = 3;
         private static final Angle BACK_RIGHT_ENOCDER_OFFSET = Rotations.of(
             0

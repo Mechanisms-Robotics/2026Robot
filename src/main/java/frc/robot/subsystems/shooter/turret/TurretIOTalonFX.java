@@ -38,12 +38,32 @@ public class TurretIOTalonFX implements TurretIO {
     
     @Override
     public void setPosition(Rotation2d position) {
+        // The shortest possible rotation for the turret to move, which if done may break the wire chain
         Rotation2d relative = position.relativeTo(Rotation2d.fromRotations(this.currentMotorRotations));
+        // Error in the PID sence
         double error = relative.getRotations();
+        // The desired position including the number of times the turret has made a revolution
         double target = Units.rotationsToRadians(this.currentMotorRotations) + relative.getRadians();
+
+        /* If the absolute desired position is past the limits of the wire chain,
+           go a different direction to the desired position; flip around the other way. */
         if (target > forwardLimit || target < reverseLimit) {
+            /* Changes direction by reversing the magnitude.
+               Derivation:
+               The magnitude of the error is 1 rotation minus the absolute value of the error:
+                    1 - |error|
+               And the direction of the error is the opposite of the signum (sign) of the error
+                    -signum(error)
+               Our flipped error becomes:
+               -(1 - |error|) * signum(error)
+               We can simplify:
+               = -(signum(error) - error)
+               = error - signum(error)
+               Which can be simplified with -=
+            */
             error -= Math.signum(error);
         }
+        // Use PD controller with voltage controll
         motor.setVoltage(MathUtil.clamp(
             error * kP - this.velocity * kD, -maxVoltage, maxVoltage
         ));

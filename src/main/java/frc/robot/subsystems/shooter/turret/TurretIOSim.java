@@ -7,7 +7,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class TurretIOSim implements TurretIO {
-    private final double MOTOR_KP = 2;
+    private final double MOTOR_KP = 5;
     private final double MOTOR_KD = 0.0;
     private final DCMotor GEARBOX = DCMotor.getFalcon500(1);
     private final DCMotorSim motorSim = new DCMotorSim(
