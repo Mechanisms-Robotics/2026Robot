@@ -100,12 +100,27 @@ public class CONSTANTS {
 
     public static final String CAMERA1_NAME = "PhotonCamera1";
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(34.125 / 2.0 - 5.5), // forward distances from the center of the robot
-        Units.inchesToMeters(5.0/16.0), // leftward distance from the center of the robot
-        Units.inchesToMeters(14.5), // height off the ground
-        Rotation3d.kZero
+        Units.inchesToMeters(0.5), // forward distances from the center of the robot
+        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
+        Units.inchesToMeters(25.375), 
+        new Rotation3d(
+            0, 
+            0, 
+            Math.toRadians(-90)    // camera is mounted sideways
+        )
     );
 
+    public static final String CAMERA2_NAME = "PhotonCamera2";
+    public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
+        Units.inchesToMeters(0.5), // figure out these
+        Units.inchesToMeters(13.0), 
+        Units.inchesToMeters(25.375), 
+        new Rotation3d(
+            0,
+            0,
+            Math.toRadians(90)
+        )
+    );
     //Localization
     public static final int GYRO_CAN_ID = 9;
 
