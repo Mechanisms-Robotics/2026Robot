@@ -114,7 +114,7 @@ public class RobotContainer {
             .cross()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.drivetrain.zeroGyro();
+                    this.drivetrain.resetHeading();
                 })
             );
 
