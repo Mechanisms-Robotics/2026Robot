@@ -42,6 +42,13 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.subsystems.feeder.FeederIOTalonFX;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.feeder.Feeder;
+
+import java.util.Optional;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
@@ -57,6 +64,8 @@ public class RobotContainer {
     public final Turret turret;
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
+    private final Feeder feeder; 
+
     private final CommandPS4Controller controller = new CommandPS4Controller(
         CONSTANTS.CONTROLLER_PORT
     );
@@ -70,6 +79,10 @@ public class RobotContainer {
                 new ModuleIOSim(DriveConstants.FRONT_RIGHT),
                 new ModuleIOSim(DriveConstants.BACK_LEFT),
                 new ModuleIOSim(DriveConstants.BACK_RIGHT)
+            );
+            this.feeder = new Feeder(
+                new FeederIOSim(),
+                new FeederIOSim()
             );
 
             this.vision = new Vision(
@@ -92,6 +105,16 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_RIGHT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
+        
+            );
+            this.feeder = new Feeder(
+                // Instantiate TalonFX-based feeder IO with explicit CAN IDs for the motors.
+                new FeederIOTalonFX(
+                    CONSTANTS.KICKER_MOTOR_CAN_ID
+                ),
+                new FeederIOTalonFX(
+                    CONSTANTS.SPINDEXER_MOTOR_CAN_ID
+                )
             );
            
             this.vision = new Vision(
@@ -167,6 +190,33 @@ public class RobotContainer {
                 this.drivetrain
             )
         );
+
+         this.controller
+            .square()
+            .onTrue(
+                new InstantCommand(() -> {
+                    // Apply 12V to feeder motors when the square button is pressed
+                    this.feeder.startFeeding();
+                }, this.feeder).withName("StartFeeding")
+            );
+        
+        this.controller
+            .triangle()
+            .onTrue( 
+                new InstantCommand(() -> {
+                    // Apply 12V to feeder motors when the triangle button is pressed
+                    this.feeder.reverseFeeding();
+                }, this.feeder).withName("ReverseFeeding")
+            );
+
+        this.controller
+            .circle()
+            .onTrue(
+                new InstantCommand(() -> {
+                    // Apply 12V to feeder motors when the circle button is pressed
+                    this.feeder.stopFeeding();
+                }, this.feeder).withName("StopFeeding")
+            );
     }
 
     private void publishAutoNames() {

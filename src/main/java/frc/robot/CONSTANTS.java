@@ -123,6 +123,17 @@ public class CONSTANTS {
     //Localization
     public static final int GYRO_CAN_ID = 9;
 
+    // Feeder motor CAN IDs (three Kraken/TalonFX motors)
+    // TODO: Replace these with actual hardware IDs when we have them
+    public static final int KICKER_MOTOR_CAN_ID = 11;
+    public static final int SPINDEXER_MOTOR_CAN_ID = 10;
+
+    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = 0.5;
+    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = 0.5;
+    public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = -0.2;
+
+
+
     // Path Following Constants
     public static final double PATH_FOLLOWER_P_X = 10.0;
     public static final double PATH_FOLLOWER_P_Y = PATH_FOLLOWER_P_X;
