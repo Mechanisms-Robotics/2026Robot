@@ -25,4 +25,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     public void setVelocity(double rps) {
         this.leader.setControl(this.velocityRequest.withVelocity(rps));
     }
+
+    public void stopPower() {
+        this.leader.setVoltage(0.0);
+    }
 }

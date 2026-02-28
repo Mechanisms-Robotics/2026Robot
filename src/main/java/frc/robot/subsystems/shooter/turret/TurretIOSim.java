@@ -13,15 +13,17 @@ public class TurretIOSim implements TurretIO {
     private final DCMotorSim motorSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(GEARBOX, 0.001, 100),
         GEARBOX);
-    private double appliedVoltage = 0;
-    // private double motorOffset = 0.0;
+    private double desiredRadians = 0.0;
 
     @Override
     public void updateInputs(TurretIOInputs inputs) {
         this.motorSim.update(0.02);
 
         this.motorSim.setInputVoltage(
-            MathUtil.clamp(this.appliedVoltage, -12, 12)
+            MathUtil.clamp(
+                (desiredRadians - this.motorSim.getAngularPositionRad()) * MOTOR_KP +
+                (-this.motorSim.getAngularVelocityRadPerSec() * MOTOR_KD)
+            , -12, 12)
         );
 
         inputs.positionRadians = this.motorSim.getAngularPositionRad();
@@ -29,16 +31,11 @@ public class TurretIOSim implements TurretIO {
     }
 
     @Override
-    public void setPosition(Rotation2d position) {
-        double radians = position.getRadians();
-        this.appliedVoltage = (
-            (radians - this.motorSim.getAngularPositionRad()) * MOTOR_KP +
-            (-this.motorSim.getAngularVelocityRadPerSec() * MOTOR_KD)
-        );
+    public void setAngle(Rotation2d position) {
+        this.desiredRadians = position.getRadians();
     }
 
     @Override
     public void zero() {
-        // this.motorOffset = this.motorSim.getAngularPositionRad();
     }
 }

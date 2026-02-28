@@ -16,7 +16,6 @@ import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import frc.robot.CONSTANTS.DriveConstants;
-import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -57,7 +56,6 @@ public class RobotContainer {
     public final Drivetrain drivetrain;
     public final Turret turret;
     private final Flywheel flywheel;
-    @SuppressWarnings("unused")
     private final Hood hood;
     
     public final SuperStructure superStructure;
@@ -90,12 +88,8 @@ public class RobotContainer {
                     drivetrain.poseEstimator
                 ));
 
-            this.turret = new Turret(
-                new TurretIOSim(), 
-                TurretConstants.ROBOT_TO_TURRET, 
-                this.drivetrain.poseEstimator);
-
             this.flywheel = new Flywheel(new FlywheelIOSim());
+            this.turret = new Turret(new TurretIOSim(), () -> this.drivetrain.poseEstimator.getEstimatedPose().getRotation());
             this.hood = new Hood(new HoodIOSim());
         } else {
             this.drivetrain = new Drivetrain(
@@ -113,13 +107,16 @@ public class RobotContainer {
             );
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
-            this.turret = new Turret(new TurretIO() {}, new Transform3d(), drivetrain.poseEstimator);
+            this.turret = new Turret(new TurretIO() {}, () -> this.drivetrain.poseEstimator.getEstimatedPose().getRotation());
             this.hood = new Hood(new HoodIO() {});
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         
         this.superStructure = new SuperStructure(
+            this.flywheel,
+            this.turret,
+            this.hood,
             this.drivetrain.poseEstimator,
             // shoot button
             this.controller.R1(),

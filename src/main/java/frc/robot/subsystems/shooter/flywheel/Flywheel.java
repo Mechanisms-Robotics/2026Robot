@@ -21,4 +21,8 @@ public class Flywheel extends SubsystemBase {
     public void setVelocity(double rps) {
         io.setVelocity(rps);
     }
+
+    public void stopPower() {
+        
+    }
 }

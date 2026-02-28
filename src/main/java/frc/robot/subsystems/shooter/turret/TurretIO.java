@@ -13,7 +13,7 @@ public interface TurretIO {
 
     public default void updateInputs(TurretIOInputs inputs) {}
 
-    public default void setPosition(Rotation2d position) {}
+    public default void setAngle(Rotation2d position) {}
 
     public default void zero() {}
 }

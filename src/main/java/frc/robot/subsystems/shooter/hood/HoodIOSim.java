@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter.hood;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -37,7 +38,7 @@ public class HoodIOSim implements HoodIO {
     }
 
     @Override
-    public void setPosition(double positionRadians) {
-        this.desiredRadians = positionRadians;
+    public void setAngle(Rotation2d angle) {
+        this.desiredRadians = angle.getRotations();
     }
 }

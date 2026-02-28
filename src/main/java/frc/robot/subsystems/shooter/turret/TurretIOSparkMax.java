@@ -75,7 +75,7 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
     private final double ratio2 = (double) turretTeeth / geer2Teeth;
     private final double motorGearRatio = (30.0 * 10.0) / turretTeeth;
 
-    private double desiredPosition = 0.0;
+    private double desiredRotations = 0.0;
 
     public TurretIOSparkMax() {
         var config = new SparkMaxConfig();
@@ -99,7 +99,7 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
         Optional<Double> position = getPosition();
         if (position.isPresent()) {
             inputs.positionRadians = Units.rotationsToRadians(position.get());
-            this.motor.setVoltage((this.desiredPosition - position.get()) * kP
+            this.motor.setVoltage((this.desiredRotations - position.get()) * kP
                                    - getVelocity() * kD);
         } else {
             inputs.positionRadians = 0.0;
@@ -108,8 +108,8 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
     }
 
     @Override
-    public void setPosition(Rotation2d position) {
-        this.desiredPosition = position.getRotations();
+    public void setAngle(Rotation2d position) {
+        this.desiredRotations = position.getRotations();
     }
 
     /**

@@ -8,11 +8,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShotCalculator.ShotData;
+import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.hood.Hood;
+import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.util.FieldUtil;
 
 public class SuperStructure extends SubsystemBase {
+    private final Flywheel flywheel;
+    private final Turret turret;
+    private final Hood hood;
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
+    private ShotData shotData = new ShotData(false, null, null, 0);
 
     @SuppressWarnings("unused")
     private boolean shooting = false;
@@ -24,7 +31,10 @@ public class SuperStructure extends SubsystemBase {
     private final BooleanSupplier shootSupplier;
     private final BooleanSupplier intakeSupplier;
 
-    public SuperStructure(PoseEstimator8736 poseEstimator, BooleanSupplier shootSupplier, BooleanSupplier intakeSupplier) {
+    public SuperStructure(Flywheel flywheel, Turret turret, Hood hood, PoseEstimator8736 poseEstimator, BooleanSupplier shootSupplier, BooleanSupplier intakeSupplier) {
+        this.flywheel = flywheel;
+        this.turret = turret;
+        this.hood = hood;
         this.poseEstimator = poseEstimator;
         this.shotCalculator = new ShotCalculator(
             () -> new Pose3d(poseEstimator.getEstimatedPose()).transformBy(new Transform3d()),
@@ -38,12 +48,17 @@ public class SuperStructure extends SubsystemBase {
 
     @Override
     public void periodic() {
-        boolean aimed = false;
+        Pose2d robotPose = this.poseEstimator.getEstimatedPose();
+        shotData = FieldUtil.inAllianceZone(robotPose)
+            ? this.shotCalculator.calculateShot(FieldUtil.getHub())
+            : this.shotCalculator.calculateShot(FieldUtil.getShuttlePose(robotPose.getY()));
 
+        this.turret.setAngle(shotData.shooterYaw());
+        
         // MARK: Aim
         if (this.shootSupplier.getAsBoolean()) {
             aiming = true;
-            aimed = aim();
+            aim();
         } else {
             aiming = false;
             stopAim();
@@ -51,7 +66,7 @@ public class SuperStructure extends SubsystemBase {
 
         // MARK: Shoot
         if (this.shootSupplier.getAsBoolean()) {
-            if (aimed) {
+            if (shotData.aimed()) {
                 shooting = true;
                 shoot();
             } else {
@@ -68,21 +83,18 @@ public class SuperStructure extends SubsystemBase {
             intake();
         } else if (intaking) {
             intaking = false;
-            stow();
+            stowIntake();
         }
     }
 
-    public boolean aim() {
-        Pose2d robotPose = this.poseEstimator.getEstimatedPose();
-        ShotData shotData = FieldUtil.inAllianceZone(robotPose)
-            ? this.shotCalculator.calculateShot(FieldUtil.getHub())
-            : this.shotCalculator.calculateShot(FieldUtil.getShuttlePose(robotPose.getY()));
-        /* Set hood, turret, and flywheel positions */
-        return shotData.aimed();
+    public void aim() {
+        this.hood.setAngle(shotData.hoodAngle());
+        this.turret.setAngle(shotData.shooterYaw());
     }
 
     public void stopAim() {
-        /* Retract the hood and stop powering the flywheel */
+        this.hood.stow();
+        this.flywheel.stopPower();
     }
 
     public void shoot() {
@@ -97,7 +109,7 @@ public class SuperStructure extends SubsystemBase {
         /* deploy intake and spin wheels */
     }
 
-    public void stow() {
-        /* stow intake and stop spinning wheels */
+    public void stowIntake() {
+        /* stow intake */
     }
 }

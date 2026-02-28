@@ -9,15 +9,17 @@ public class FlywheelIOSim implements FlywheelIO {
     private final FlywheelSim sim = new FlywheelSim(
         LinearSystemId.createFlywheelSystem(motorModel, 1.0, 1.0), motorModel);
 
-    private double desiredRps = 0.0;
     private double kP = 1.0;
     private double kD = 0.0;
+
+    private double desiredRps = 0.0;
+    private boolean stopPower = false;
     
     public FlywheelIOSim() {}
 
     @Override
     public void updateInputs(FlywheelIOInputs inputs) {
-        this.sim.setInputVoltage(
+        this.sim.setInputVoltage(this.stopPower ? 0.0 :
             (desiredRps - this.sim.getAngularVelocityRPM() / 60.0) * this.kP
             -this.sim.getAngularAccelerationRadPerSecSq() * this.kD);
         this.sim.update(0.2);
@@ -28,5 +30,11 @@ public class FlywheelIOSim implements FlywheelIO {
     @Override
     public void setVelocity(double rps) {
         this.desiredRps = rps;
+        this.stopPower = false;
+    }
+
+    @Override
+    public void stopPower() {
+        this.stopPower = true;
     }
 }

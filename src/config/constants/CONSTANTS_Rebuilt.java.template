@@ -148,6 +148,8 @@ public class CONSTANTS {
     }
 
     public static class TurretConstants {
+        // TODO: Find this by moving the turret to zero and recording the error.
+        public static final double TURRET_OFFSET = 0.0; 
         // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
             Units.inchesToMeters(8.0),
@@ -194,6 +196,8 @@ public class CONSTANTS {
     public static class HoodConstants {
         // number of rotations of the hood per gear rotation
         public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
+        // TODO: find this by moving the hood to the minimum angle and recording the error.
+        public static final double HOOD_OFFSET_RADIANS = 0.0; 
         public static final double MIN_DEGREES = 22.0;
         public static final double MAX_DEGREES = 52.0;
 
