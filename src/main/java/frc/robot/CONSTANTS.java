@@ -24,6 +24,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -166,6 +167,55 @@ public class CONSTANTS {
                 new MotorOutputConfigs()
                     .withInverted(InvertedValue.CounterClockwise_Positive)   
                     .withNeutralMode(NeutralModeValue.Brake)
+            );
+    }
+
+    public static class FlywheelConstants {
+        public static final int LEADER_ID = 21;
+        public static final int FOLLOWER_ID = 22;
+
+        public static final TalonFXConfiguration LEADER_CONFIG = new TalonFXConfiguration()
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withSupplyCurrentLimit(Amps.of(60.0))
+            )
+            .withSlot0(
+                new Slot0Configs()
+                .withKP(0.2)
+                    .withKD(0.0)
+            )
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withInverted(InvertedValue.Clockwise_Positive)
+                    .withNeutralMode(NeutralModeValue.Coast)
+            );
+    }
+
+    public static class HoodConstants {
+        // number of rotations of the hood per gear rotation
+        public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
+        public static final double MIN_DEGREES = 22.0;
+        public static final double MAX_DEGREES = 52.0;
+
+        public static final double kP = 0.1;
+        public static final double kD = 0.0;
+
+        public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
+            .withFeedback(
+                new FeedbackConfigs()
+                    .withSensorToMechanismRatio(48.0/12.0 * ENCODER_HOOD_RATIO)
+            )
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withInverted(InvertedValue.CounterClockwise_Positive)
+                    .withNeutralMode(NeutralModeValue.Brake)
+            )
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(Amps.of(60))
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(20))
+                    .withSupplyCurrentLimitEnable(true)
             );
     }
 
