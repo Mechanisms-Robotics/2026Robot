@@ -150,6 +150,10 @@ public class CONSTANTS {
     public static class TurretConstants {
         // TODO: Find this by moving the turret to zero and recording the error.
         public static final double TURRET_OFFSET = 0.0; 
+
+        // TODO: set these correctly
+        public static final double FORWARD_LIMIT = 3.2;
+        public static final double REVERSE_LIMIT = -3.2;
         // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
             Units.inchesToMeters(8.0),

@@ -62,7 +62,7 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
     
     // Control constants
     private final int SMART_CURRENT_LIMIT = 20;
-    private final double kP = 1.0;
+    private final double kP = 0.0;
     private final double kD = 0.0;
 
     // Physical constants
@@ -73,9 +73,10 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
     private final int geer2Teeth = 28;
     private final double ratio1 = (double) turretTeeth / geer1Teeth;
     private final double ratio2 = (double) turretTeeth / geer2Teeth;
-    private final double motorGearRatio = (30.0 * 10.0) / turretTeeth;
+    private final double motorGearRatio = (30.0 * 10.0) / turretTeeth;  
 
-    private double desiredRotations = 0.0;
+    // changed this to rotation2d because easier to work with
+    private Rotation2d desiredPosition = Rotation2d.kZero;
 
     public TurretIOSparkMax() {
         var config = new SparkMaxConfig();
@@ -96,20 +97,40 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
     public void updateInputs(TurretIOInputs inputs) {
         inputs.velocityRadiansPerSec = Units.rotationsToRadians(getVelocity());
 
-        Optional<Double> position = getPosition();
+        Optional<Rotation2d> position = getPosition();
         if (position.isPresent()) {
-            inputs.positionRadians = Units.rotationsToRadians(position.get());
-            this.motor.setVoltage((this.desiredRotations - position.get()) * kP
+            inputs.positionRadians = position.get().getRadians();
+            
+            // Wrap around logic.
+
+            // Shortest possible rotation for the turret to move, which if done may break the wire chain
+            Rotation2d relative = desiredPosition.relativeTo(Rotation2d.fromRadians(inputs.positionRadians));
+            // Error in the PID sence
+            double error = relative.getRadians();
+            // The desired position including the number of times the turret has made a revolution
+            double target = inputs.positionRadians + relative.getRadians();
+
+            if (target > TurretConstants.FORWARD_LIMIT || target < TurretConstants.REVERSE_LIMIT) {
+                // Changes direction by reversing the magnitude.
+                error -= Math.signum(error) * (Math.PI * 2);
+            }
+
+            this.motor.setVoltage(error * kP
                                    - getVelocity() * kD);
+            Logger.recordOutput("Turret/appliedVoltage", error * kP - getVelocity() * kD);
+
         } else {
             inputs.positionRadians = 0.0;
             this.motor.setVoltage(0.0);
         }
     }
 
+    /**
+     * Sets a desired position for the turret, in radians.
+     */
     @Override
     public void setAngle(Rotation2d position) {
-        this.desiredRotations = position.getRotations();
+        this.desiredPosition = position;
     }
 
     /**
@@ -122,12 +143,12 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
     }
 
     /**
-     * Get the absolute position of the turret in rotations.
+     * Get the absolute position of the turret as a Rotation2d.
      * This is calculated from two encoders using Chinese Remainder Theorem.
      * 
-     * @return turret position in rotations, between 0 and 1
+     * @return turret position as a Rotation2d
      */
-    public Optional<Double> getPosition() {
+    public Optional<Rotation2d> getPosition() {
         final double tolerance = 0.05;
         // Absolute position of encoders 1 and 2
         final double abs1 = MathUtil.inputModulus(this.encoder1.get(), 0.0, 1.0);
@@ -183,6 +204,8 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
             return Optional.empty();
         }
 
-        return Optional.of(bestPosition + TurretConstants.TURRET_OFFSET);
+        return Optional.of(
+            Rotation2d.fromRotations(bestPosition)
+            .plus(Rotation2d.fromRadians(TurretConstants.TURRET_OFFSET)));
     }
 }
