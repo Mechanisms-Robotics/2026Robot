@@ -19,7 +19,6 @@ import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -47,8 +46,6 @@ import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
-import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
-import frc.robot.subsystems.shooter.turret.TurretIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
@@ -56,6 +53,7 @@ import frc.robot.subsystems.vision.PoseCameraIOSim;
 public class RobotContainer {
 
     public final Drivetrain drivetrain;
+    @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
     public final Turret turret;

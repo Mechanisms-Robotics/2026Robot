@@ -1,12 +1,10 @@
 package frc.robot.subsystems.shooter.flywheel;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
-import edu.wpi.first.math.util.Units;
 import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.util.PhoenixUtil;
 
