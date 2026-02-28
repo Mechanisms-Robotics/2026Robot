@@ -146,6 +146,11 @@ public class CONSTANTS {
         REPLAY,
     }
 
+    public static class IntakeConstants {
+        public static final double INTAKE_DUTY_CYCLE = 0.75;
+        public static final double OUTTAKE_DUTY_CYCLE = -0.25;
+    }
+
     public static class TurretConstants {
         // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
