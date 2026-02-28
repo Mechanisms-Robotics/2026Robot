@@ -14,12 +14,16 @@ public class DepotAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> depotBackup = Choreo.loadTrajectory(
                     "DepotBackup"
                 );
+        Optional<Trajectory<SwerveSample>> depotForward = Choreo.loadTrajectory(
+                    "DepotForward"
+                );
+
 
         addCommands(
             new WaitCommand(2.0), // simulate shooting
             new FollowPath(depotBackup.get(), drivetrain, true),
             new WaitCommand(1.0), // probably unneeded but simulate intaking
-            // add move forward path here
+            new FollowPath(depotForward.get(), drivetrain, false),
             new WaitCommand(3.0) // simulate shooting
         );
 
