@@ -156,10 +156,7 @@ public class CONSTANTS {
         public static final double REVERSE_LIMIT = -3.2;
         // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
-            Units.inchesToMeters(8.0),
-            Units.inchesToMeters(8.0),
-            Units.inchesToMeters(33.5),
-            Rotation3d.kZero
+            0.0, 0.0, 0.372845, Rotation3d.kZero
         );
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
             .withCurrentLimits(

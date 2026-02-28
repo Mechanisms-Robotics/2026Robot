@@ -26,4 +26,8 @@ public class Turret extends SubsystemBase {
     public void zero() {
         io.zero();
     }
+
+    public Rotation2d getAngle() {
+        return new Rotation2d(this.inputs.positionRadians);
+    }
 }

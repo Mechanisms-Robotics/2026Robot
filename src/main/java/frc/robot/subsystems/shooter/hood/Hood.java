@@ -28,4 +28,8 @@ public class Hood extends SubsystemBase {
     public void stow() {
         setAngle(Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES));
     }
+
+    public Rotation2d getAngle() {
+        return new Rotation2d(this.inputs.positionRadians);
+    }
 }
