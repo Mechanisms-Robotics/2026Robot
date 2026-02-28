@@ -11,15 +11,15 @@ public class HoodIOSim implements HoodIO {
         new SingleJointedArmSim(
             motorModel,
             HoodConstants.CONFIG.Feedback.SensorToMechanismRatio,
-            0.05,
+            0.04,
             0.2,
-            Units.degreesToRadians(22.0),
-            Units.degreesToRadians(52.0),
+            Units.degreesToRadians(HoodConstants.MIN_DEGREES),
+            Units.degreesToRadians(HoodConstants.MAX_DEGREES),
             false,
             Units.degreesToRadians(22.0)
         );
-    private final double kP = 0.1;
-    private final double kD = 0.0;
+    private final double kP = 0.2;
+    private final double kD = 0.4;
     
     private double desiredRadians = 22.0;
     

@@ -194,9 +194,11 @@ public class CONSTANTS {
     public static class HoodConstants {
         // number of rotations of the hood per gear rotation
         public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
+        public static final double MIN_DEGREES = 22.0;
+        public static final double MAX_DEGREES = 52.0;
 
-        public static final double P = 0.1;
-        public static final double D = 0.0;
+        public static final double kP = 0.1;
+        public static final double kD = 0.0;
 
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
             .withFeedback(

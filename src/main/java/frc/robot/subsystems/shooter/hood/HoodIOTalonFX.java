@@ -2,9 +2,11 @@ package frc.robot.subsystems.shooter.hood;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.CONSTANTS.HoodConstants;
+import frc.robot.util.PhoenixUtil;
 
 public class HoodIOTalonFX implements HoodIO {
     // Kraken X44
@@ -15,7 +17,7 @@ public class HoodIOTalonFX implements HoodIO {
     private double desiredRadians = 0.0;
     
     public HoodIOTalonFX() {
-        this.motor.getConfigurator().apply(HoodConstants.CONFIG);
+        PhoenixUtil.tryUntilOk(5, () -> this.motor.getConfigurator().apply(HoodConstants.CONFIG));
     }
 
     @Override
@@ -23,14 +25,14 @@ public class HoodIOTalonFX implements HoodIO {
         inputs.positionRadians = Units.rotationsToRadians(getPosition());
         
         this.motor.setVoltage(
-            (this.desiredRadians - Units.rotationsToRadians(getPosition())) * HoodConstants.P +
-            -this.motor.getVelocity().getValueAsDouble() * HoodConstants.D
+            (this.desiredRadians - Units.rotationsToRadians(getPosition())) * HoodConstants.kP +
+            -this.motor.getVelocity().getValueAsDouble() * HoodConstants.kD
         );
     }
 
     @Override
     public void setPosition(double positionRadians) {
-        this.desiredRadians = positionRadians;
+        this.desiredRadians = MathUtil.clamp(positionRadians, HoodConstants.MIN_DEGREES, HoodConstants.MAX_DEGREES);
     }
 
     private double getPosition() {
