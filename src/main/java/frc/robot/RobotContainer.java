@@ -41,8 +41,11 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
-import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.shooter.hood.Hood;
+import frc.robot.subsystems.shooter.hood.HoodIO;
+import frc.robot.subsystems.shooter.hood.HoodIOSim;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
@@ -51,13 +54,16 @@ import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 public class RobotContainer {
-
     public final Drivetrain drivetrain;
+    public final Turret turret;
+    private final Flywheel flywheel;
+    @SuppressWarnings("unused")
+    private final Hood hood;
+    
     @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
-    public final Turret turret;
-    private final Flywheel flywheel;
+    
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -88,7 +94,8 @@ public class RobotContainer {
                 TurretConstants.ROBOT_TO_TURRET, 
                 this.drivetrain.poseEstimator);
 
-            this.flywheel = new Flywheel(new FlywheelIO() {});
+            this.flywheel = new Flywheel(new FlywheelIOSim());
+            this.hood = new Hood(new HoodIOSim());
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -106,6 +113,7 @@ public class RobotContainer {
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
             this.turret = new Turret(new TurretIO() {}, new Transform3d(), drivetrain.poseEstimator);
+            this.hood = new Hood(new HoodIO() {});
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
