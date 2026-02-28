@@ -13,36 +13,25 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 
 public class ShotCalculator {
     private final Supplier<Pose3d> shooterPoseSupplier;
-    private final Supplier<Rotation2d> hoodAngleSupplier;
-    private final DoubleSupplier rpmSupplier;
 
     private final InterpolatingTreeMap<Double, Rotation2d> hoodAngleMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
     private final InterpolatingDoubleTreeMap rpmMap = new InterpolatingDoubleTreeMap();
     
-    private final double rpsEpsilon = 100.0;
+    private final double rpmEpsilon = 100.0;
     private final double yawEpsilon = 3.0;
     private final double hoodEpsilon = 3.0;
     
     /**
-     * @param shooterPoseSupplier position of the shooter mechanism field relative
-     * @param hoodAngleSupplier hood rotation2d
-     * @param rpmSupplier rotations per second of the flywheels
+     * @param shooterPoseSupplier position of the shooter mechanism field relative, used for distance calculation.
      */
-    public ShotCalculator(
-        Supplier<Pose3d> shooterPoseSupplier,
-        Supplier<Rotation2d> hoodAngleSupplier,
-        DoubleSupplier rpmSupplier
-    ) {
+    public ShotCalculator(Supplier<Pose3d> shooterPoseSupplier) {
         this.shooterPoseSupplier = shooterPoseSupplier;
-        this.hoodAngleSupplier = hoodAngleSupplier;
-        this.rpmSupplier = rpmSupplier;
 
-        this.hoodAngleMap.put(0.0, Rotation2d.fromDegrees(40.0));
-        this.rpmMap.put(0.0, 10.0);
+        this.hoodAngleMap.put(0.0, Rotation2d.fromDegrees(10.0));
+        this.rpmMap.put(0.0, 500.0);
     }
 
     public record ShotData(
-        boolean aimed,
         Rotation2d shooterYaw,
         Rotation2d hoodAngle,
         double rpm
@@ -52,17 +41,18 @@ public class ShotCalculator {
         Pose3d shooterPose = this.shooterPoseSupplier.get();
 
         double targetDistance = target.relativeTo(shooterPose).getTranslation().getNorm();
-        Rotation2d desiredHoodAngle = this.hoodAngleMap.get(targetDistance);
-        double desiredRPM = this.rpmMap.get(targetDistance);
+        Rotation2d hoodAngle = this.hoodAngleMap.get(targetDistance);
+        double rpm = this.rpmMap.get(targetDistance);
+
         Translation2d shooterToTarget = target.getTranslation().minus(shooterPose.getTranslation()).toTranslation2d();
-        Rotation2d desiredYaw = shooterToTarget.getAngle();
+        Rotation2d shooterYaw = shooterToTarget.getAngle();
+
+        // boolean aimed =
+        //     Math.abs(rpsSupplier.getAsDouble() - rps) < this.rpsEpsilon
+        //  && Math.abs(shooterYaw.getDegrees() - this.shooterPoseSupplier.get().getRotation().toRotation2d().getDegrees()) < this.yawEpsilon
+        //  && Math.abs(hoodAngle.getDegrees() - this.hoodAngleSupplier.get().getDegrees()) < this.hoodEpsilon;
         
-        boolean aimed =
-            Math.abs(rpmSupplier.getAsDouble() - desiredRPM) < this.rpsEpsilon
-         && Math.abs(desiredHoodAngle.getDegrees() - this.shooterPoseSupplier.get().getRotation().toRotation2d().getDegrees()) < this.yawEpsilon
-         && Math.abs(desiredYaw.getDegrees() - this.hoodAngleSupplier.get().getDegrees()) < this.hoodEpsilon;
-        
-        return new ShotData(aimed, desiredYaw, desiredHoodAngle, desiredRPM);
+        return new ShotData(shooterYaw, hoodAngle, rpm);
     }
 
     public ShotData calculateShot(Pose2d target) {

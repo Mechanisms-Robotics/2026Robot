@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,7 +27,7 @@ public class SuperStructure extends SubsystemBase {
     private final Hood hood;
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
-    private ShotData shotData = new ShotData(false, null, null, 0);
+    private ShotData shotData = new ShotData(null, null, 0);
 
     private boolean shuttling = false;
     private boolean intaking = false;
@@ -39,15 +40,14 @@ public class SuperStructure extends SubsystemBase {
         this.turret = turret;
         this.hood = hood;
         this.poseEstimator = poseEstimator;
+        // TODO: add TurretConstants.ROBOT_TO_TURRET
         this.shotCalculator = new ShotCalculator(
-            () -> new Pose3d(poseEstimator.getEstimatedPose()).transformBy(new Transform3d()),
-            () -> Rotation2d.kZero,
-            () -> 0.0
-        );
+            () -> new Pose3d(this.poseEstimator.getEstimatedPose()));
+        
         this.aimCommand = new ShootCommands.Aim(this.hood, this.flywheel, () -> this.shotData);
         this.shootCommand = new ShootCommands.Shoot();
 
-        shootButton.and(shotData::aimed).whileTrue(this.shootCommand);
+        shootButton.and(() -> this.aimed()).whileTrue(this.shootCommand);
         shootButton.whileTrue(this.aimCommand);
 
         this.turret.setDefaultCommand(
@@ -76,9 +76,13 @@ public class SuperStructure extends SubsystemBase {
         );
 
         Logger.recordOutput("SuperStructure/aiming", this.aimCommand.isScheduled());
-        Logger.recordOutput("SuperStructure/aimed", shotData.aimed());
+        Logger.recordOutput("SuperStructure/aimed", this.aimed());
         Logger.recordOutput("SuperStructure/shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/shuttling", shuttling);
         Logger.recordOutput("SuperStructure/intaking", intaking);
+    }
+
+    public boolean aimed() {
+        return false;
     }
 }
