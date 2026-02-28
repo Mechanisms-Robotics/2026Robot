@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import frc.robot.commands.DepotAuto;
+import frc.robot.commands.ChaosRightAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -178,7 +179,8 @@ public class RobotContainer {
             // "BackUpLeft",
             // "OverBump",
             // "VisionTesting2026",
-            "Depot Auto"
+            "Depot Auto",
+            "Chaos Right Auto"
         };
 
 
@@ -197,6 +199,9 @@ public class RobotContainer {
         switch (name) {
             case "Depot Auto":
                 autoCommand = new DepotAuto(this.drivetrain);
+                break;
+            case "Chaos Right Auto":
+                autoCommand = new ChaosRightAuto(this.drivetrain);
                 break;
             case "Wheel Characterization":
                 autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);
