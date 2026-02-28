@@ -36,7 +36,7 @@ import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 
 import frc.robot.subsystems.feeder.FeederIO;
-import frc.robot.subsystems.feeder.FeederIONeo;
+import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
 
@@ -70,6 +70,7 @@ public class RobotContainer {
                 new ModuleIOSim(DriveConstants.BACK_RIGHT)
             );
             this.feeder = new Feeder(
+                new FeederIOSim(),
                 new FeederIOSim()
             );
 
@@ -91,7 +92,13 @@ public class RobotContainer {
         
             );
             this.feeder = new Feeder(
-                new FeederIONeo()
+                // Instantiate TalonFX-based feeder IO with explicit CAN IDs for the motors.
+                new FeederIOTalonFX(
+                    CONSTANTS.KICKER_MOTOR_CAN_ID
+                ),
+                new FeederIOTalonFX(
+                    CONSTANTS.SPINDEXER_MOTOR_CAN_ID
+                )
             );
 
             // TODO: move this to the proper constants file (in src/config/constants)
@@ -173,7 +180,26 @@ public class RobotContainer {
             .square()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.feeder.setMotorOpenLoop(100);
+                    // Apply 12V to feeder motors when the square button is pressed
+                    this.feeder.startFeeding();
+                })
+            );
+        
+        this.controller
+            .triangle()
+            .onTrue(
+                new InstantCommand(() -> {
+                    // Apply 12V to feeder motors when the triangle button is pressed
+                    this.feeder.reverseFeeding();
+                })
+            );
+
+        this.controller
+            .circle()
+            .onTrue(
+                new InstantCommand(() -> {
+                    // Apply 12V to feeder motors when the circle button is pressed
+                    this.feeder.stopFeeding();
                 })
             );
     }
