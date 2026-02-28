@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.ShotCalculator.ShotData;
+import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 
@@ -21,7 +22,7 @@ public class ShootCommands {
         }
 
         @Override
-        public void initialize() {
+        public void execute() {
             this.hood.setAngle(this.shotSupplier.get().hoodAngle());
             this.flywheel.setVelocity(this.shotSupplier.get().rpm());
         }
@@ -34,8 +35,20 @@ public class ShootCommands {
     }
 
     public static class Shoot extends Command {
-        public Shoot() {
+        private final Feeder feeder;
 
+        public Shoot(Feeder feeder) {
+            this.feeder = feeder;
+        }
+
+        @Override
+        public void initialize() {
+            this.feeder.startFeeding();
+        }
+
+        @Override
+        public void end(boolean interupted) {
+            this.feeder.stopFeeding();
         }
     }
 }

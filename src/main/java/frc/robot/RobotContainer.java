@@ -136,11 +136,12 @@ public class RobotContainer {
             this.flywheel,
             this.turret,
             this.hood,
+            this.feeder,
             this.drivetrain.poseEstimator,
             // shoot button
-            this.controller.button(1),
+            this.controller.R2(),
             // intake button
-            this.controller.L1()
+            this.controller.L2()
         );
 
         configureBindings();

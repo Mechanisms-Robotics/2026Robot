@@ -30,6 +30,6 @@ public class Hood extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
-        return new Rotation2d(this.inputs.positionRadians);
+        return Rotation2d.fromDegrees(this.inputs.positionDegrees);
     }
 }

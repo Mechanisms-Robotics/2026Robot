@@ -1,7 +1,8 @@
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -17,18 +18,17 @@ public class ShotCalculator {
     private final InterpolatingTreeMap<Double, Rotation2d> hoodAngleMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
     private final InterpolatingDoubleTreeMap rpmMap = new InterpolatingDoubleTreeMap();
     
-    private final double rpmEpsilon = 100.0;
-    private final double yawEpsilon = 3.0;
-    private final double hoodEpsilon = 3.0;
-    
     /**
      * @param shooterPoseSupplier position of the shooter mechanism field relative, used for distance calculation.
      */
     public ShotCalculator(Supplier<Pose3d> shooterPoseSupplier) {
         this.shooterPoseSupplier = shooterPoseSupplier;
 
-        this.hoodAngleMap.put(0.0, Rotation2d.fromDegrees(10.0));
-        this.rpmMap.put(0.0, 500.0);
+        this.hoodAngleMap.put(1.0, Rotation2d.fromDegrees(23.0));
+        this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(50.0));
+        this.rpmMap.put(1.0, 10.0);
+        this.rpmMap.put(5.0, 100.0);
+        this.rpmMap.put(10.0, 300.0);
     }
 
     public record ShotData(
@@ -41,18 +41,15 @@ public class ShotCalculator {
         Pose3d shooterPose = this.shooterPoseSupplier.get();
 
         double targetDistance = target.relativeTo(shooterPose).getTranslation().getNorm();
-        Rotation2d hoodAngle = this.hoodAngleMap.get(targetDistance);
-        double rpm = this.rpmMap.get(targetDistance);
+        Rotation2d desiredHoodAngle = this.hoodAngleMap.get(targetDistance);
+        double desiredRPM = this.rpmMap.get(targetDistance);
 
         Translation2d shooterToTarget = target.getTranslation().minus(shooterPose.getTranslation()).toTranslation2d();
-        Rotation2d shooterYaw = shooterToTarget.getAngle();
+        Rotation2d desiredYaw = shooterToTarget.getAngle();
 
-        // boolean aimed =
-        //     Math.abs(rpsSupplier.getAsDouble() - rps) < this.rpsEpsilon
-        //  && Math.abs(shooterYaw.getDegrees() - this.shooterPoseSupplier.get().getRotation().toRotation2d().getDegrees()) < this.yawEpsilon
-        //  && Math.abs(hoodAngle.getDegrees() - this.hoodAngleSupplier.get().getDegrees()) < this.hoodEpsilon;
+        Logger.recordOutput("ShotCalculator/targetDistance", targetDistance);
         
-        return new ShotData(shooterYaw, hoodAngle, rpm);
+        return new ShotData(desiredYaw, desiredHoodAngle, desiredRPM);
     }
 
     public ShotData calculateShot(Pose2d target) {
