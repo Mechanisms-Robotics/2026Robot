@@ -187,7 +187,7 @@ public class RobotContainer {
         
         this.controller
             .triangle()
-            .onTrue(
+            .onTrue( 
                 new InstantCommand(() -> {
                     // Apply 12V to feeder motors when the triangle button is pressed
                     this.feeder.reverseFeeding();
