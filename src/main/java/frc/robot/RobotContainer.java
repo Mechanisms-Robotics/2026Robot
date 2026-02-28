@@ -49,6 +49,7 @@ import frc.robot.subsystems.vision.PoseCameraIOSim;
 public class RobotContainer {
 
     public final Drivetrain drivetrain;
+    @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
     public final Turret turret;
