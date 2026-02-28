@@ -2,11 +2,14 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.ShotCalculator.ShotData;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
@@ -21,11 +24,8 @@ public class SuperStructure extends SubsystemBase {
     private final ShotCalculator shotCalculator;
     private ShotData shotData = new ShotData(false, null, null, 0);
 
-    @SuppressWarnings("unused")
     private boolean shooting = false;
-    @SuppressWarnings("unused")
     private boolean shuttling = false;
-    @SuppressWarnings("unused")
     private boolean aiming = false;
     private boolean intaking = false;
     private final BooleanSupplier shootSupplier;
@@ -53,7 +53,7 @@ public class SuperStructure extends SubsystemBase {
             ? this.shotCalculator.calculateShot(FieldUtil.getHub())
             : this.shotCalculator.calculateShot(FieldUtil.getShuttlePose(robotPose.getY()));
 
-        this.turret.setAngle(shotData.shooterYaw());
+        this.turret.setAngle(shotData.shooterYaw().minus(robotPose.getRotation()));
         
         // MARK: Aim
         if (this.shootSupplier.getAsBoolean()) {
@@ -85,16 +85,22 @@ public class SuperStructure extends SubsystemBase {
             intaking = false;
             stowIntake();
         }
+
+        Logger.recordOutput("SuperStructure/aiming", aiming);
+        Logger.recordOutput("SuperStructure/aimed", shotData.aimed());
+        Logger.recordOutput("SuperStructure/shooting", shooting);
+        Logger.recordOutput("SuperStructure/shuttling", shuttling);
+        Logger.recordOutput("SuperStructure/intaking", intaking);
     }
 
     public void aim() {
         this.hood.setAngle(shotData.hoodAngle());
-        this.turret.setAngle(shotData.shooterYaw());
+        this.flywheel.setVelocity(shotData.rpm());
     }
 
     public void stopAim() {
         this.hood.stow();
-        this.flywheel.stopPower();
+        this.flywheel.setVelocity(FlywheelConstants.IDLE_RPM);
     }
 
     public void shoot() {

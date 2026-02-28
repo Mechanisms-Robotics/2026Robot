@@ -1,7 +1,5 @@
 package frc.robot.subsystems.shooter.turret;
 
-import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,20 +8,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Turret extends SubsystemBase {
     private final TurretIO io;
     private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
-    private final Supplier<Rotation2d> robotHeadingSupplier;
     
-    public Turret(TurretIO io, Supplier<Rotation2d> robotHeadingSupplier) {
+    public Turret(TurretIO io) {
         this.io = io;
-        this.robotHeadingSupplier = robotHeadingSupplier;
     }
 
     public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Turret", inputs);
+        this.io.updateInputs(this.inputs);
+        Logger.processInputs("Turret", this.inputs);
     }
 
+    /** @param angle robot relative turret angle */
     public void setAngle(Rotation2d angle) {
-        this.io.setAngle(angle.minus(robotHeadingSupplier.get()));
+        this.io.setAngle(angle);
     }
 
     public void zero() {

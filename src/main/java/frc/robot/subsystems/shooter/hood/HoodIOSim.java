@@ -39,6 +39,6 @@ public class HoodIOSim implements HoodIO {
 
     @Override
     public void setAngle(Rotation2d angle) {
-        this.desiredRadians = angle.getRotations();
+        this.desiredRadians = angle.getRadians();
     }
 }

@@ -19,11 +19,11 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     }
 
     public void updateInputs(FlywheelIOInputs inputs) {
-        inputs.rps = this.leader.getVelocity().getValueAsDouble();
+        inputs.rpm = this.leader.getVelocity().getValueAsDouble() / 60.0;
     }
 
-    public void setVelocity(double rps) {
-        this.leader.setControl(this.velocityRequest.withVelocity(rps));
+    public void setVelocity(double rpm) {
+        this.leader.setControl(this.velocityRequest.withVelocity(rpm / 60.0));
     }
 
     public void stopPower() {

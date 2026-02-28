@@ -14,10 +14,10 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 public class ShotCalculator {
     private final Supplier<Pose3d> shooterPoseSupplier;
     private final Supplier<Rotation2d> hoodAngleSupplier;
-    private final DoubleSupplier rpsSupplier;
+    private final DoubleSupplier rpmSupplier;
 
     private final InterpolatingTreeMap<Double, Rotation2d> hoodAngleMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
-    private final InterpolatingDoubleTreeMap rpsMap = new InterpolatingDoubleTreeMap();
+    private final InterpolatingDoubleTreeMap rpmMap = new InterpolatingDoubleTreeMap();
     
     private final double rpsEpsilon = 100.0;
     private final double yawEpsilon = 3.0;
@@ -25,27 +25,27 @@ public class ShotCalculator {
     
     /**
      * @param shooterPoseSupplier position of the shooter mechanism field relative
-     * @param hoodAngle hood rotation2d
-     * @param rps rotations per second of the flywheels
+     * @param hoodAngleSupplier hood rotation2d
+     * @param rpmSupplier rotations per second of the flywheels
      */
     public ShotCalculator(
         Supplier<Pose3d> shooterPoseSupplier,
-        Supplier<Rotation2d> hoodAngle,
-        DoubleSupplier rps
+        Supplier<Rotation2d> hoodAngleSupplier,
+        DoubleSupplier rpmSupplier
     ) {
         this.shooterPoseSupplier = shooterPoseSupplier;
-        this.hoodAngleSupplier = hoodAngle;
-        this.rpsSupplier = rps;
+        this.hoodAngleSupplier = hoodAngleSupplier;
+        this.rpmSupplier = rpmSupplier;
 
-        this.hoodAngleMap.put(0.0, Rotation2d.fromDegrees(10.0));
-        this.rpsMap.put(0.0, 10.0);
+        this.hoodAngleMap.put(0.0, Rotation2d.fromDegrees(40.0));
+        this.rpmMap.put(0.0, 10.0);
     }
 
     public record ShotData(
         boolean aimed,
         Rotation2d shooterYaw,
         Rotation2d hoodAngle,
-        double rps
+        double rpm
     ) {}
 
     public ShotData calculateShot(Pose3d target) {
@@ -53,17 +53,17 @@ public class ShotCalculator {
 
         double targetDistance = target.relativeTo(shooterPose).getTranslation().getNorm();
         Rotation2d hoodAngle = this.hoodAngleMap.get(targetDistance);
-        double rps = this.rpsMap.get(targetDistance);
+        double rpm = this.rpmMap.get(targetDistance);
 
         Translation2d shooterToTarget = target.getTranslation().minus(shooterPose.getTranslation()).toTranslation2d();
         Rotation2d shooterYaw = shooterToTarget.getAngle();
 
         boolean aimed =
-            Math.abs(rpsSupplier.getAsDouble() - rps) < this.rpsEpsilon
+            Math.abs(rpmSupplier.getAsDouble() - rpm) < this.rpsEpsilon
          && Math.abs(shooterYaw.getDegrees() - this.shooterPoseSupplier.get().getRotation().toRotation2d().getDegrees()) < this.yawEpsilon
          && Math.abs(hoodAngle.getDegrees() - this.hoodAngleSupplier.get().getDegrees()) < this.hoodEpsilon;
         
-        return new ShotData(aimed, shooterYaw, hoodAngle, rps);
+        return new ShotData(aimed, shooterYaw, hoodAngle, rpm);
     }
 
     public ShotData calculateShot(Pose2d target) {

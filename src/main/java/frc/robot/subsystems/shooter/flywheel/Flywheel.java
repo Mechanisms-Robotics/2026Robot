@@ -18,11 +18,8 @@ public class Flywheel extends SubsystemBase {
         Logger.processInputs("Flywheel", this.inputs);
     }
 
-    public void setVelocity(double rps) {
-        io.setVelocity(rps);
-    }
-
-    public void stopPower() {
-        
+    /** @param rpm desired rotations per minute */
+    public void setVelocity(double rpm) {
+        this.io.setVelocity(rpm);
     }
 }

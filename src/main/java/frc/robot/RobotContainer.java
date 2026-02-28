@@ -70,7 +70,6 @@ public class RobotContainer {
     );
 
     public RobotContainer() {
-        // TODO: Think about where to initialize all of this properly
         if (CONSTANTS.CURRENT_MODE == CONSTANTS.SIM_MODE) {
             this.drivetrain = new Drivetrain(
                 new GyroIO() {},
@@ -89,7 +88,7 @@ public class RobotContainer {
                 ));
 
             this.flywheel = new Flywheel(new FlywheelIOSim());
-            this.turret = new Turret(new TurretIOSim(), () -> this.drivetrain.poseEstimator.getEstimatedPose().getRotation());
+            this.turret = new Turret(new TurretIOSim());
             this.hood = new Hood(new HoodIOSim());
         } else {
             this.drivetrain = new Drivetrain(
@@ -107,7 +106,7 @@ public class RobotContainer {
             );
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
-            this.turret = new Turret(new TurretIO() {}, () -> this.drivetrain.poseEstimator.getEstimatedPose().getRotation());
+            this.turret = new Turret(new TurretIO() {});
             this.hood = new Hood(new HoodIO() {});
         }
 
@@ -119,7 +118,7 @@ public class RobotContainer {
             this.hood,
             this.drivetrain.poseEstimator,
             // shoot button
-            this.controller.R1(),
+            this.controller.button(1),
             // intake button
             this.controller.L1()
         );
