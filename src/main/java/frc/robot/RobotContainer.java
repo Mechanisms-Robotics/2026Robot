@@ -52,6 +52,7 @@ public class RobotContainer {
     private final Vision vision;
     private final DrivetrainController drivetrainController;
     public final Turret turret;
+    public final SuperStructure superStructure;
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
@@ -104,6 +105,14 @@ public class RobotContainer {
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
+        
+        this.superStructure = new SuperStructure(
+            this.drivetrain.poseEstimator,
+            // shoot button
+            this.controller.R1(),
+            // intake button
+            this.controller.L1()
+        );
 
         configureBindings();
         publishAutoNames();
