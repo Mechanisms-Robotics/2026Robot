@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import frc.robot.commands.DepotAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -168,15 +169,16 @@ public class RobotContainer {
 
     private void publishAutoNames() {
         String[] autoNames = {
-            "Wheel Characterization",
-            "Drive Feedforward Characterization",
-            "RotationTuning",
-            "TranslationTuning",
-            "TestPath2026",
-            "BackUpCenter",
-            "BackUpLeft",
-            "OverBump",
-            "VisionTesting2026"
+            // "Wheel Characterization",
+            // "Drive Feedforward Characterization",
+            // "RotationTuning",
+            // "TranslationTuning",
+            // "TestPath2026",
+            // "BackUpCenter",
+            // "BackUpLeft",
+            // "OverBump",
+            // "VisionTesting2026",
+            "Depot Auto"
         };
 
 
@@ -193,6 +195,9 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
+            case "Depot Auto":
+                autoCommand = new DepotAuto(this.drivetrain);
+                break;
             case "Wheel Characterization":
                 autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);
                 break;
@@ -242,7 +247,6 @@ public class RobotContainer {
                 autoCommand = new FollowPath(visionTesting2026.get(), this.drivetrain, true); // this path was written on red side
                 break;
         }
-
 
         autoCommand.setName(name);
         return autoCommand;
