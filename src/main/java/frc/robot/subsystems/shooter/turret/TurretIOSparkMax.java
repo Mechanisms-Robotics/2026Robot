@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CONSTANTS.TurretConstants;
 
 /**
  * The IO layer of the turret for the competition robot.
@@ -182,6 +183,6 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
             return Optional.empty();
         }
 
-        return Optional.of(bestPosition);
+        return Optional.of(bestPosition + TurretConstants.TURRET_OFFSET);
     }
 }

@@ -22,20 +22,24 @@ public class HoodIOTalonFX implements HoodIO {
 
     @Override
     public void updateInputs(HoodIOInputs inputs) {
-        inputs.positionRadians = Units.rotationsToRadians(getPosition());
+        inputs.positionRadians = getPosition();
         
         this.motor.setVoltage(
-            (this.desiredRadians - Units.rotationsToRadians(getPosition())) * HoodConstants.kP +
+            (this.desiredRadians - getPosition()) * HoodConstants.kP +
             -this.motor.getVelocity().getValueAsDouble() * HoodConstants.kD
         );
     }
 
     @Override
     public void setPosition(double positionRadians) {
-        this.desiredRadians = MathUtil.clamp(positionRadians, HoodConstants.MIN_DEGREES, HoodConstants.MAX_DEGREES);
+        this.desiredRadians = MathUtil.clamp(positionRadians, Units.degreesToRadians(HoodConstants.MIN_DEGREES), Units.degreesToRadians(HoodConstants.MAX_DEGREES));
     }
 
+    /**
+     * Returns the position of the hood, in radians.
+     */
     private double getPosition() {
-        return this.encoder.get() * HoodConstants.ENCODER_HOOD_RATIO;
+        return Units.rotationsToRadians(this.encoder.get() * HoodConstants.ENCODER_HOOD_RATIO) 
+            + HoodConstants.HOOD_OFFSET_RADIANS;
     }
 }
