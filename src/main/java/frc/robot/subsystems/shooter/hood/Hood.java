@@ -18,6 +18,7 @@ public class Hood extends SubsystemBase {
     }
 
     public void setPosition(double positionRadians) {
+        Logger.recordOutput("Hood/desiredPositionRadians", positionRadians);
         this.io.setPosition(positionRadians);
     }
 }

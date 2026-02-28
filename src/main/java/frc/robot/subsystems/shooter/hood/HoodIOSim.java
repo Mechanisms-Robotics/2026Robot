@@ -18,7 +18,7 @@ public class HoodIOSim implements HoodIO {
             false,
             Units.degreesToRadians(22.0)
         );
-    private final double kP = 1.0;
+    private final double kP = 0.1;
     private final double kD = 0.0;
     
     private double desiredRadians = 22.0;
@@ -27,13 +27,13 @@ public class HoodIOSim implements HoodIO {
 
     @Override
     public void updateInputs(HoodIOInputs inputs) {
-        sim.setInputVoltage(
-            (this.desiredRadians - sim.getAngleRads()) * this.kP
-            -sim.getVelocityRadPerSec() * kD
+        this.sim.setInputVoltage(
+            (this.desiredRadians - this.sim.getAngleRads()) * this.kP
+            -this.sim.getVelocityRadPerSec() * kD
         );
-        sim.update(0.2);
+        this.sim.update(0.2);
 
-        inputs.positionRadians = sim.getAngleRads();
+        inputs.positionRadians = this.sim.getAngleRads();
     }
 
     @Override

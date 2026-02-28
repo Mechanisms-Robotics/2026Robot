@@ -133,9 +133,9 @@ public class RobotContainer {
             );
 
         this.controller.R1()
-            .onTrue(new InstantCommand(() -> flywheel.setVelocity(5)));
+            .onTrue(new InstantCommand(() -> this.flywheel.setVelocity(5)));
         this.controller.R1()
-            .onFalse(new InstantCommand(() -> flywheel.setVelocity(0)));
+            .onFalse(new InstantCommand(() -> this.flywheel.setVelocity(0)));
 
         this.drivetrain.setDefaultCommand(
             new RunCommand(
