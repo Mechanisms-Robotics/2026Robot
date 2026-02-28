@@ -34,7 +34,7 @@ public class HoodIOSim implements HoodIO {
         );
         this.sim.update(0.2);
 
-        inputs.positionRadians = this.sim.getAngleRads();
+        inputs.positionDegrees = Units.radiansToDegrees(this.sim.getAngleRads());
     }
 
     @Override
