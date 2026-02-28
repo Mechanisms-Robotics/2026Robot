@@ -160,6 +160,7 @@ public class PoseEstimator8736 {
      *
      * @return The current pose estimate
      */
+    @AutoLogOutput(key = "PoseEstimator8736/EstimatedPosition")
     public Pose2d getEstimatedPose() {
         return poseEstimator.getEstimatedPosition();
     }

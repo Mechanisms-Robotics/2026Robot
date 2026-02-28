@@ -62,4 +62,9 @@ public class GyroIORedux implements GyroIO {
         yawTimestampQueue.clear();
         yawPositionQueue.clear();
     }
+
+    @Override
+    public void zeroGyro() {
+        this.gyro.setYaw(0.0);
+    }
 }
