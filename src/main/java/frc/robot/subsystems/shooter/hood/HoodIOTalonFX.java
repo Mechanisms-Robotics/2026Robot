@@ -23,7 +23,7 @@ public class HoodIOTalonFX implements HoodIO {
 
     @Override
     public void updateInputs(HoodIOInputs inputs) {
-        inputs.positionRadians = getPosition();
+        inputs.positionDegrees = Units.radiansToDegrees(getPosition());
         
         this.motor.setVoltage(
             (this.desiredRadians - getPosition()) * HoodConstants.kP +
