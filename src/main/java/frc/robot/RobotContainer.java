@@ -182,7 +182,7 @@ public class RobotContainer {
                 new InstantCommand(() -> {
                     // Apply 12V to feeder motors when the square button is pressed
                     this.feeder.startFeeding();
-                })
+                }, this.feeder).withName("StartFeeding")
             );
         
         this.controller
@@ -191,7 +191,7 @@ public class RobotContainer {
                 new InstantCommand(() -> {
                     // Apply 12V to feeder motors when the triangle button is pressed
                     this.feeder.reverseFeeding();
-                })
+                }, this.feeder).withName("ReverseFeeding")
             );
 
         this.controller
@@ -200,7 +200,7 @@ public class RobotContainer {
                 new InstantCommand(() -> {
                     // Apply 12V to feeder motors when the circle button is pressed
                     this.feeder.stopFeeding();
-                })
+                }, this.feeder).withName("StopFeeding")
             );
     }
 
