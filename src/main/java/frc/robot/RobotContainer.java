@@ -239,7 +239,7 @@ public class RobotContainer {
                 Optional<Trajectory<SwerveSample>> visionTesting2026 = Choreo.loadTrajectory(
                     "VisionTesting2026"
                 );
-                autoCommand = new FollowPath(visionTesting2026.get(), this.drivetrain, true);
+                autoCommand = new FollowPath(visionTesting2026.get(), this.drivetrain, true); // this path was written on red side
                 break;
         }
 
