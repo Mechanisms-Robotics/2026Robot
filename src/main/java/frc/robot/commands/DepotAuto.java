@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.commands;
 
 import java.util.Optional;
 
@@ -16,9 +16,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.turret.Turret;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class FollowPath extends Command {
+public class DepotAuto extends SequentialCommandGroup {
 
   private final Trajectory<SwerveSample> trajectory;
   private final Drivetrain drivetrain;
@@ -28,7 +33,8 @@ public class FollowPath extends Command {
   private final Timer timer = new Timer();
   private final HolonomicDriveController holonomicController;
   
-  public FollowPath(
+  public DepotAuto(
+      Turret turret,
       Trajectory<SwerveSample> trajectory,
       Drivetrain drivetrain,
       boolean resetPose) {
