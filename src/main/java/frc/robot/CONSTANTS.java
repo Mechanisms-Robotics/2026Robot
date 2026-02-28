@@ -1,16 +1,15 @@
 /******************************************************************************
- *         
- *                 ** REBUILT **
- *                                                                    *
- *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE REBUILT COMPETITION BOT.          *
  *                                                                            *
- *  DO NOT USE THIS FILE FOR THE MECHIATTO PRACTICE BOT.                      *
+ *                 ** MECHIATTO **                                            *
+ *                                                                            *
+ *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE MECHIATTO PRACTICE BOT.   *
+ *                                                                            *
+ *  DO NOT USE THIS FILE FOR THE COMPETITION BOT.                             *
  *                                                                            *
  *  MAKE SURE TO UPDATE CONSTANTS HERE ONLY IF THEY ARE SPECIFIC TO THE       *
- *  COMPETITION BOT.                                                          *
+ *  MECHIATTO PRACTICE BOT.                                                   *
  *                                                                            *
  ******************************************************************************/
-
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -98,27 +97,27 @@ public class CONSTANTS {
         );
     }
 
-    public static final String CAMERA1_NAME = "PhotonCamera1";
+    public static final String CAMERA1_NAME = "PhotonCameraLeft";
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(0.5), // forward distances from the center of the robot
-        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
+        Units.inchesToMeters(13.0), // leftward distance from the center of the robot
         Units.inchesToMeters(25.375), 
         new Rotation3d(
             0, 
             0, 
-            Math.toRadians(-90)    // camera is mounted sideways
+            Math.toRadians(90)    // camera is mounted sideways
         )
     );
 
-    public static final String CAMERA2_NAME = "PhotonCamera2";
+    public static final String CAMERA2_NAME = "PhotonCameraRight";
     public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(0.5), // figure out these
-        Units.inchesToMeters(13.0), 
+        Units.inchesToMeters(-13.0), 
         Units.inchesToMeters(25.375), 
         new Rotation3d(
             0,
             0,
-            Math.toRadians(90)
+            Math.toRadians(-90)
         )
     );
     //Localization
@@ -251,7 +250,7 @@ public class CONSTANTS {
 
         private static final double DRIVE_GEAR_RATIO = 6.75;
         private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
-        public static final Distance WHEEL_RADIUS = Inches.of(2.23);
+        public static final Distance WHEEL_RADIUS = Inches.of(1.99);
 
         private static final boolean INVERT_LEFT_SIDE = false;
         private static final boolean INVERT_RIGHT_SIDE = true;
@@ -298,8 +297,8 @@ public class CONSTANTS {
             .withSteerFrictionVoltage(STEER_FRICTION_VOLTAGE)
             .withDriveFrictionVoltage(DRIVE_FRICTION_VOLTAGE);
 
-        private static final double TRACK_WIDTH_METERS = 0.55;
-        private static final double TRACK_LENGTH_METERS = 0.55;
+        private static final double TRACK_WIDTH_METERS = 0.48;
+        private static final double TRACK_LENGTH_METERS = 0.74;
     
         // Front Left
         private static final int FRONT_LEFT_DRIVE_MOTOR_ID = 1;
@@ -328,8 +327,8 @@ public class CONSTANTS {
         private static final Distance FRONT_RIGHT_Y_POS = Meters.of(-TRACK_WIDTH_METERS / 2);
 
         // Back Left
-        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 4; // this is swapped with steer on Mechiatto for some reason
-        private static final int BACK_LEFT_STEER_MOTOR_ID = 8;
+        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 8;
+        private static final int BACK_LEFT_STEER_MOTOR_ID = 4;
         private static final int BACK_LEFT_ENCODER_ID = 4;
         private static final Angle BACK_LEFT_ENCODER_OFFSET = Rotations.of(
             0
@@ -341,8 +340,8 @@ public class CONSTANTS {
         private static final Distance BACK_LEFT_Y_POS = Meters.of(TRACK_WIDTH_METERS / 2);
 
         // Back Right
-        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 3; // this is swapped with steer on Mechiatto for some reason
-        private static final int BACK_RIGHT_STEER_MOTOR_ID = 7;
+        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 7;
+        private static final int BACK_RIGHT_STEER_MOTOR_ID = 3;
         private static final int BACK_RIGHT_ENCODER_ID = 3;
         private static final Angle BACK_RIGHT_ENOCDER_OFFSET = Rotations.of(
             0

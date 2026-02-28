@@ -114,7 +114,7 @@ public class RobotContainer {
             .cross()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.drivetrain.zeroGyro();
+                    this.drivetrain.resetHeading();
                 })
             );
 
@@ -175,7 +175,8 @@ public class RobotContainer {
             "TestPath2026",
             "BackUpCenter",
             "BackUpLeft",
-            "OverBump"
+            "OverBump",
+            "VisionTesting2026"
         };
 
 
@@ -233,6 +234,12 @@ public class RobotContainer {
                     "OverBump"
                 );
                 autoCommand = new FollowPath(overBump.get(), this.drivetrain, true);
+                break;
+            case "VisionTesting2026":
+                Optional<Trajectory<SwerveSample>> visionTesting2026 = Choreo.loadTrajectory(
+                    "VisionTesting2026"
+                );
+                autoCommand = new FollowPath(visionTesting2026.get(), this.drivetrain, true);
                 break;
         }
 

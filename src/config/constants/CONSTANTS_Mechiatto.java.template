@@ -97,27 +97,27 @@ public class CONSTANTS {
         );
     }
 
-    public static final String CAMERA1_NAME = "PhotonCamera1";
+    public static final String CAMERA1_NAME = "PhotonCameraLeft";
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(0.5), // forward distances from the center of the robot
-        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
+        Units.inchesToMeters(13.0), // leftward distance from the center of the robot
         Units.inchesToMeters(25.375), 
         new Rotation3d(
             0, 
             0, 
-            Math.toRadians(-90)    // camera is mounted sideways
+            Math.toRadians(90)    // camera is mounted sideways
         )
     );
 
-    public static final String CAMERA2_NAME = "PhotonCamera2";
+    public static final String CAMERA2_NAME = "PhotonCameraRight";
     public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(0.5), // figure out these
-        Units.inchesToMeters(13.0), 
+        Units.inchesToMeters(-13.0), 
         Units.inchesToMeters(25.375), 
         new Rotation3d(
             0,
             0,
-            Math.toRadians(90)
+            Math.toRadians(-90)
         )
     );
     //Localization
