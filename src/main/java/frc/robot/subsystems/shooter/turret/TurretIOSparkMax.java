@@ -9,8 +9,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -60,44 +58,18 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
     private final DutyCycleEncoder encoder1 = new DutyCycleEncoder(0);
     private final DutyCycleEncoder encoder2 = new DutyCycleEncoder(1);
     
-    // Control constants
-    private final int SMART_CURRENT_LIMIT = 20;
-    private final double kP = 0.0;
-    private final double kD = 0.0;
-
-    // Physical constants
-    private final double minPosition = -0.5;
-    private final double maxPosition = 0.5;
-    private final double turretTeeth = 202.0;
-    private final int geer1Teeth = 30;
-    private final int geer2Teeth = 28;
-    private final double ratio1 = (double) turretTeeth / geer1Teeth;
-    private final double ratio2 = (double) turretTeeth / geer2Teeth;
-    private final double motorGearRatio = (30.0 * 10.0) / turretTeeth;  
-
     // changed this to rotation2d because easier to work with
     private Rotation2d desiredPosition = Rotation2d.kZero;
 
     public TurretIOSparkMax() {
-        var config = new SparkMaxConfig();
-        config.absoluteEncoder
-            .setSparkMaxDataPortConfig()
-            .positionConversionFactor(1)
-            .velocityConversionFactor(1)
-            .inverted(false);
-
-        config
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(SMART_CURRENT_LIMIT);
-        
-        this.motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.motor.configure(TurretConstants.CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
     public void updateInputs(TurretIOInputs inputs) {
-        inputs.velocityRadiansPerSec = Units.rotationsToRadians(getVelocity());
+        inputs.velocityRadiansPerSec = Units.rotationsToRadians(this.getVelocity());
 
-        Optional<Rotation2d> position = getPosition();
+        Optional<Rotation2d> position = this.getPosition();
         if (position.isPresent()) {
             inputs.positionRadians = position.get().getRadians();
             
@@ -115,10 +87,11 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
                 error -= Math.signum(error) * (Math.PI * 2);
             }
 
-            this.motor.setVoltage(error * kP
-                                   - getVelocity() * kD);
-            Logger.recordOutput("Turret/appliedVoltage", error * kP - getVelocity() * kD);
+            double appliedVoltage = error * TurretConstants.kP
+                                   - this.getVelocity() * TurretConstants.kD;
 
+            this.motor.setVoltage(appliedVoltage);
+            Logger.recordOutput("Turret/appliedVoltage", appliedVoltage);
         } else {
             inputs.positionRadians = 0.0;
             this.motor.setVoltage(0.0);
@@ -139,7 +112,7 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
      * @return velocity of the turret in RPM
      */
     public double getVelocity() {
-        return this.motorEncoder.getVelocity() * motorGearRatio;
+        return this.motorEncoder.getVelocity() * TurretConstants.MOTOR_GEAR_RATIO;
     }
 
     /**
@@ -156,8 +129,8 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
 
         /* Minimum and maximum number of rotations the first encoder could be at WITHOUT wrap around not accounting 
            for the rotation read from the encoder. */
-        double minEncoder1Rotations = ratio1 * minPosition;
-        double maxEncoder1Rotations = ratio1 * maxPosition;
+        double minEncoder1Rotations = TurretConstants.RATIO1 * TurretConstants.MIN_POSITION;
+        double maxEncoder1Rotations = TurretConstants.RATIO1 * TurretConstants.MAX_POSITION;
         // Convert min and max bounds to integers for looping purposes
         int minPossible = (int) Math.floor(minEncoder1Rotations - abs1) - 1;
         int maxPossible = (int) Math.ceil(maxEncoder1Rotations - abs1) + 1;
@@ -173,9 +146,9 @@ public class TurretIOSparkMax extends SubsystemBase implements TurretIO {
            between the corresponding/predicted encoder 2 position and the actual position from the encoder. */
         for (int n = minPossible; n < maxPossible; n++) {
             // Possible position of the turret given encoder1's rotation
-            double possiblePosition = (abs1 + n) / ratio1;
+            double possiblePosition = (abs1 + n) / TurretConstants.RATIO1;
             // Predicted rotation of encoder2 given the possible position of the turret
-            double abs2Pred = MathUtil.inputModulus(ratio2 * possiblePosition, 0.0, 1.0);
+            double abs2Pred = MathUtil.inputModulus(TurretConstants.RATIO2 * possiblePosition, 0.0, 1.0);
 
             double error = Math.abs(abs2Pred - abs2);
             error = error > 0.5 ? 1.0 - error : error;

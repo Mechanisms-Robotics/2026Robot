@@ -37,6 +37,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -165,23 +167,36 @@ public class CONSTANTS {
         // TODO: set these correctly
         public static final double FORWARD_LIMIT = 3.2;
         public static final double REVERSE_LIMIT = -3.2;
+        public static final double MIN_POSITION = -0.5;
+        public static final double MAX_POSITION = 0.5;
+        public static final double TURRET_TEETH = 202.0;
+        public static final int GEER1_TEETH = 30;
+        public static final int GEER2_TEETH = 28;
+        public static final double RATIO1 = (double) TURRET_TEETH / GEER1_TEETH;
+        public static final double RATIO2 = (double) TURRET_TEETH / GEER2_TEETH;
+        public static final double MOTOR_GEAR_RATIO = (30.0 * 10.0) / TURRET_TEETH;
+
+        public static final double kP = 0.0;
+        public static final double kD = 0.0;
+
         // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
             0.0, 0.0, 0.372845, Rotation3d.kZero
         );
-        public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(60))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(20))
-                    .withSupplyCurrentLimitEnable(true)
-            )
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(InvertedValue.CounterClockwise_Positive)   
-                    .withNeutralMode(NeutralModeValue.Brake)
-            );
+
+        public static final SparkMaxConfig CONFIG = new SparkMaxConfig();
+
+        static {
+            CONFIG.absoluteEncoder
+                .setSparkMaxDataPortConfig()
+                    .positionConversionFactor(1)
+                    .velocityConversionFactor(1)
+                    .inverted(false);
+
+            CONFIG
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(20); // amps
+        }
     }
 
     public static class FlywheelConstants {
