@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DepotAuto;
 import frc.robot.commands.ChaosRightAuto;
 import frc.robot.commands.ChaosLeftAuto;
@@ -49,6 +50,7 @@ import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.HoodIO;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
+import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
@@ -131,10 +133,11 @@ public class RobotContainer {
             );
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
-            
+            this.hood = new Hood(new HoodIOTalonFX());
+
             // TODO: These are empty while we build and test the robot
             this.turret = new Turret(new TurretIO() {});
-            this.hood = new Hood(new HoodIO() {});
+
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
@@ -152,6 +155,7 @@ public class RobotContainer {
         );
 
         configureBindings();
+        configureTestBindings(); // testing individual mechanisms 
         publishAutoNames();
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
@@ -164,11 +168,6 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
-
-        this.controller.R1()
-            .onTrue(new InstantCommand(() -> this.flywheel.setVelocity(5)));
-        this.controller.R1()
-            .onFalse(new InstantCommand(() -> this.flywheel.setVelocity(0)));
 
         this.drivetrain.setDefaultCommand(
             new RunCommand(
@@ -217,31 +216,75 @@ public class RobotContainer {
             )
         );
 
+    }
+
+    private void configureTestBindings() {
+        
          this.controller
             .square()
             .onTrue(
                 new InstantCommand(() -> {
-                    // Apply 12V to feeder motors when the square button is pressed
-                    this.feeder.startFeeding();
-                }, this.feeder).withName("StartFeeding")
-            );
-        
-        this.controller
-            .triangle()
-            .onTrue( 
-                new InstantCommand(() -> {
-                    // Apply 12V to feeder motors when the triangle button is pressed
-                    this.feeder.reverseFeeding();
-                }, this.feeder).withName("ReverseFeeding")
+                    this.feeder.adjustSpindexerVolts(CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                })
             );
 
         this.controller
             .circle()
             .onTrue(
                 new InstantCommand(() -> {
-                    // Apply 12V to feeder motors when the circle button is pressed
-                    this.feeder.stopFeeding();
-                }, this.feeder).withName("StopFeeding")
+                    this.feeder.adjustSpindexerVolts(-CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                })
+            );
+
+        // D-Pad up/down move the hood (use POV via Trigger since CommandPS4Controller doesn't expose dpad triggers)
+        new Trigger(() -> this.controller.getHID().getPOV() == 0)
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                })
+            );
+
+        new Trigger(() -> this.controller.getHID().getPOV() == 180)
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                })
+            );
+
+        // Flywheel: R1 = decrease, R2 = increase
+        this.controller
+            .R1()
+            .onTrue(
+                new InstantCommand(() -> {
+                    double newRPM = this.flywheel.getRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(newRPM);
+                })
+            );
+
+        this.controller
+            .R2()
+            .onTrue(
+                new InstantCommand(() -> {
+                    double newRPM = this.flywheel.getRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(newRPM);
+                })
+            );
+
+        // Kicker: L1 = decrease, L2 = increase
+        this.controller
+            .L1()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
+                })
+            );
+
+        this.controller
+            .L2()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
+                })
             );
     }
 

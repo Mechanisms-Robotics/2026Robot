@@ -62,4 +62,20 @@ public class Feeder extends SubsystemBase {
         this.setMotorOpenLoop(this.desiredVoltsKicker, this.kickFeederIO);
         this.setMotorOpenLoop(this.desiredVoltsSpindexer, this.spindexerFeederIO);
     }
+
+    /** Adjust the spindexer desired voltage by delta (no clamping) and apply it. */
+    public void adjustSpindexerVolts(double delta) {
+        // Simple and explicit: just add the delta. Caller controls limits.
+        this.desiredVoltsSpindexer = this.desiredVoltsSpindexer + delta;
+        this.setMotorOpenLoop(this.desiredVoltsSpindexer, this.spindexerFeederIO);
+        Logger.recordOutput("Feeder/Spindexer/DesiredVolts", this.desiredVoltsSpindexer);
+    }
+
+    /** Adjust the kicker desired voltage by delta (no clamping) and apply it. */
+    public void adjustKickerVolts(double delta) {
+        // Simple and explicit: just add the delta. Caller controls limits.
+        this.desiredVoltsKicker = this.desiredVoltsKicker + delta;
+        this.setMotorOpenLoop(this.desiredVoltsKicker, this.kickFeederIO);
+        Logger.recordOutput("Feeder/Kicker/DesiredVolts", this.desiredVoltsKicker);
+    }
 }

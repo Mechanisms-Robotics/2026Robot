@@ -148,6 +148,12 @@ public class CONSTANTS {
     public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -4.0;
     public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
+    //TEST Constants
+    public static final double SPINDEXER_DELTA_VOLTS = 0.5; // volts per press
+    public static final double KICKER_DELTA_VOLTS = 0.5; // volts per press
+    public static final double FLYWHEEL_DELTA_RPM = 50.0; // rpm per press
+    public static final double HOOD_DELTA_DEGREES = 1.0; // degrees per press
+
     public static enum Mode {
         /** Running on a real robot. */
         REAL,
@@ -158,6 +164,7 @@ public class CONSTANTS {
         /** Replaying from a log file. */
         REPLAY,
     }
+
 
     public static class TurretConstants {
         // TODO: Find this by moving the turret to zero and recording the error.
@@ -245,9 +252,9 @@ public class CONSTANTS {
                 new CurrentLimitsConfigs()
                     .withStatorCurrentLimit(Amps.of(60))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(20))
+                    .withSupplyCurrentLimit(Amps.of(2))
                     .withSupplyCurrentLimitEnable(true)
-            );
+            ); //TODO: adjust SupplyCurrentLimit as needed
     }
 
     // NEW DRIVETRAIN CONSTANTS

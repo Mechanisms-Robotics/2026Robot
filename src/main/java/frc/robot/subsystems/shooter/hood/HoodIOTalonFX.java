@@ -13,7 +13,7 @@ public class HoodIOTalonFX implements HoodIO {
     // Kraken X44
     private final TalonFX motor = new TalonFX(23);
     // REV throughbore encoder
-    private final DutyCycleEncoder encoder = new DutyCycleEncoder(3);
+    private final DutyCycleEncoder encoder = new DutyCycleEncoder(0);
 
     private double desiredRadians = 0.0;
     
