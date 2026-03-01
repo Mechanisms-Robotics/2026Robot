@@ -67,7 +67,7 @@ public class RobotContainer {
     public final Drivetrain drivetrain;
     public final Turret turret;
     private final Flywheel flywheel;
-    private final Hood hood;
+    public final Hood hood;
     
     public final SuperStructure superStructure;
     @SuppressWarnings("unused")

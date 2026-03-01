@@ -15,7 +15,7 @@ public class HoodIOTalonFX implements HoodIO {
     // REV throughbore encoder
     private final DutyCycleEncoder encoder = new DutyCycleEncoder(0);
 
-    private double desiredRadians = 0.0;
+    private double desiredRadians = this.getPosition();
     
     public HoodIOTalonFX() {
         PhoenixUtil.tryUntilOk(5, () -> this.motor.getConfigurator().apply(HoodConstants.CONFIG));
@@ -23,11 +23,12 @@ public class HoodIOTalonFX implements HoodIO {
 
     @Override
     public void updateInputs(HoodIOInputs inputs) {
-        inputs.positionDegrees = Units.radiansToDegrees(getPosition());
+        double position = this.getPosition();
+
+        inputs.positionDegrees = Units.radiansToDegrees(position);
         
         this.motor.setVoltage(
-            (this.desiredRadians - getPosition()) * HoodConstants.kP +
-            -this.motor.getVelocity().getValueAsDouble() * HoodConstants.kD
+            (this.desiredRadians - position) * HoodConstants.kP
         );
     }
 
