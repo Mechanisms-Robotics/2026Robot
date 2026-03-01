@@ -129,6 +129,7 @@ public class RobotContainer {
                 new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
             );
 
+            // TODO: These are empty while we build and test the robot
             this.flywheel = new Flywheel(new FlywheelIO() {});
             this.turret = new Turret(new TurretIO() {});
             this.hood = new Hood(new HoodIO() {});

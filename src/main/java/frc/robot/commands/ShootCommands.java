@@ -19,6 +19,8 @@ public class ShootCommands {
             this.hood = hood;
             this.flywheel = flywheel;
             this.shotSupplier = shotSupplier;
+
+            addRequirements(this.hood, this.flywheel);
         }
 
         @Override
@@ -39,6 +41,7 @@ public class ShootCommands {
 
         public Shoot(Feeder feeder) {
             this.feeder = feeder;
+            addRequirements(this.feeder);
         }
 
         @Override

@@ -86,8 +86,9 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
-        return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 100
-            && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 3.0
-            && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.poseEstimator.getEstimatedPose().getRotation())).getDegrees()) < 3.0;
+        return true; // TODO: THIS IS TEMPORARY FOR TESTING
+        // return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 100
+        //     && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 3.0
+        //     && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.poseEstimator.getEstimatedPose().getRotation())).getDegrees()) < 3.0;
     }
 }
