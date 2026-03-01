@@ -17,9 +17,6 @@ public class Intake extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);
 
-        // Logger.recordOutput("Intake/velocityRPM", inputs.FILLER);
-        // Logger.recordOutput("Intake/currentAmps", inputs.FILLER);
-        // Logger.recordOutput("Intake/hasNote", hasNote());
     }
 
     public void intake() {

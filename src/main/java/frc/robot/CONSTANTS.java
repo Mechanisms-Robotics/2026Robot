@@ -37,6 +37,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -149,6 +151,23 @@ public class CONSTANTS {
     public static class IntakeConstants {
         public static final double INTAKE_DUTY_CYCLE = 0.75;
         public static final double OUTTAKE_DUTY_CYCLE = -0.25;
+
+        public static final int ARM_ID_LEFT = 12;
+        public static final int ARM_ID_RIGHT = 13;
+        public static final int ROLLERS_ID = 14;
+
+        public static final double GEAR_RATIO_ARM = 10 / 84.0;
+
+        public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
+        static {
+            CONFIG_LEFT.encoder.positionConversionFactor(GEAR_RATIO_ARM);
+            CONFIG_LEFT.encoder.velocityConversionFactor(GEAR_RATIO_ARM);
+            // CONFIG_LEFT.softLimits=;
+            CONFIG_LEFT.smartCurrentLimit(30);
+            //CONFIG_LEFT.
+        }
+
+    
     }
 
     public static class TurretConstants {

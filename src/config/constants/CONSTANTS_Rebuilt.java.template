@@ -149,6 +149,9 @@ public class CONSTANTS {
     public static class IntakeConstants {
         public static final double INTAKE_DUTY_CYCLE = 0.75;
         public static final double OUTTAKE_DUTY_CYCLE = -0.25;
+
+        public static final int MOTOR_ID = 12;
+        
     }
 
     public static class TurretConstants {
