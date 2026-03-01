@@ -101,7 +101,8 @@ public class CONSTANTS {
         );
     }
 
-    public static final String CAMERA1_NAME = "PhotonCamera1";
+    public static final String CAMERA1_NAME = "PhotonCameraLeft";
+
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(0.5), // forward distances from the center of the robot
         Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
@@ -127,17 +128,6 @@ public class CONSTANTS {
     //Localization
     public static final int GYRO_CAN_ID = 9;
 
-    // Feeder motor CAN IDs (three Kraken/TalonFX motors)
-    // TODO: Replace these with actual hardware IDs when we have them
-    public static final int KICKER_MOTOR_CAN_ID = 11;
-    public static final int SPINDEXER_MOTOR_CAN_ID = 10;
-
-    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = 12.0;
-    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = 12.0;
-    public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = -6.0;
-
-
-
     // Path Following Constants
     public static final double PATH_FOLLOWER_P_X = 10.0;
     public static final double PATH_FOLLOWER_P_Y = PATH_FOLLOWER_P_X;
@@ -148,6 +138,15 @@ public class CONSTANTS {
     public static final Mode CURRENT_MODE = RobotBase.isReal()
         ? Mode.REAL
         : SIM_MODE;
+
+    
+    // Feeder Constants
+    public static final int KICKER_MOTOR_CAN_ID = 11;
+    public static final int SPINDEXER_MOTOR_CAN_ID = 10;
+
+    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = 0.5;
+    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = 0.5;
+    public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = -0.2;
 
     public static enum Mode {
         /** Running on a real robot. */

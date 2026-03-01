@@ -31,8 +31,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import frc.robot.commands.DepotAuto;
+import frc.robot.commands.ChaosRightAuto;
+import frc.robot.commands.ChaosLeftAuto;
 import frc.robot.commands.DriveCommands;
-
+import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
 import frc.robot.subsystems.drivetrain.GyroIO;
@@ -48,6 +51,7 @@ import frc.robot.subsystems.shooter.hood.HoodIOSim;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
+
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
@@ -154,7 +158,7 @@ public class RobotContainer {
             .cross()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.drivetrain.zeroGyro();
+                    this.drivetrain.resetHeading();
                 })
             );
 
@@ -216,16 +220,16 @@ public class RobotContainer {
                 new InstantCommand(() -> {
                     // Apply 12V to feeder motors when the square button is pressed
                     this.feeder.startFeeding();
-                })
+                }, this.feeder).withName("StartFeeding")
             );
         
         this.controller
             .triangle()
-            .onTrue(
+            .onTrue( 
                 new InstantCommand(() -> {
                     // Apply 12V to feeder motors when the triangle button is pressed
                     this.feeder.reverseFeeding();
-                })
+                }, this.feeder).withName("ReverseFeeding")
             );
 
         this.controller
@@ -234,20 +238,25 @@ public class RobotContainer {
                 new InstantCommand(() -> {
                     // Apply 12V to feeder motors when the circle button is pressed
                     this.feeder.stopFeeding();
-                })
+                }, this.feeder).withName("StopFeeding")
             );
     }
 
     private void publishAutoNames() {
         String[] autoNames = {
-            "Wheel Characterization",
-            "Drive Feedforward Characterization",
-            "RotationTuning",
-            "TranslationTuning",
-            "TestPath2026",
-            "BackUpCenter",
-            "BackUpLeft",
-            "OverBump"
+            // "Wheel Characterization",
+            // "Drive Feedforward Characterization",
+            // "RotationTuning",
+            // "TranslationTuning",
+            // "TestPath2026",
+            // "BackUpCenter",
+            // "BackUpLeft",
+            // "OverBump",
+            // "VisionTesting2026",
+            "Depot Auto",
+            "Chaos Right Auto",
+            "Chaos Left Auto"
+            
         };
 
 
@@ -264,6 +273,15 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
+            case "Depot Auto":
+                autoCommand = new DepotAuto(this.drivetrain);
+                break;
+            case "Chaos Right Auto":
+                autoCommand = new ChaosRightAuto(this.drivetrain);
+                break;
+            case "Chaos Left Auto":
+                autoCommand = new ChaosLeftAuto(this.drivetrain);
+                break;
             case "Wheel Characterization":
                 autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);
                 break;
@@ -306,8 +324,13 @@ public class RobotContainer {
                 );
                 autoCommand = new FollowPath(overBump.get(), this.drivetrain, true);
                 break;
+            case "VisionTesting2026":
+                Optional<Trajectory<SwerveSample>> visionTesting2026 = Choreo.loadTrajectory(
+                    "VisionTesting2026"
+                );
+                autoCommand = new FollowPath(visionTesting2026.get(), this.drivetrain, true); // this path was written on red side
+                break;
         }
-
 
         autoCommand.setName(name);
         return autoCommand;
