@@ -144,9 +144,9 @@ public class CONSTANTS {
     public static final int KICKER_MOTOR_CAN_ID = 11;
     public static final int SPINDEXER_MOTOR_CAN_ID = 10;
 
-    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = 0.5;
-    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = 0.5;
-    public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = -0.2;
+    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -10.0;
+    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -4.0;
+    public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
     public static enum Mode {
         /** Running on a real robot. */
