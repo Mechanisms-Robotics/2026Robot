@@ -5,15 +5,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.CONSTANTS.HoodConstants;
 import frc.robot.util.PhoenixUtil;
 
 public class HoodIOTalonFX implements HoodIO {
     // Kraken X44
     private final TalonFX motor = new TalonFX(23);
-    // REV throughbore encoder
-    private final DutyCycleEncoder encoder = new DutyCycleEncoder(3);
 
     private double desiredRadians = 0.0;
     
@@ -40,7 +37,7 @@ public class HoodIOTalonFX implements HoodIO {
      * Returns the position of the hood, in radians.
      */
     private double getPosition() {
-        return Units.rotationsToRadians(this.encoder.get() * HoodConstants.ENCODER_HOOD_RATIO) 
+        return Units.rotationsToRadians(this.motor.getPosition().getValueAsDouble()) 
             + HoodConstants.HOOD_OFFSET_RADIANS;
     }
 }
