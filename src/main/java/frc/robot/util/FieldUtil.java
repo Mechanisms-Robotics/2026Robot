@@ -20,10 +20,10 @@ public class FieldUtil {
         return Alliance.Blue;
     }
     
-    public static boolean inAllianceZone(double robotX) {
+    public static boolean inAllianceZone(Pose2d robot) {
         return getAlliance().equals(Alliance.Blue) ?
-            robotX < FieldConstants.BLUE_ALLIANCE_ZONE
-            : robotX > FieldConstants.RED_ALLIANCE_ZONE;
+            robot.getX() < FieldConstants.BLUE_ALLIANCE_ZONE
+            : robot.getX() > FieldConstants.RED_ALLIANCE_ZONE;
     }
 
     public static Pose3d getHub() {

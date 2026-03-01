@@ -8,10 +8,11 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CONSTANTS.TurretConstants;
+import frc.robot.ShotCalculator.ShotData;
 import frc.robot.commands.ShootCommands;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -26,9 +27,9 @@ public class SuperStructure extends SubsystemBase {
     private final Feeder feeder;
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
+    private ShotData shotData = new ShotData(null, null, 0);
 
-    private final Command aimHubCommand;
-    private final Command aimShuttleCommand;
+    private final Command aimCommand;
     private final Command shootCommand;
 
     public SuperStructure(Flywheel flywheel, Turret turret, Hood hood, Feeder feeder, PoseEstimator8736 poseEstimator, Trigger shootButton, Trigger intakeButton) {
@@ -48,38 +49,25 @@ public class SuperStructure extends SubsystemBase {
             )
         );
         
-        this.aimHubCommand = ShootCommands.aimHubCommand(
-            this.hood,
-            this.flywheel,
-            this.turret,
-            this.shotCalculator,
-            this.poseEstimator
-        );
-
-        this.aimShuttleCommand = ShootCommands.aimShuttleCommand(
-            this.hood,
-            this.flywheel,
-            this.turret,
-            this.shotCalculator,
-            this.poseEstimator
-        );
-
+        this.aimCommand = new ShootCommands.Aim(this.hood, this.flywheel, () -> this.shotData);
         this.shootCommand = new ShootCommands.Shoot(this.feeder);
 
         shootButton.and(this::isAimed).whileTrue(this.shootCommand);
+        shootButton.whileTrue(this.aimCommand);
 
-        shootButton.whileTrue(
-            Commands.either(
-                this.aimHubCommand,
-                this.aimShuttleCommand,
-                () -> FieldUtil.inAllianceZone(this.poseEstimator.getEstimatedPose().getX())
-            )
+        this.turret.setDefaultCommand(
+            new RunCommand(
+                () -> this.turret.setAngle(this.shotData.shooterYaw().minus(this.poseEstimator.getEstimatedPose().getRotation()))
+            , this.turret)
         );
     }
 
     @Override
     public void periodic() {
         Pose2d robotPose = this.poseEstimator.getEstimatedPose();
+        shotData = FieldUtil.inAllianceZone(robotPose)
+            ? this.shotCalculator.calculateShot(FieldUtil.getHub())
+            : this.shotCalculator.calculateShot(FieldUtil.getShuttlePose(robotPose.getY()));
 
         Logger.recordOutput("SuperStructure/ShooterPose3d", 
             new Pose3d(
@@ -92,13 +80,15 @@ public class SuperStructure extends SubsystemBase {
             ).rotateBy(TurretConstants.ROBOT_TO_TURRET.getRotation())
         );
 
-        Logger.recordOutput("SuperStructure/AimingHub", this.aimHubCommand.isScheduled());
-        Logger.recordOutput("SuperStructure/AimingShuttle", this.aimShuttleCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/aiming", this.aimCommand.isScheduled());
         Logger.recordOutput("SuperStructure/aimed", this.isAimed());
         Logger.recordOutput("SuperStructure/shooting", this.shootCommand.isScheduled());
     }
 
     public boolean isAimed() {
-        return ShootCommands.Aim.anyAimed();
+        return true; // TODO: THIS IS TEMPORARY FOR TESTING
+        // return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 100
+        //     && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 3.0
+        //     && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.poseEstimator.getEstimatedPose().getRotation())).getDegrees()) < 3.0;
     }
 }
