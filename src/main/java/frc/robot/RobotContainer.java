@@ -45,6 +45,7 @@ import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.HoodIO;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
@@ -129,8 +130,9 @@ public class RobotContainer {
                 new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
             );
 
+            this.flywheel = new Flywheel(new FlywheelIOTalonFX());
+            
             // TODO: These are empty while we build and test the robot
-            this.flywheel = new Flywheel(new FlywheelIO() {});
             this.turret = new Turret(new TurretIO() {});
             this.hood = new Hood(new HoodIO() {});
         }
