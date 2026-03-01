@@ -16,7 +16,6 @@ import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import frc.robot.CONSTANTS.DriveConstants;
-import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +26,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -42,26 +42,36 @@ import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
+import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.shooter.hood.Hood;
+import frc.robot.subsystems.shooter.hood.HoodIO;
+import frc.robot.subsystems.shooter.hood.HoodIOSim;
+import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.subsystems.shooter.turret.TurretIO;
+import frc.robot.subsystems.shooter.turret.TurretIOSim;
 
-import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
 
-import java.util.Optional;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.TurretIOSim;
-import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 public class RobotContainer {
-
     public final Drivetrain drivetrain;
+    public final Turret turret;
+    private final Flywheel flywheel;
+    private final Hood hood;
+    
+    public final SuperStructure superStructure;
+    @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
-    public final Turret turret;
+    
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     private final Feeder feeder; 
@@ -71,7 +81,6 @@ public class RobotContainer {
     );
 
     public RobotContainer() {
-        // TODO: Think about where to initialize all of this properly
         if (CONSTANTS.CURRENT_MODE == CONSTANTS.SIM_MODE) {
             this.drivetrain = new Drivetrain(
                 new GyroIO() {},
@@ -93,11 +102,9 @@ public class RobotContainer {
                     drivetrain.poseEstimator
                 ));
 
-            this.turret = new Turret(
-                new TurretIOSim(), 
-                TurretConstants.ROBOT_TO_TURRET, 
-                this.drivetrain.poseEstimator);
-
+            this.flywheel = new Flywheel(new FlywheelIOSim());
+            this.turret = new Turret(new TurretIOSim());
+            this.hood = new Hood(new HoodIOSim());
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -123,16 +130,30 @@ public class RobotContainer {
                 new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
             );
 
-            this.turret = new Turret(
-                new TurretIOTalonFX(TurretConstants.CONFIG),
-                TurretConstants.ROBOT_TO_TURRET, 
-                this.drivetrain.poseEstimator);
+            this.flywheel = new Flywheel(new FlywheelIOTalonFX());
+            
+            // TODO: These are empty while we build and test the robot
+            this.turret = new Turret(new TurretIO() {});
+            this.hood = new Hood(new HoodIO() {});
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
+        
+        this.superStructure = new SuperStructure(
+            this.flywheel,
+            this.turret,
+            this.hood,
+            this.feeder,
+            this.drivetrain.poseEstimator,
+            // shoot button
+            this.controller.R2(),
+            // intake button
+            this.controller.L2()
+        );
 
         configureBindings();
         publishAutoNames();
+        SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
 
     private void configureBindings() {
@@ -143,6 +164,11 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
+
+        this.controller.R1()
+            .onTrue(new InstantCommand(() -> this.flywheel.setVelocity(5)));
+        this.controller.R1()
+            .onFalse(new InstantCommand(() -> this.flywheel.setVelocity(0)));
 
         this.drivetrain.setDefaultCommand(
             new RunCommand(
