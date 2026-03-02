@@ -1,15 +1,16 @@
 /******************************************************************************
+ *         
+ *                 ** REBUILT **
+ *                                                                    *
+ *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE REBUILT COMPETITION BOT.          *
  *                                                                            *
- *                 ** MECHIATTO **                                            *
- *                                                                            *
- *  THIS FILE IS FOR MANAGING THE CONSTANTS FOR THE MECHIATTO PRACTICE BOT.   *
- *                                                                            *
- *  DO NOT USE THIS FILE FOR THE COMPETITION BOT.                             *
+ *  DO NOT USE THIS FILE FOR THE MECHIATTO PRACTICE BOT.                      *
  *                                                                            *
  *  MAKE SURE TO UPDATE CONSTANTS HERE ONLY IF THEY ARE SPECIFIC TO THE       *
- *  MECHIATTO PRACTICE BOT.                                                   *
+ *  COMPETITION BOT.                                                          *
  *                                                                            *
  ******************************************************************************/
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -23,6 +24,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -35,6 +37,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -51,6 +55,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.subsystems.shooter.hood.Hood;
 
 public class CONSTANTS {
 
@@ -98,26 +103,27 @@ public class CONSTANTS {
     }
 
     public static final String CAMERA1_NAME = "PhotonCameraLeft";
+
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(0.5), // forward distances from the center of the robot
-        Units.inchesToMeters(13.0), // leftward distance from the center of the robot
+        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
         Units.inchesToMeters(25.375), 
         new Rotation3d(
             0, 
             0, 
-            Math.toRadians(90)    // camera is mounted sideways
+            Math.toRadians(-90)    // camera is mounted sideways
         )
     );
 
-    public static final String CAMERA2_NAME = "PhotonCameraRight";
+    public static final String CAMERA2_NAME = "PhotonCamera2";
     public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
         Units.inchesToMeters(0.5), // figure out these
-        Units.inchesToMeters(-13.0), 
+        Units.inchesToMeters(13.0), 
         Units.inchesToMeters(25.375), 
         new Rotation3d(
             0,
             0,
-            Math.toRadians(-90)
+            Math.toRadians(90)
         )
     );
     //Localization
@@ -134,6 +140,21 @@ public class CONSTANTS {
         ? Mode.REAL
         : SIM_MODE;
 
+    
+    // Feeder Constants
+    public static final int KICKER_MOTOR_CAN_ID = 11;
+    public static final int SPINDEXER_MOTOR_CAN_ID = 10;
+
+    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -10.0;
+    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -4.0;
+    public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
+
+    //TEST Constants
+    public static final double SPINDEXER_DELTA_VOLTS = 3; // volts per press
+    public static final double KICKER_DELTA_VOLTS = 11; // volts per press
+    public static final double FLYWHEEL_DELTA_RPM = 3000.0; // rpm per press
+    public static final double HOOD_DELTA_DEGREES = 1.0; // degrees per press
+
     public static enum Mode {
         /** Running on a real robot. */
         REAL,
@@ -145,27 +166,96 @@ public class CONSTANTS {
         REPLAY,
     }
 
+
     public static class TurretConstants {
+        // TODO: Find this by moving the turret to zero and recording the error.
+        public static final double TURRET_OFFSET = 0.0; 
+
+        // TODO: set these correctly
+        public static final double FORWARD_LIMIT = 3.2;
+        public static final double REVERSE_LIMIT = -3.2;
+        public static final double MIN_POSITION = -0.5;
+        public static final double MAX_POSITION = 0.5;
+        public static final double TURRET_TEETH = 202.0;
+        public static final int GEER1_TEETH = 30;
+        public static final int GEER2_TEETH = 28;
+        public static final double RATIO1 = (double) TURRET_TEETH / GEER1_TEETH;
+        public static final double RATIO2 = (double) TURRET_TEETH / GEER2_TEETH;
+        public static final double MOTOR_GEAR_RATIO = (30.0 * 10.0) / TURRET_TEETH;
+
+        public static final double kP = 0.0;
+        public static final double kD = 0.0;
+
         // Center of the robot to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
-            Units.inchesToMeters(8.0),
-            Units.inchesToMeters(8.0),
-            Units.inchesToMeters(33.5),
-            Rotation3d.kZero
+            0.0, 0.0, 0.372845, Rotation3d.kZero
         );
+
+        public static final SparkMaxConfig CONFIG = new SparkMaxConfig();
+
+        static {
+            CONFIG.absoluteEncoder
+                .setSparkMaxDataPortConfig()
+                    .positionConversionFactor(1)
+                    .velocityConversionFactor(1)
+                    .inverted(false);
+
+            CONFIG
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(20); // amps
+        }
+    }
+
+    public static class FlywheelConstants {
+        public static final int LEADER_ID = 21;
+        public static final int FOLLOWER_ID = 22;
+        public static final double IDLE_RPM = 0.0;
+
+        public static final TalonFXConfiguration LEADER_CONFIG = new TalonFXConfiguration()
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withSupplyCurrentLimit(Amps.of(60.0))
+            )
+            .withSlot0(
+                new Slot0Configs()
+                .withKP(0.8)
+                    .withKD(0.0)
+            )
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withInverted(InvertedValue.Clockwise_Positive)
+                    .withNeutralMode(NeutralModeValue.Coast)
+            );
+    }
+
+    public static class HoodConstants {
+        // number of rotations of the hood per gear rotation
+        public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
+        // TODO: find this by moving the hood to the minimum angle and recording the error between that and MIN_DEGREES
+        public static final double HOOD_OFFSET_DEGREES = 12; 
+        public static final double MIN_DEGREES = 22.0;
+        public static final double MAX_DEGREES = 52.0;
+
+        public static final double kP = 0.1;
+        public static final double kD = 0.0;
+
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
+            .withFeedback(
+                new FeedbackConfigs()
+                    .withSensorToMechanismRatio(48.0/12.0 * ENCODER_HOOD_RATIO)
+            )
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withInverted(InvertedValue.CounterClockwise_Positive)
+                    .withNeutralMode(NeutralModeValue.Brake)
+            )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
                     .withStatorCurrentLimit(Amps.of(60))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(20))
+                    .withSupplyCurrentLimit(Amps.of(2))
                     .withSupplyCurrentLimitEnable(true)
-            )
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(InvertedValue.CounterClockwise_Positive)   
-                    .withNeutralMode(NeutralModeValue.Brake)
-            );
+            ); //TODO: adjust SupplyCurrentLimit as needed
     }
 
     // NEW DRIVETRAIN CONSTANTS
@@ -246,11 +336,12 @@ public class CONSTANTS {
 
         // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
         // This may need to be tuned to your individual robot
+        @SuppressWarnings("unused")
         private static final double COUPLE_RATIO = 0.0;
 
         private static final double DRIVE_GEAR_RATIO = 6.75;
         private static final double STEER_GEAR_RATIO = 150.0 / 7.0; // ~21.43
-        public static final Distance WHEEL_RADIUS = Inches.of(1.99);
+        public static final Distance WHEEL_RADIUS = Inches.of(2.23);
 
         private static final boolean INVERT_LEFT_SIDE = false;
         private static final boolean INVERT_RIGHT_SIDE = true;
@@ -297,8 +388,8 @@ public class CONSTANTS {
             .withSteerFrictionVoltage(STEER_FRICTION_VOLTAGE)
             .withDriveFrictionVoltage(DRIVE_FRICTION_VOLTAGE);
 
-        private static final double TRACK_WIDTH_METERS = 0.48;
-        private static final double TRACK_LENGTH_METERS = 0.74;
+        private static final double TRACK_WIDTH_METERS = 0.55;
+        private static final double TRACK_LENGTH_METERS = 0.55;
     
         // Front Left
         private static final int FRONT_LEFT_DRIVE_MOTOR_ID = 1;
@@ -327,8 +418,8 @@ public class CONSTANTS {
         private static final Distance FRONT_RIGHT_Y_POS = Meters.of(-TRACK_WIDTH_METERS / 2);
 
         // Back Left
-        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 8;
-        private static final int BACK_LEFT_STEER_MOTOR_ID = 4;
+        private static final int BACK_LEFT_DRIVE_MOTOR_ID = 4; // this is swapped with steer on Mechiatto for some reason
+        private static final int BACK_LEFT_STEER_MOTOR_ID = 8;
         private static final int BACK_LEFT_ENCODER_ID = 4;
         private static final Angle BACK_LEFT_ENCODER_OFFSET = Rotations.of(
             0
@@ -340,8 +431,8 @@ public class CONSTANTS {
         private static final Distance BACK_LEFT_Y_POS = Meters.of(TRACK_WIDTH_METERS / 2);
 
         // Back Right
-        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 7;
-        private static final int BACK_RIGHT_STEER_MOTOR_ID = 3;
+        private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 3; // this is swapped with steer on Mechiatto for some reason
+        private static final int BACK_RIGHT_STEER_MOTOR_ID = 7;
         private static final int BACK_RIGHT_ENCODER_ID = 3;
         private static final Angle BACK_RIGHT_ENOCDER_OFFSET = Rotations.of(
             0
@@ -483,5 +574,12 @@ public class CONSTANTS {
         public static final double STD_TIMEOUT = 0.1; // Secs
         public static final double STD_TIMEOUT_LONG = 0.25; // Secs
         public static final double SYSID_TIMEOUT = 1.0; // Secs
+    }
+
+    // Manual mode constants
+    public static class ManualModeConstants {
+        public static final Rotation2d TURRET_PINNED_ANGLE = Rotation2d.fromDegrees(0.0);
+        public static final Rotation2d HOOD_PINNED_ANGLE = Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES);
+        public static final double FLYWHEEL_RPM = 3000;
     }
 }
