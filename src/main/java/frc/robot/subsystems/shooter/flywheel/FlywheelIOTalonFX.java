@@ -18,15 +18,13 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         this.follower.setControl(new Follower(this.leader.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
+    @Override
     public void updateInputs(FlywheelIOInputs inputs) {
         inputs.rpm = this.leader.getVelocity().getValueAsDouble() * 60.0;
     }
 
+    @Override
     public void setVelocity(double rpm) {
         this.leader.setControl(this.velocityRequest.withVelocity(rpm / 60.0));
-    }
-
-    public void stopPower() {
-        this.leader.setVoltage(0.0);
     }
 }
