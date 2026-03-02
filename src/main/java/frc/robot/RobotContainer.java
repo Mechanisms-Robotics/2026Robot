@@ -147,11 +147,11 @@ public class RobotContainer {
             this.feeder,
             this.drivetrain.poseEstimator,
             // shoot button
-            this.controller.button(1),
+            this.controller.R2(), // right trigger
             // intake button
-            this.controller.L2(),
+            this.controller.L2(), // left trigger
             // manual mode toggle
-            this.controller.button(3)
+            this.controller.R1() // right bumper
         );
 
         configureBindings();

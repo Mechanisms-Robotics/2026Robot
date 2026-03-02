@@ -144,17 +144,7 @@ public class ShootCommands {
             this.hood.setAngle(this.hoodAngle);
             this.turret.setAngle(this.turretAngle);
             this.flywheel.setVelocity(this.rpm);
-        }
-
-        @Override
-        public void execute() {
-            if (Math.abs(this.hood.getAngle().minus(this.hoodAngle).getDegrees()) < 3.0
-             && Math.abs(this.turret.getAngle().minus(this.turretAngle).getDegrees()) < 3.0
-             && Math.abs(this.flywheel.getRPM() - this.rpm) < 500.0) {
-                this.feeder.startFeeding();
-            } else {
-                this.feeder.stopFeeding();
-            }
+            this.feeder.startFeeding();
         }
 
         @Override

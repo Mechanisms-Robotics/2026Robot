@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CONSTANTS.TurretConstants;
+import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.ShootCommands;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -85,9 +86,9 @@ public class SuperStructure extends SubsystemBase {
             this.flywheel,
             this.turret,
             this.feeder,
-            Rotation2d.fromDegrees(30.0),
-            Rotation2d.kZero,
-            3000.0
+            ManualModeConstants.HOOD_PINNED_ANGLE,
+            ManualModeConstants.TURRET_PINNED_ANGLE,
+            ManualModeConstants.FLYWHEEL_RPM
         );
 
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
