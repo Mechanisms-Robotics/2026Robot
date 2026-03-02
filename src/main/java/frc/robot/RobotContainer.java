@@ -47,8 +47,8 @@ import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
-import frc.robot.subsystems.shooter.hood.HoodIO;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
+import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
@@ -131,7 +131,7 @@ public class RobotContainer {
             );
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
-            this.hood = new Hood(new HoodIO() {});
+            this.hood = new Hood(new HoodIOTalonFX());
 
             // TODO: These are empty while we build and test the robot
             this.turret = new Turret(new TurretIO() {});
@@ -168,7 +168,7 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
-
+        
         this.drivetrain.setDefaultCommand(
             new RunCommand(
                 () -> {

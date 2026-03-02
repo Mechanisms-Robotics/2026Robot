@@ -4,7 +4,6 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -82,12 +81,8 @@ public class SuperStructure extends SubsystemBase {
         this.shootCommand = new ShootCommands.Shoot(this.feeder);
 
         this.manualShootCommand = new ShootCommands.ManualShoot(
-            this.hood,
             this.flywheel,
-            this.turret,
             this.feeder,
-            ManualModeConstants.HOOD_PINNED_ANGLE,
-            ManualModeConstants.TURRET_PINNED_ANGLE,
             ManualModeConstants.FLYWHEEL_RPM
         );
 
@@ -103,7 +98,11 @@ public class SuperStructure extends SubsystemBase {
 
         shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);
 
-        manualButton.onTrue(new InstantCommand(() -> this.manualMode = !this.manualMode));
+        manualButton.onTrue(new InstantCommand(() -> {
+            this.manualMode = !this.manualMode;
+            if (this.manualMode)
+                this.hood.stow();
+        }, this.hood));
     }
 
 
