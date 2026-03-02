@@ -74,12 +74,11 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-    this.robotContainer.hood.setAngle(this.robotContainer.hood.getAngle());
   }
-
+  
   @Override
   public void disabledInit() {}
-
+  
   @Override
   public void disabledPeriodic() {
     String autoName = this.robotContainer.autoChooser.getSelected();

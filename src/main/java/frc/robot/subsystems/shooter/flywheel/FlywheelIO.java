@@ -11,5 +11,4 @@ public interface FlywheelIO {
     default void updateInputs(FlywheelIOInputs inputs) {}
 
     default void setVelocity(double rpm) {}
-    default void stopPower() {}
 }
