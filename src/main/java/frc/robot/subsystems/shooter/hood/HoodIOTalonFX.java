@@ -24,7 +24,6 @@ public class HoodIOTalonFX implements HoodIO {
     @Override
     public void updateInputs(HoodIOInputs inputs) {
         double position = this.getPosition();
-        Logger.recordOutput("Hood/desiredTest", this.desiredRadians);
 
         inputs.positionDegrees = Units.radiansToDegrees(position);
         
