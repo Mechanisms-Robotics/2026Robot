@@ -44,13 +44,11 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
-import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.HoodIO;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
-import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
@@ -69,7 +67,7 @@ public class RobotContainer {
     private final Flywheel flywheel;
     public final Hood hood;
     
-    // public final SuperStructure superStructure;
+    public final SuperStructure superStructure;
     @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
@@ -133,7 +131,7 @@ public class RobotContainer {
             );
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
-            this.hood = new Hood(new HoodIOTalonFX());
+            this.hood = new Hood(new HoodIO() {});
 
             // TODO: These are empty while we build and test the robot
             this.turret = new Turret(new TurretIO() {});
@@ -142,20 +140,22 @@ public class RobotContainer {
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         
-        // this.superStructure = new SuperStructure(
-        //     this.flywheel,
-        //     this.turret,
-        //     this.hood,
-        //     this.feeder,
-        //     this.drivetrain.poseEstimator,
-        //     // shoot button
-        //     this.controller.R2(),
-        //     // intake button
-        //     this.controller.L2()
-        // );
+        this.superStructure = new SuperStructure(
+            this.flywheel,
+            this.turret,
+            this.hood,
+            this.feeder,
+            this.drivetrain.poseEstimator,
+            // shoot button
+            this.controller.button(1),
+            // intake button
+            this.controller.L2(),
+            // manual mode toggle
+            this.controller.button(3)
+        );
 
         configureBindings();
-        configureTestBindings(); // testing individual mechanisms 
+        // configureTestBindings(); // testing individual mechanisms 
         publishAutoNames();
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
@@ -218,6 +218,7 @@ public class RobotContainer {
 
     }
 
+    @SuppressWarnings("unused")
     private void configureTestBindings() {
         
          this.controller
