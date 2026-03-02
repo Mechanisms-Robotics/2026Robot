@@ -230,7 +230,6 @@ public class CONSTANTS {
     public static class HoodConstants {
         // number of rotations of the hood per gear rotation
         public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
-        public static final double HOOD_OFFSET_DEGREES = 22.0; 
         public static final double MIN_DEGREES = 22.0;
         public static final double MAX_DEGREES = 52.0;
 
