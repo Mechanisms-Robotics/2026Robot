@@ -171,9 +171,9 @@ public class CONSTANTS {
     public static class IntakeConstants {
         public static final double INTAKE_DUTY_CYCLE = 0.75;
         public static final double OUTTAKE_DUTY_CYCLE = -0.25;
-        public static final double DEPLOY_DEGREES = 30.0;
-        public static final double RETRACT_DEGREES = 50.0;
-        public static final double START_DEGREES = 80.0;
+        public static final double DEPLOY_DEGREES = 33.0;
+        public static final double RETRACT_DEGREES = 65.0;
+        public static final double START_DEGREES = 70.0;
 
         public static final int ARM_ID_LEFT = 12;
         public static final int ARM_ID_RIGHT = 13;
