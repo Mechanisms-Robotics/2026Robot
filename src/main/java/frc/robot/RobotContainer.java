@@ -69,7 +69,7 @@ public class RobotContainer {
     private final Flywheel flywheel;
     public final Hood hood;
     
-    public final SuperStructure superStructure;
+    // public final SuperStructure superStructure;
     @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
@@ -142,17 +142,17 @@ public class RobotContainer {
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         
-        this.superStructure = new SuperStructure(
-            this.flywheel,
-            this.turret,
-            this.hood,
-            this.feeder,
-            this.drivetrain.poseEstimator,
-            // shoot button
-            this.controller.R2(),
-            // intake button
-            this.controller.L2()
-        );
+        // this.superStructure = new SuperStructure(
+        //     this.flywheel,
+        //     this.turret,
+        //     this.hood,
+        //     this.feeder,
+        //     this.drivetrain.poseEstimator,
+        //     // shoot button
+        //     this.controller.R2(),
+        //     // intake button
+        //     this.controller.L2()
+        // );
 
         configureBindings();
         configureTestBindings(); // testing individual mechanisms 
@@ -257,7 +257,7 @@ public class RobotContainer {
             .onTrue(
                 new InstantCommand(() -> {
                     double newRPM = this.flywheel.getRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
-                    this.flywheel.setVelocity(newRPM);
+                    this.flywheel.setVelocity(4000);//newRPM);
                 })
             );
 
@@ -266,7 +266,7 @@ public class RobotContainer {
             .onTrue(
                 new InstantCommand(() -> {
                     double newRPM = this.flywheel.getRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
-                    this.flywheel.setVelocity(newRPM);
+                    this.flywheel.setVelocity(4000);
                 })
             );
 

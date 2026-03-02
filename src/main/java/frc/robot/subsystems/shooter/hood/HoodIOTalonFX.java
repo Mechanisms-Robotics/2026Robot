@@ -42,6 +42,6 @@ public class HoodIOTalonFX implements HoodIO {
      */
     private double getPosition() {
         return Units.rotationsToRadians(this.encoder.get() * HoodConstants.ENCODER_HOOD_RATIO) 
-            + HoodConstants.HOOD_OFFSET_RADIANS;
+            + Units.degreesToRadians(HoodConstants.HOOD_OFFSET_DEGREES);
     }
 }

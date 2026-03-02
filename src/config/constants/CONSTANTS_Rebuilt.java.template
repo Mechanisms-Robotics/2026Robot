@@ -149,9 +149,9 @@ public class CONSTANTS {
     public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
     //TEST Constants
-    public static final double SPINDEXER_DELTA_VOLTS = 0.5; // volts per press
-    public static final double KICKER_DELTA_VOLTS = 0.5; // volts per press
-    public static final double FLYWHEEL_DELTA_RPM = 50.0; // rpm per press
+    public static final double SPINDEXER_DELTA_VOLTS = 3; // volts per press
+    public static final double KICKER_DELTA_VOLTS = 11; // volts per press
+    public static final double FLYWHEEL_DELTA_RPM = 3000.0; // rpm per press
     public static final double HOOD_DELTA_DEGREES = 1.0; // degrees per press
 
     public static enum Mode {
@@ -217,7 +217,7 @@ public class CONSTANTS {
             )
             .withSlot0(
                 new Slot0Configs()
-                .withKP(0.2)
+                .withKP(0.8)
                     .withKD(0.0)
             )
             .withMotorOutput(
@@ -230,8 +230,8 @@ public class CONSTANTS {
     public static class HoodConstants {
         // number of rotations of the hood per gear rotation
         public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
-        // TODO: find this by moving the hood to the minimum angle and recording the error.
-        public static final double HOOD_OFFSET_RADIANS = 0.0; 
+        // TODO: find this by moving the hood to the minimum angle and recording the error between that and MIN_DEGREES
+        public static final double HOOD_OFFSET_DEGREES = 12; 
         public static final double MIN_DEGREES = 22.0;
         public static final double MAX_DEGREES = 52.0;
 
@@ -252,9 +252,9 @@ public class CONSTANTS {
                 new CurrentLimitsConfigs()
                     .withStatorCurrentLimit(Amps.of(60))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(20))
+                    .withSupplyCurrentLimit(Amps.of(2))
                     .withSupplyCurrentLimitEnable(true)
-            );
+            ); //TODO: adjust SupplyCurrentLimit as needed
     }
 
     // NEW DRIVETRAIN CONSTANTS
