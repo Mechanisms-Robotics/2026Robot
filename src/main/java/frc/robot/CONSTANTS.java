@@ -230,8 +230,7 @@ public class CONSTANTS {
     public static class HoodConstants {
         // number of rotations of the hood per gear rotation
         public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
-        // TODO: find this by moving the hood to the minimum angle and recording the error between that and MIN_DEGREES
-        public static final double HOOD_OFFSET_DEGREES = 12; 
+        public static final double HOOD_OFFSET_DEGREES = 22.0; 
         public static final double MIN_DEGREES = 22.0;
         public static final double MAX_DEGREES = 52.0;
 
@@ -241,7 +240,7 @@ public class CONSTANTS {
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
             .withFeedback(
                 new FeedbackConfigs()
-                    .withSensorToMechanismRatio(48.0/12.0 * ENCODER_HOOD_RATIO)
+                    .withSensorToMechanismRatio(48.0 / 12.0 / ENCODER_HOOD_RATIO)
             )
             .withMotorOutput(
                 new MotorOutputConfigs()

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.PoseEstimator8736;
@@ -111,38 +110,24 @@ public class ShootCommands {
     }
 
     public static class ManualShoot extends Command {
-        private final Hood hood;
         private final Flywheel flywheel;
-        private final Turret turret;
         private final Feeder feeder;
         
-        private final Rotation2d hoodAngle;
-        private final Rotation2d turretAngle;
         private final double rpm;
         
         public ManualShoot(
-            Hood hood,
             Flywheel flywheel,
-            Turret turret,
             Feeder feeder,
-            Rotation2d hoodAngle,
-            Rotation2d turretAngle,
             double rpm
         ) {
-            this.hood = hood;
             this.flywheel = flywheel;
-            this.turret = turret;
             this.feeder = feeder;
 
-            this.hoodAngle = hoodAngle;
-            this.turretAngle = turretAngle;
             this.rpm = rpm;
         }
 
         @Override
         public void initialize() {
-            this.hood.setAngle(this.hoodAngle);
-            this.turret.setAngle(this.turretAngle);
             this.flywheel.setVelocity(this.rpm);
             this.feeder.startFeeding();
         }
