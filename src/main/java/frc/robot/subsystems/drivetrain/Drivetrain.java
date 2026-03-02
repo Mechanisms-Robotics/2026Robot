@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.CONSTANTS;
@@ -45,6 +46,8 @@ public class Drivetrain extends SubsystemBase {
     public static final Lock odometryLock = new ReentrantLock();
     
     private boolean driveClosedLoop = true;
+
+    private Field2d field = new Field2d();
 
     /**
      * Remember that the forward direction of the robot is +X and the left direction is
@@ -203,6 +206,9 @@ public class Drivetrain extends SubsystemBase {
             this.backLeftModule.setModuleState(backLeftState);
             this.backRightModule.setModuleState(backRightState);
         }
+
+        // Publish estimate pose to Field2d for visualization in dashboard
+        this.field.setRobotPose(this.getPose());
     }
 
     public void resetHeading() {
