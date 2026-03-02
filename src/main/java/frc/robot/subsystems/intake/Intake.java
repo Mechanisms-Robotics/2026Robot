@@ -14,24 +14,23 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Intake", inputs);
-
+        io.updateInputs(this.inputs);
+        Logger.processInputs("Intake", this.inputs);
     }
 
     public void intake() {
-        io.setDeployed(true);
+        io.deploy();
         io.setSpeed(CONSTANTS.IntakeConstants.INTAKE_DUTY_CYCLE);
     }
 
     public void outtake() {
-        io.setDeployed(true);
+        io.deploy();
         io.setSpeed(CONSTANTS.IntakeConstants.OUTTAKE_DUTY_CYCLE);
     }
 
     public void retract() {
         // retracts and stops the intake
-        io.setDeployed(false);
+        io.retract();
         io.setSpeed(0.0);
     }
 }
