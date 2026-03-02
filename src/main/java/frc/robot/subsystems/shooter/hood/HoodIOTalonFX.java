@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter.hood;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -12,16 +14,17 @@ public class HoodIOTalonFX implements HoodIO {
     // Kraken X44
     private final TalonFX motor = new TalonFX(23);
 
-    private double desiredRadians = this.getPosition();
+    private double desiredRadians = Units.degreesToRadians(HoodConstants.MIN_DEGREES);
     
     public HoodIOTalonFX() {
         PhoenixUtil.tryUntilOk(5, () -> this.motor.getConfigurator().apply(HoodConstants.CONFIG));
-        PhoenixUtil.tryUntilOk(5, () -> this.motor.setPosition(0.0));
+        PhoenixUtil.tryUntilOk(5, () -> this.motor.setPosition(0.0)); // set to zero rotations
     }
 
     @Override
     public void updateInputs(HoodIOInputs inputs) {
         double position = this.getPosition();
+        Logger.recordOutput("Hood/desiredTest", this.desiredRadians);
 
         inputs.positionDegrees = Units.radiansToDegrees(position);
         

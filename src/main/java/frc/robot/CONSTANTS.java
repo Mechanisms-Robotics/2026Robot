@@ -234,8 +234,7 @@ public class CONSTANTS {
         public static final double MIN_DEGREES = 22.0;
         public static final double MAX_DEGREES = 52.0;
 
-        public static final double kP = 0.1;
-        public static final double kD = 0.0;
+        public static final double kP = 12.0;
 
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
             .withFeedback(
