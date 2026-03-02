@@ -62,10 +62,7 @@ public class CONSTANTS {
     //RobotContainer
     public static final int CONTROLLER_PORT = 0;
 
-    // Vision Constants
-    public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-
+    // MARK: Field
     public static class FieldConstants {
         public static double WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
         public static double LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
@@ -101,6 +98,10 @@ public class CONSTANTS {
             Rotation3d.kZero
         );
     }
+
+    // MARK: Vision
+    public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static final String CAMERA1_NAME = "PhotonCameraLeft";
 
@@ -141,7 +142,7 @@ public class CONSTANTS {
         : SIM_MODE;
 
     
-    // Feeder Constants
+    // MARK: Feeder
     public static final int KICKER_MOTOR_CAN_ID = 11;
     public static final int SPINDEXER_MOTOR_CAN_ID = 10;
 
@@ -166,6 +167,7 @@ public class CONSTANTS {
         REPLAY,
     }
 
+    // MARK: Intake
     public static class IntakeConstants {
         public static final double INTAKE_DUTY_CYCLE = 0.75;
         public static final double OUTTAKE_DUTY_CYCLE = -0.25;
@@ -188,6 +190,7 @@ public class CONSTANTS {
         }
     }
 
+    // MARK: Turret
     public static class TurretConstants {
         // TODO: Find this by moving the turret to zero and recording the error.
         public static final double TURRET_OFFSET = 0.0; 
@@ -227,6 +230,7 @@ public class CONSTANTS {
         }
     }
 
+    // MARK: Flywheel
     public static class FlywheelConstants {
         public static final int LEADER_ID = 21;
         public static final int FOLLOWER_ID = 22;
@@ -249,6 +253,7 @@ public class CONSTANTS {
             );
     }
 
+    // MARK: Hood
     public static class HoodConstants {
         // number of rotations of the hood per gear rotation
         public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
@@ -273,10 +278,10 @@ public class CONSTANTS {
                     .withStatorCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(Amps.of(2))
                     .withSupplyCurrentLimitEnable(true)
-            ); //TODO: adjust SupplyCurrentLimit as needed
+            );
     }
 
-    // NEW DRIVETRAIN CONSTANTS
+    // MARK: Drivetrain
     public static class DriveConstants {
 
         // Both sets of gains need to be tuned to your individual robot.
@@ -594,6 +599,7 @@ public class CONSTANTS {
         public static final double SYSID_TIMEOUT = 1.0; // Secs
     }
 
+    // MARK: Commands
     // Manual mode constants
     public static class ManualModeConstants {
         public static final Rotation2d TURRET_PINNED_ANGLE = Rotation2d.fromDegrees(0.0);

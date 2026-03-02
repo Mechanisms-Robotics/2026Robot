@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
@@ -36,6 +37,7 @@ public class SuperStructure extends SubsystemBase {
     private final Command aimShuttleCommand;
     private final Command shootCommand;
     private final Command manualShootCommand;
+    private final Command intakeCommand;
 
     private boolean manualMode = false;
 
@@ -92,6 +94,8 @@ public class SuperStructure extends SubsystemBase {
             ManualModeConstants.FLYWHEEL_RPM
         );
 
+        this.intakeCommand = IntakeCommands.intake(this.intake);
+
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
         shootButton.and(() -> !this.manualMode).whileTrue(
@@ -110,15 +114,7 @@ public class SuperStructure extends SubsystemBase {
                 this.hood.stow();
         }, this.hood));
 
-        intakeButton
-            .onTrue(
-                new InstantCommand(() -> this.intake.intake(), this.intake)
-            )
-            .onFalse(
-                new InstantCommand(() -> this.intake.retract(), this.intake)
-            );
-
-        ;
+        intakeButton.whileTrue(this.intakeCommand);
     }
 
 
