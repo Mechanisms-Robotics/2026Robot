@@ -169,14 +169,6 @@ public class RobotContainer {
                 })
             );
         
-        this.controller
-            .triangle()
-            .onTrue(
-                new InstantCommand(() -> {
-                    this.hood.setAngle(Rotation2d.fromDegrees(40.0));
-                }, this.hood)
-            );
-
         this.drivetrain.setDefaultCommand(
             new RunCommand(
                 () -> {
