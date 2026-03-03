@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import frc.robot.CONSTANTS.IntakeConstants;
 
 public class IntakeIOSparkMax implements IntakeIO {
@@ -16,7 +17,7 @@ public class IntakeIOSparkMax implements IntakeIO {
     private final SparkMax armRight = new SparkMax(IntakeConstants.ARM_ID_RIGHT, MotorType.kBrushless);
     private final RelativeEncoder armEncoder = this.armLeft.getEncoder();
     
-    private final SparkMax rollers = new SparkMax(IntakeConstants.ROLLERS_ID, MotorType.kBrushless);
+    // private final SparkMax rollers = new SparkMax(IntakeConstants.ROLLERS_ID, MotorType.kBrushless);
 
     public IntakeIOSparkMax() {
         var config = new SparkMaxConfig();
@@ -43,16 +44,23 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     @Override
     public void setSpeed(double dutyCycle) {
-        this.rollers.set(dutyCycle);
+        // this.rollers.set(dutyCycle);
     }
 
     @Override
     public void setAngle(Rotation2d angle) {
-        this.armLeft.getClosedLoopController().setSetpoint(angle.rotateBy(Rotation2d.fromDegrees(IntakeConstants.START_DEGREES)).getRotations(), ControlType.kPosition);
+        this.armLeft.getClosedLoopController().setSetpoint(
+            -angle.getRotations() * IntakeConstants.GEAR_RATIO_ARM
+            + Units.degreesToRotations(IntakeConstants.START_DEGREES),
+            ControlType.kPosition
+        );
     }
 
     @Override
     public Rotation2d getAngle() {
-        return Rotation2d.fromRotations(this.armEncoder.getPosition());
+        return Rotation2d.fromRotations(
+            this.armEncoder.getPosition() * IntakeConstants.GEAR_RATIO_ARM)
+                .plus(Rotation2d.fromDegrees(IntakeConstants.START_DEGREES)
+        );
     }
 }

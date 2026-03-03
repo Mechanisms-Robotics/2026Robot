@@ -183,9 +183,7 @@ public class CONSTANTS {
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
         static {
-            CONFIG_LEFT.encoder.positionConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.encoder.velocityConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.encoder.inverted(false);
+            CONFIG_LEFT.closedLoop.p(0.1);
             CONFIG_LEFT.smartCurrentLimit(5);
         }
     }

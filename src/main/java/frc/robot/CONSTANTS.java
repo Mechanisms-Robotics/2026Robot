@@ -171,8 +171,8 @@ public class CONSTANTS {
     public static class IntakeConstants {
         public static final double INTAKE_DUTY_CYCLE = 0.75;
         public static final double OUTTAKE_DUTY_CYCLE = -0.25;
-        public static final double DEPLOY_DEGREES = 33.0;
-        public static final double RETRACT_DEGREES = 65.0;
+        public static final double DEPLOY_DEGREES = 40.0;
+        public static final double RETRACT_DEGREES = 50.0;
         public static final double START_DEGREES = 70.0;
 
         public static final int ARM_ID_LEFT = 12;
@@ -183,9 +183,7 @@ public class CONSTANTS {
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
         static {
-            CONFIG_LEFT.encoder.positionConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.encoder.velocityConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.encoder.inverted(false);
+            CONFIG_LEFT.closedLoop.p(0.1);
             CONFIG_LEFT.smartCurrentLimit(5);
         }
     }
