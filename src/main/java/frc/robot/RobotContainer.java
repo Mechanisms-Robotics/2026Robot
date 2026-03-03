@@ -54,9 +54,9 @@ import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
 
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
+import frc.robot.subsystems.intake.Slam;
+import frc.robot.subsystems.intake.SlamIOSim;
+import frc.robot.subsystems.intake.SlamIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
 
@@ -69,7 +69,7 @@ public class RobotContainer {
     public final Turret turret;
     private final Flywheel flywheel;
     public final Hood hood;
-    public final Intake intake;
+    public final Slam intake;
     
     public final SuperStructure superStructure;
     @SuppressWarnings("unused")
@@ -109,7 +109,7 @@ public class RobotContainer {
             this.flywheel = new Flywheel(new FlywheelIOSim());
             this.turret = new Turret(new TurretIOSim());
             this.hood = new Hood(new HoodIOSim());
-            this.intake = new Intake(new IntakeIOSim());
+            this.intake = new Slam(new SlamIOSim());
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -128,7 +128,7 @@ public class RobotContainer {
                     CONSTANTS.SPINDEXER_MOTOR_CAN_ID
                 )
             );
-            this.intake = new Intake(new IntakeIOSparkMax());
+            this.intake = new Slam(new SlamIOSparkMax());
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,

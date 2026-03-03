@@ -169,21 +169,29 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double INTAKE_DUTY_CYCLE = 0.75;
-        public static final double OUTTAKE_DUTY_CYCLE = -0.25;
-        public static final double DEPLOY_DEGREES = 40.0;
-        public static final double RETRACT_DEGREES = 60.0;
-        public static final double START_DEGREES = 70.0;
+        public static final double kD = 0.1;
+        public static enum SlamState {
+            DEPLOY(0.2),
+            RETRACT(-0.4);
+
+            public double voltage;
+
+            private SlamState(double voltage) {
+                this.voltage = voltage;
+            }
+        }
 
         public static final int ARM_ID_LEFT = 12;
         public static final int ARM_ID_RIGHT = 13;
         public static final int ROLLERS_ID = 14;
 
-        public static final double GEAR_RATIO_ARM = 10 / 84.0;
+        public static final double GEAR_RATIO_ARM = 10.0 / 84.0;
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
         static {
-            CONFIG_LEFT.closedLoop.p(0.1);
+            CONFIG_LEFT.encoder
+                .positionConversionFactor(GEAR_RATIO_ARM)
+                .velocityConversionFactor(GEAR_RATIO_ARM);
             CONFIG_LEFT.smartCurrentLimit(5);
         }
     }
