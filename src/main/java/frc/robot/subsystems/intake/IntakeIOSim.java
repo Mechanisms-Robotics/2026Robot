@@ -1,52 +1,82 @@
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.CONSTANTS.IntakeConstants;
 
 public class IntakeIOSim implements IntakeIO {
-    private final DCMotor armMotorsModel = DCMotor.getNEO(2);
+    private final DCMotor armMotorModel = DCMotor.getNEO(1);
     private final DCMotor rollersModel = DCMotor.getNeo550(1);
 
-    private final SingleJointedArmSim armSim = 
-        new SingleJointedArmSim(armMotorsModel,
-            IntakeConstants.GEAR_RATIO_ARM,
-            1.0,
-            Units.inchesToMeters(15.0),
-            Units.degreesToRadians(IntakeConstants.DEPLOY_DEGREES),
-            Units.degreesToRadians(IntakeConstants.START_DEGREES),
-            false,
-            Units.degreesToRadians(IntakeConstants.START_DEGREES)
-        );
+    private final DCMotorSim armLeftSim = 
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                armMotorModel,
+                10,
+                IntakeConstants.GEAR_RATIO_ARM),
+                armMotorModel
+            );
+
+    private final DCMotorSim armRightSim = 
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                armMotorModel,
+                2,
+                IntakeConstants.GEAR_RATIO_ARM
+                ),
+                armMotorModel
+            );
     
     private final FlywheelSim rollerSim = 
         new FlywheelSim(
             LinearSystemId.createFlywheelSystem(
                 this.rollersModel,
-                0.4,
-                1.0
+                0.5,
+                IntakeConstants.GEAR_RATIO_ARM
             ),
             this.rollersModel
         );
 
-    private final double kP = 3.0;
-    private double desiredRotations = IntakeConstants.START_DEGREES;
+    private final double kP = 20.0;
+    private final double kD = 0.35;
+    private double desiredRotations = Units.degreesToRotations(IntakeConstants.START_DEGREES);
 
-    public IntakeIOSim() {}
+    public IntakeIOSim() {
+        this.armLeftSim.setAngle(Units.degreesToRadians(IntakeConstants.START_DEGREES));
+        this.armRightSim.setAngle(Units.degreesToRadians(IntakeConstants.START_DEGREES));
+    }
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
-        this.armSim.setInputVoltage(
-            (this.desiredRotations - Units.radiansToRotations(this.armSim.getAngleRads())) * kP
+        double voltage = (this.desiredRotations - this.armLeftSim.getAngularPosition().in(Rotations)) * this.kP
+         - this.armLeftSim.getAngularVelocity().in(DegreesPerSecond) * this.kD;
+        double voltage2 = (this.desiredRotations - this.armLeftSim.getAngularPosition().in(Rotations)) * this.kP
+         - this.armLeftSim.getAngularVelocity().in(DegreesPerSecond) * this.kD;
+         
+        this.armLeftSim.setInputVoltage(
+            voltage
         );
-        this.armSim.update(0.2);
+        this.armRightSim.setInputVoltage(
+            voltage2
+        );
+
+        this.armLeftSim.update(0.2);
+        this.armRightSim.update(0.2);
         this.rollerSim.update(0.2);
 
-        inputs.armDegrees = Units.radiansToDegrees(this.armSim.getAngleRads());
+        inputs.armLeftDegrees = this.armLeftSim.getAngularPosition().in(Degrees);
+        inputs.armRightDegrees = this.armRightSim.getAngularPosition().in(Degrees);
+        inputs.desiredDegrees = Units.rotationsToDegrees(this.desiredRotations);
     }
 
     @Override

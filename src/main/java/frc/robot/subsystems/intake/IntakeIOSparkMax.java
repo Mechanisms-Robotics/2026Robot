@@ -15,7 +15,8 @@ import frc.robot.CONSTANTS.IntakeConstants;
 public class IntakeIOSparkMax implements IntakeIO {
     private final SparkMax armLeft = new SparkMax(IntakeConstants.ARM_ID_LEFT, MotorType.kBrushless);
     private final SparkMax armRight = new SparkMax(IntakeConstants.ARM_ID_RIGHT, MotorType.kBrushless);
-    private final RelativeEncoder armEncoder = this.armLeft.getEncoder();
+    private final RelativeEncoder armLeftEncoder = this.armLeft.getEncoder();
+    private final RelativeEncoder armRightEncoder = this.armLeft.getEncoder();
     
     // private final SparkMax rollers = new SparkMax(IntakeConstants.ROLLERS_ID, MotorType.kBrushless);
 
@@ -24,12 +25,17 @@ public class IntakeIOSparkMax implements IntakeIO {
         config.follow(IntakeConstants.ARM_ID_LEFT, true);
         this.armRight.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         this.armLeft.configure(IntakeConstants.CONFIG_LEFT, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        this.armEncoder.setPosition(0.0);
+        this.armLeftEncoder.setPosition(0.0);
+        this.armRightEncoder.setPosition(0.0);
     }
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
-        inputs.armDegrees = this.getAngle().getDegrees();
+        inputs.armLeftDegrees = this.getAngle().getDegrees();
+        inputs.armRightDegrees = this.getArmAngle(this.armRightEncoder.getPosition()).getDegrees();
+
+        inputs.desiredDegrees =
+            this.getArmAngle(this.armLeft.getClosedLoopController().getSetpoint()).getDegrees();
     }
 
     @Override
@@ -58,9 +64,12 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     @Override
     public Rotation2d getAngle() {
+        return this.getArmAngle(this.armLeftEncoder.getPosition());
+    }
+
+    private Rotation2d getArmAngle(double rotation) {
         return Rotation2d.fromRotations(
-            this.armEncoder.getPosition() * IntakeConstants.GEAR_RATIO_ARM)
-                .plus(Rotation2d.fromDegrees(IntakeConstants.START_DEGREES)
-        );
+            rotation * IntakeConstants.GEAR_RATIO_ARM)
+                .plus(Rotation2d.fromDegrees(IntakeConstants.START_DEGREES));
     }
 }

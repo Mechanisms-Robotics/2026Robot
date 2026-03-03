@@ -7,7 +7,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public interface IntakeIO {
     @AutoLog
     public class IntakeIOInputs {
-        public double armDegrees;
+        public double armLeftDegrees;
+        public double armRightDegrees;
+        public double desiredDegrees;
     }
 
     public default void updateInputs(IntakeIOInputs inputs) {}
