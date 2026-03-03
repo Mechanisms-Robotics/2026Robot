@@ -2,7 +2,7 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final IntakeIO io;
@@ -18,18 +18,29 @@ public class Intake extends SubsystemBase {
         Logger.processInputs("Intake", this.inputs);
     }
 
+    /**
+     * Deploy the intake arms ans spin the rollers
+     */
     public void intake() {
+        Logger.recordOutput("Intake/state", "intaking");
         io.deploy();
-        io.setSpeed(CONSTANTS.IntakeConstants.INTAKE_DUTY_CYCLE);
+        io.setSpeed(IntakeConstants.INTAKE_DUTY_CYCLE);
     }
 
+    /**
+     * Deploy the intake arms and spin the rollers backwards
+     */
     public void outtake() {
+        Logger.recordOutput("Intake/state", "outtaking");
         io.deploy();
-        io.setSpeed(CONSTANTS.IntakeConstants.OUTTAKE_DUTY_CYCLE);
+        io.setSpeed(IntakeConstants.OUTTAKE_DUTY_CYCLE);
     }
 
+    /**
+     * Retract the intake arms and stop the rollers
+     */
     public void retract() {
-        // retracts and stops the intake
+        Logger.recordOutput("Intake/state", "retracted");
         io.retract();
         io.setSpeed(0.0);
     }

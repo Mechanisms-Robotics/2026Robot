@@ -39,6 +39,10 @@ public class SuperStructure extends SubsystemBase {
     private final Command manualShootCommand;
     private final Command intakeCommand;
 
+    private final Trigger shootButton;
+    private final Trigger intakeButton;
+    private final Trigger manualButton;
+
     private boolean manualMode = false;
 
     public SuperStructure(
@@ -69,6 +73,10 @@ public class SuperStructure extends SubsystemBase {
                 )
             )
         );
+
+        this.shootButton = shootButton;
+        this.intakeButton = intakeButton;
+        this.manualButton = manualButton;
         
         this.aimHubCommand = ShootCommands.aimHubCommand(
             this.hood,
@@ -137,6 +145,10 @@ public class SuperStructure extends SubsystemBase {
         Logger.recordOutput("SuperStructure/AimingShuttle", this.aimShuttleCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
+        Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
+        Logger.recordOutput("SuperStructure/Buttons/ManualToggle", this.manualButton.getAsBoolean());
     }
 
     public boolean isAimed() {
