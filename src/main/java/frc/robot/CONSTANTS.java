@@ -180,7 +180,7 @@ public class CONSTANTS {
         public static final int GEER2_TEETH = 28;
         public static final double RATIO1 = (double) TURRET_TEETH / GEER1_TEETH;
         public static final double RATIO2 = (double) TURRET_TEETH / GEER2_TEETH;
-        public static final double MOTOR_GEAR_RATIO = (30.0 * 10.0) / TURRET_TEETH;
+        public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
 
         public static final double kP = 0.0;
         public static final double kD = 0.0;
