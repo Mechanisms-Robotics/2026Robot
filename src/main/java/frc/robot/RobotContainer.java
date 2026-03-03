@@ -141,13 +141,14 @@ public class RobotContainer {
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         
         this.superStructure = new SuperStructure(
+            this.drivetrain,
             this.flywheel,
             this.turret,
             this.hood,
             this.feeder,
             this.drivetrain.poseEstimator,
             // shoot button
-            this.controller.R2(), // right trigger
+            this.controller.button(1), // right trigger
             // intake button
             this.controller.L2(), // left trigger
             // manual mode toggle

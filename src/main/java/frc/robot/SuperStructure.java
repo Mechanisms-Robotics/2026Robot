@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.ShootCommands;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
@@ -22,6 +23,7 @@ import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.util.FieldUtil;
 
 public class SuperStructure extends SubsystemBase {
+    private final Drivetrain drivetrain;
     private final Flywheel flywheel;
     private final Turret turret;
     private final Hood hood;
@@ -37,6 +39,7 @@ public class SuperStructure extends SubsystemBase {
     private boolean manualMode = false;
 
     public SuperStructure(
+        Drivetrain drivetrain,
         Flywheel flywheel,
         Turret turret,
         Hood hood,
@@ -46,6 +49,7 @@ public class SuperStructure extends SubsystemBase {
         Trigger intakeButton,
         Trigger manualButton
     ) {
+        this.drivetrain = drivetrain;
         this.flywheel = flywheel;
         this.turret = turret;
         this.hood = hood;
@@ -62,18 +66,18 @@ public class SuperStructure extends SubsystemBase {
             )
         );
         
-        this.aimHubCommand = ShootCommands.aimHubCommand(
+        this.aimHubCommand = ShootCommands.driveAimHubCommand(
             this.hood,
             this.flywheel,
-            this.turret,
+            this.drivetrain,
             this.shotCalculator,
             this.poseEstimator
         );
 
-        this.aimShuttleCommand = ShootCommands.aimShuttleCommand(
+        this.aimShuttleCommand = ShootCommands.driveAimShuttleCommand(
             this.hood,
             this.flywheel,
-            this.turret,
+            this.drivetrain,
             this.shotCalculator,
             this.poseEstimator
         );

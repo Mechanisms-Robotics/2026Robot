@@ -4,10 +4,13 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -160,5 +163,58 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = Rotation2d.kZero;
     double gyroDelta = 0.0;
+  }
+
+  public static class Point extends Command {
+    private final Drivetrain drivetrain;
+    private final Supplier<Pose2d> target;
+    private final double kP;
+    private final double MAX_OMEGA_RADIANS_PER_SECOND;
+
+    public Point(Drivetrain drivetrain, Supplier<Pose2d> target, double p, double maxOmegaRadiansPerSecond) {
+        this.drivetrain = drivetrain;
+        this.target = target;
+        this.kP = p;
+        this.MAX_OMEGA_RADIANS_PER_SECOND = maxOmegaRadiansPerSecond;
+    }
+
+    public Point(Drivetrain drivetrain, Supplier<Pose2d> target) {
+        this(drivetrain, target, 1.0, 6.0);
+    }
+
+    @Override
+    public void execute() {
+        Rotation2d desiredHeading = 
+            this.drivetrain
+                .getPose()
+                .relativeTo(this.target.get())
+                .getTranslation()
+                .getAngle();
+        Rotation2d heading =
+            this.drivetrain
+                .getPose()
+                .getRotation()
+                .plus(Rotation2d.k180deg);
+
+        double setOmegaRadiansPerSecond = 
+            MathUtil.clamp(
+                desiredHeading.relativeTo(heading).getRadians() * kP,
+                -MAX_OMEGA_RADIANS_PER_SECOND,
+                MAX_OMEGA_RADIANS_PER_SECOND
+            );
+
+        this.drivetrain.setDesiredState(
+            new ChassisSpeeds(
+                0.0,
+                0.0, 
+                setOmegaRadiansPerSecond
+            )
+        );
+    }
+
+    @Override
+    public void end(boolean interupted) {
+        this.drivetrain.setDesiredState(new ChassisSpeeds());
+    }
   }
 }

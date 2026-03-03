@@ -6,14 +6,17 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.PoseEstimator8736;
 import frc.robot.ShotCalculator;
 import frc.robot.ShotCalculator.ShotData;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.util.FieldUtil;
 
 public class ShootCommands {
@@ -76,6 +79,25 @@ public class ShootCommands {
             this.hood.stow();
             this.flywheel.setVelocity(FlywheelConstants.IDLE_RPM);
         }
+    }
+
+    /**
+     * Aim at a target using the drivetrain rather than the turret
+     */
+    public static Command driveAimCommand(Hood hood, Flywheel flywheel, Drivetrain drivetrain, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator, Supplier<Pose2d> target) {
+        // Turret that is always pointed at zero
+        Turret fakeTurret = new Turret(new TurretIO() {});
+        Aim aim = new Aim(hood, flywheel, fakeTurret, shotCalculator, poseEstimator, target);
+        DriveCommands.Point point = new DriveCommands.Point(drivetrain, target);
+        return Commands.parallel(aim, point);
+    }
+
+    public static Command driveAimHubCommand(Hood hood, Flywheel flywheel, Drivetrain drivetrain, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+        return driveAimCommand(hood, flywheel, drivetrain, shotCalculator, poseEstimator, () -> FieldUtil.getHub().toPose2d());
+    }
+
+    public static Command driveAimShuttleCommand(Hood hood, Flywheel flywheel, Drivetrain drivetrain, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+        return driveAimCommand(hood, flywheel, drivetrain, shotCalculator, poseEstimator, () -> FieldUtil.getShuttlePose(poseEstimator.getEstimatedPose().getY()));
     }
 
     public static Command aimShuttleCommand(Hood hood, Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
