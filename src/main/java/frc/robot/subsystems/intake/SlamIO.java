@@ -6,6 +6,7 @@ public interface SlamIO {
     @AutoLog
     public class IntakeIOInputs {
         public double velocityRPS;
+        public double positionRotations;
     }
 
     public default void updateInputs(IntakeIOInputs inputs) {}

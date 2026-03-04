@@ -6,6 +6,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.CONSTANTS.IntakeConstants;
 
@@ -15,16 +16,18 @@ public class SlamIOSparkMax implements SlamIO {
     private final RelativeEncoder armLeftEncoder = this.armLeft.getEncoder();
 
     public SlamIOSparkMax() {
-        var config = new SparkMaxConfig();
-        config.follow(IntakeConstants.ARM_ID_LEFT, true);
-        this.armRight.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        var config_right = new SparkMaxConfig();
+        config_right.follow(IntakeConstants.ARM_ID_LEFT, true);
+        config_right.idleMode(IdleMode.kBrake);
+        
+        this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         this.armLeft.configure(IntakeConstants.CONFIG_LEFT, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
-        double velocity = this.armLeftEncoder.getVelocity() / 60.0;
-        inputs.velocityRPS = velocity;
+        inputs.velocityRPS = this.armLeftEncoder.getVelocity() / 60.0;
+        inputs.positionRotations = this.armLeftEncoder.getPosition();
     }
 
     @Override
