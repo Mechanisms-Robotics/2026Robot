@@ -51,9 +51,8 @@ import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
 import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
-
+import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
@@ -144,10 +143,7 @@ public class RobotContainer {
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
             this.hood = new Hood(new HoodIOTalonFX());
-
-            // TODO: These are empty while we build and test the robot
-            this.turret = new Turret(new TurretIO() {});
-
+            this.turret = new Turret(new TurretIOSparkMax());
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
@@ -181,6 +177,28 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
+
+        this.controller.povLeft().onTrue(
+            new InstantCommand(
+                () -> 
+                    this.turret.setAngle(
+                        this.turret.getAngle()
+                            .rotateBy(Rotation2d.fromDegrees(3.0))
+                    ),
+                this.turret
+            )
+        );
+
+        this.controller.povRight().onTrue(
+            new InstantCommand(
+                () -> 
+                    this.turret.setAngle(
+                        this.turret.getAngle()
+                            .rotateBy(Rotation2d.fromDegrees(-3.0))
+                    ),
+                this.turret
+            )
+        );
         
         this.drivetrain.setDefaultCommand(
             new RunCommand(
