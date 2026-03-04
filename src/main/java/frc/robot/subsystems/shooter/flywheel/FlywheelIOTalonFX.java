@@ -28,8 +28,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     @Override
     public void setVelocity(double rpm) {
-        this.desiredRPM = rpm / 60.0;
-        this.leader.setControl(this.velocityRequest.withVelocity(desiredRPM));
+        this.desiredRPM = rpm; 
+        this.leader.setControl(this.velocityRequest.withVelocity(desiredRPM / 60.0));
     }
 
     @Override
