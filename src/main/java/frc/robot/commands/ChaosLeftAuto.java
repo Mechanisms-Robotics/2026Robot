@@ -27,13 +27,14 @@ public class ChaosLeftAuto extends SequentialCommandGroup {
         ManualShoot shooter = new ManualShoot(
             new Flywheel(new FlywheelIO() {}),
             new Feeder(new FeederIO() {}, new FeederIO() {}),
-            50
+            100
         );
 
         addCommands(
             new FollowPath(chaosLeftBackup.get(), drivetrain, true),
-            new InstantCommand(shooter::initialize).withTimeout(2.0),
-            new InstantCommand(() -> shooter.end(true)),
+            new InstantCommand(() -> shooter.initialize()),
+            new WaitCommand(2.0),
+            new InstantCommand(() -> shooter.end(false)),
             new FollowPath(chaosLeftChaos.get(), drivetrain, false)
         );
 
