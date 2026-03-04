@@ -54,6 +54,12 @@ import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
 
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.RollersIOSparkMax;
+import frc.robot.subsystems.intake.SlamIOSim;
+import frc.robot.subsystems.intake.SlamIOSparkMax;
+import frc.robot.subsystems.intake.RollersIO;
+import frc.robot.subsystems.intake.RollersIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
 
@@ -66,6 +72,7 @@ public class RobotContainer {
     public final Turret turret;
     private final Flywheel flywheel;
     public final Hood hood;
+    public final Intake intake;
     
     public final SuperStructure superStructure;
     @SuppressWarnings("unused")
@@ -105,6 +112,7 @@ public class RobotContainer {
             this.flywheel = new Flywheel(new FlywheelIOSim());
             this.turret = new Turret(new TurretIOSim());
             this.hood = new Hood(new HoodIOSim());
+            this.intake = new Intake(new SlamIOSim(), new RollersIO() {});
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -114,6 +122,7 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
         
             );
+
             this.feeder = new Feeder(
                 // Instantiate TalonFX-based feeder IO with explicit CAN IDs for the motors.
                 new FeederIOTalonFX(
@@ -123,6 +132,8 @@ public class RobotContainer {
                     CONSTANTS.SPINDEXER_MOTOR_CAN_ID
                 )
             );
+
+            this.intake = new Intake(new SlamIOSparkMax(), new RollersIOSparkMax());
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
@@ -145,6 +156,7 @@ public class RobotContainer {
             this.turret,
             this.hood,
             this.feeder,
+            this.intake,
             this.drivetrain.poseEstimator,
             // shoot button
             this.controller.R2(), // right trigger

@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
@@ -26,6 +28,8 @@ public class SuperStructure extends SubsystemBase {
     private final Turret turret;
     private final Hood hood;
     private final Feeder feeder;
+    private final Intake intake;
+
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
 
@@ -33,6 +37,11 @@ public class SuperStructure extends SubsystemBase {
     private final Command aimShuttleCommand;
     private final Command shootCommand;
     private final Command manualShootCommand;
+    private final Command intakeCommand;
+
+    private final Trigger shootButton;
+    private final Trigger intakeButton;
+    private final Trigger manualButton;
 
     private boolean manualMode = false;
 
@@ -41,6 +50,7 @@ public class SuperStructure extends SubsystemBase {
         Turret turret,
         Hood hood,
         Feeder feeder,
+        Intake intake,
         PoseEstimator8736 poseEstimator,
         Trigger shootButton,
         Trigger intakeButton,
@@ -50,6 +60,8 @@ public class SuperStructure extends SubsystemBase {
         this.turret = turret;
         this.hood = hood;
         this.feeder = feeder;
+        this.intake = intake;
+
         this.poseEstimator = poseEstimator;
         this.shotCalculator = new ShotCalculator(
             () -> new Pose3d(
@@ -61,6 +73,10 @@ public class SuperStructure extends SubsystemBase {
                 )
             )
         );
+
+        this.shootButton = shootButton;
+        this.intakeButton = intakeButton;
+        this.manualButton = manualButton;
         
         this.aimHubCommand = ShootCommands.aimHubCommand(
             this.hood,
@@ -86,6 +102,8 @@ public class SuperStructure extends SubsystemBase {
             ManualModeConstants.FLYWHEEL_RPM
         );
 
+        this.intakeCommand = IntakeCommands.intake(this.intake);
+
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
         shootButton.and(() -> !this.manualMode).whileTrue(
@@ -103,6 +121,8 @@ public class SuperStructure extends SubsystemBase {
             if (this.manualMode)
                 this.hood.stow();
         }, this.hood));
+
+        intakeButton.whileTrue(this.intakeCommand);
     }
 
 
@@ -125,6 +145,10 @@ public class SuperStructure extends SubsystemBase {
         Logger.recordOutput("SuperStructure/AimingShuttle", this.aimShuttleCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
+        Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
+        Logger.recordOutput("SuperStructure/Buttons/ManualToggle", this.manualButton.getAsBoolean());
     }
 
     public boolean isAimed() {
