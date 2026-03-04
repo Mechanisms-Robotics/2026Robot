@@ -171,8 +171,8 @@ public class CONSTANTS {
     public static class IntakeConstants {
         public static final double kD = 0.1;
         public static enum SlamState {
-            DEPLOY(0.2),
-            RETRACT(-0.4);
+            DEPLOY(-0.2),
+            RETRACT(0.4);
 
             public double voltage;
 
