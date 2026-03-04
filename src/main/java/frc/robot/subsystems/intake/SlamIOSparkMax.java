@@ -20,8 +20,10 @@ public class SlamIOSparkMax implements SlamIO {
         config_right.follow(IntakeConstants.ARM_CAN_ID_LEFT, true);
         config_right.idleMode(IdleMode.kBrake);
 
-        this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // Configure the leader first, then the follower. Some firmware versions
+        // apply follower settings better when the leader is configured first.
         this.armLeft.configure(IntakeConstants.CONFIG_LEFT, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public double lastAppliedVolts = 0.0;
