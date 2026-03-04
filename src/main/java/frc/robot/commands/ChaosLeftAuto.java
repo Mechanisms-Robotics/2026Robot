@@ -6,22 +6,34 @@ import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.CONSTANTS;
+import frc.robot.commands.ShootCommands.ManualShoot;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class ChaosLeftAuto extends SequentialCommandGroup {
     public ChaosLeftAuto(Drivetrain drivetrain) {
         Optional<Trajectory<SwerveSample>> chaosLeftBackup = Choreo.loadTrajectory(
-                    "ChaosLeftBackup"
-                );
+            "ChaosLeftBackup"
+        );
         Optional<Trajectory<SwerveSample>> chaosLeftChaos = Choreo.loadTrajectory(
-                    "ChaosLeftChaos"
-                );
-
+            "ChaosLeftChaos"
+        );
+        ManualShoot shooter = new ManualShoot(
+            new Flywheel(new FlywheelIO() {}),
+            new Feeder(new FeederIO() {}, new FeederIO() {}),
+            50
+        );
 
         addCommands(
             new FollowPath(chaosLeftBackup.get(), drivetrain, true),
-            new WaitCommand(2.0), // simulate shooting
+            new InstantCommand(shooter::initialize).withTimeout(2.0),
+            new InstantCommand(() -> shooter.end(true)),
             new FollowPath(chaosLeftChaos.get(), drivetrain, false)
         );
 
