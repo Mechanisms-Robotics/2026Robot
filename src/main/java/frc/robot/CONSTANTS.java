@@ -193,11 +193,7 @@ public class CONSTANTS {
                 .p(3.0)
                 .d(1.0)
                 .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
-                .positionWrappingInputRange(
-                    Units.degreesToRotations(MIN_DEGREES),
-                    Units.degreesToRotations(MAX_DEGREES)
-                )
-                .positionWrappingEnabled(true);
+                .positionWrappingEnabled(false);
 
             CONFIG
                 .idleMode(IdleMode.kBrake);
