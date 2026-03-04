@@ -5,23 +5,29 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS.IntakeConstants;
 import frc.robot.CONSTANTS.IntakeConstants.SlamState;
 
-public class Slam extends SubsystemBase {
+public class Intake extends SubsystemBase {
     private final SlamIO io;
+    private final RollersIO rollersIO;
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+    private final RollersIOInputsAutoLogged rollersInputs = new RollersIOInputsAutoLogged();
 
     SlamState state = SlamState.RETRACT_VOLTS;
 
     // the way our motors are configured the positive is the retracted direction
     private double retractedPositionDetected = Double.MIN_VALUE;
 
-    public Slam(SlamIO io) {
+    public Intake(SlamIO io, RollersIO rollersIO) {
         this.io = io;
+        this.rollersIO = rollersIO;
     }
 
     @Override
     public void periodic() {
         this.io.updateInputs(this.inputs);
         Logger.processInputs("Intake", this.inputs);
+
+        this.rollersIO.updateInputs(this.rollersInputs);
+        Logger.processInputs("Intake", this.rollersInputs);
 
         // Capture the most retracted position. If we accidentally start
         // with the intake out it's okay. It probably won't retract until
@@ -49,6 +55,15 @@ public class Slam extends SubsystemBase {
             + feedForward;
 
         this.io.setVoltage(voltage);
+
+        // run the rollers if deployed
+
+        if (state == SlamState.DEPLOY_VOLTS) {
+            this.rollersIO.setVoltage(IntakeConstants.ROLLERS_VOLTAGE);
+        }
+        else {
+            this.rollersIO.setVoltage(0.0);
+        }
     }
 
     /**

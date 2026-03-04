@@ -12,6 +12,4 @@ public interface SlamIO {
 
     public default void updateInputs(IntakeIOInputs inputs) {}
     public default void setVoltage(double volts) {}
-
-    public default void stop() {}
 }

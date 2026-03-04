@@ -17,7 +17,7 @@ import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.intake.Slam;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
@@ -28,7 +28,7 @@ public class SuperStructure extends SubsystemBase {
     private final Turret turret;
     private final Hood hood;
     private final Feeder feeder;
-    private final Slam intake;
+    private final Intake intake;
 
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
@@ -50,7 +50,7 @@ public class SuperStructure extends SubsystemBase {
         Turret turret,
         Hood hood,
         Feeder feeder,
-        Slam intake,
+        Intake intake,
         PoseEstimator8736 poseEstimator,
         Trigger shootButton,
         Trigger intakeButton,

@@ -11,13 +11,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.CONSTANTS.IntakeConstants;
 
 public class SlamIOSparkMax implements SlamIO {
-    private final SparkMax armLeft = new SparkMax(IntakeConstants.ARM_ID_LEFT, MotorType.kBrushless);
-    private final SparkMax armRight = new SparkMax(IntakeConstants.ARM_ID_RIGHT, MotorType.kBrushless);
+    private final SparkMax armLeft = new SparkMax(IntakeConstants.ARM_CAN_ID_LEFT, MotorType.kBrushless);
+    private final SparkMax armRight = new SparkMax(IntakeConstants.ARM_CAN_ID_RIGHT, MotorType.kBrushless);
     private final RelativeEncoder armLeftEncoder = this.armLeft.getEncoder();
 
     public SlamIOSparkMax() {
         var config_right = new SparkMaxConfig();
-        config_right.follow(IntakeConstants.ARM_ID_LEFT, true);
+        config_right.follow(IntakeConstants.ARM_CAN_ID_LEFT, true);
         config_right.idleMode(IdleMode.kBrake);
 
         this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
