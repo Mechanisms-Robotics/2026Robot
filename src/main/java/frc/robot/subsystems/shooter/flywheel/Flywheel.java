@@ -27,4 +27,8 @@ public class Flywheel extends SubsystemBase {
     public double getRPM() {
         return this.inputs.rpm;
     }
+
+    public double getDesiredRPM() {
+        return this.io.getDesiredVelocity();
+    }
 }

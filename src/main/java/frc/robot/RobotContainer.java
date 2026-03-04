@@ -44,6 +44,7 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
@@ -167,7 +168,7 @@ public class RobotContainer {
         );
 
         configureBindings();
-        // configureTestBindings(); // testing individual mechanisms 
+        configureTestBindings(); // testing individual mechanisms 
         publishAutoNames();
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
@@ -230,7 +231,6 @@ public class RobotContainer {
 
     }
 
-    @SuppressWarnings("unused")
     private void configureTestBindings() {
         
          this.controller
@@ -252,20 +252,54 @@ public class RobotContainer {
         // D-Pad up/down move the hood (use POV via Trigger since CommandPS4Controller doesn't expose dpad triggers)
         new Trigger(() -> this.controller.getHID().getPOV() == 0)
             .onTrue(
-                new InstantCommand(() -> {
+               /*  new InstantCommand(() -> {
                     this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                })*/
+
+                new InstantCommand(() -> {
+                     double newRPM = this.flywheel.getDesiredRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(newRPM);
                 })
             );
 
         new Trigger(() -> this.controller.getHID().getPOV() == 180)
             .onTrue(
                 new InstantCommand(() -> {
-                    this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                    //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+
+                     double newRPM = this.flywheel.getDesiredRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(newRPM);
                 })
             );
 
-        // Flywheel: R1 = decrease, R2 = increase
+        new Trigger(() -> this.controller.getHID().getPOV() == 90)
+            .onTrue(
+                new InstantCommand(() -> {
+                    //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                    this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
+                
+                })
+            );
+
+        new Trigger(() -> this.controller.getHID().getPOV() == 270)
+            .onTrue(
+                new InstantCommand(() -> {
+                    //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                    this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
+                
+                })
+            );
+        
         this.controller
+        .triangle().onTrue(
+            new InstantCommand(() -> {
+                this.feeder.stopFeeding();
+                this.flywheel.setVelocity(0);
+            })
+        );
+
+        // Flywheel: R1 = decrease, R2 = increase
+       /* this.controller
             .R1()
             .onTrue(
                 new InstantCommand(() -> {
@@ -281,14 +315,15 @@ public class RobotContainer {
                     double newRPM = this.flywheel.getRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
                     this.flywheel.setVelocity(4000);
                 })
-            );
+            );*/
 
         // Kicker: L1 = decrease, L2 = increase
-        this.controller
+       /*  this.controller
             .L1()
             .onTrue(
                 new InstantCommand(() -> {
                     this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
+
                 })
             );
 
@@ -298,7 +333,7 @@ public class RobotContainer {
                 new InstantCommand(() -> {
                     this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
                 })
-            );
+            );*/
     }
 
     private void publishAutoNames() {
