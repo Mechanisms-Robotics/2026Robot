@@ -149,9 +149,9 @@ public class CONSTANTS {
     public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
     //TEST Constants
-    public static final double SPINDEXER_DELTA_VOLTS = 3; // volts per press
-    public static final double KICKER_DELTA_VOLTS = 11; // volts per press
-    public static final double FLYWHEEL_DELTA_RPM = 3000.0; // rpm per press
+    public static final double SPINDEXER_DELTA_VOLTS = 0.2; // volts per press
+    public static final double KICKER_DELTA_VOLTS = 0.2; // volts per press
+    public static final double FLYWHEEL_DELTA_RPM = 100; // rpm per press
     public static final double HOOD_DELTA_DEGREES = 1.0; // degrees per press
 
     public static enum Mode {

@@ -24,6 +24,7 @@ public class FlywheelIOSim implements FlywheelIO {
         this.sim.update(0.2);
 
         inputs.rpm = this.sim.getAngularVelocityRPM();
+        inputs.desiredRpm = this.desiredRpm;
     }
 
     @Override

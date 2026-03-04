@@ -13,6 +13,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     private final TalonFX follower = new TalonFX(FlywheelConstants.FOLLOWER_ID);
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
+    private double desiredRPM = 0.0;
+
     public FlywheelIOTalonFX() {
         PhoenixUtil.tryUntilOk(5, () -> this.leader.getConfigurator().apply(FlywheelConstants.LEADER_CONFIG));
         this.follower.setControl(new Follower(this.leader.getDeviceID(), MotorAlignmentValue.Opposed));
@@ -21,10 +23,17 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     @Override
     public void updateInputs(FlywheelIOInputs inputs) {
         inputs.rpm = this.leader.getVelocity().getValueAsDouble() * 60.0;
+        inputs.desiredRpm = this.desiredRPM;
     }
 
     @Override
     public void setVelocity(double rpm) {
-        this.leader.setControl(this.velocityRequest.withVelocity(rpm / 60.0));
+        this.desiredRPM = rpm / 60.0;
+        this.leader.setControl(this.velocityRequest.withVelocity(desiredRPM));
+    }
+
+    @Override
+    public double getDesiredVelocity() {
+        return this.desiredRPM;
     }
 }
