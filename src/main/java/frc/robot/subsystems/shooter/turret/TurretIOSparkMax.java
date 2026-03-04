@@ -34,7 +34,6 @@ public class TurretIOSparkMax implements TurretIO {
     @Override
     public void setAngle(Rotation2d angle) {
         this.motor.getClosedLoopController().setSetpoint(angle.getRotations(), ControlType.kPosition);
-        Logger.recordOutput("Turret/test/setpoint", Units.rotationsToDegrees(this.motor.getClosedLoopController().getSetpoint()));
     }
 
     @Override

@@ -174,8 +174,9 @@ public class CONSTANTS {
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
         // Clockwise and counter clockwise maximum rotation the turret should rotate
-        public static final double MIN_DEGREES = -15.0;
-        public static final double MAX_DEGREES = 15.0;
+        public static final double MIN_DEGREES = -135.0;
+        public static final double MAX_DEGREES = 135.0;
+        public static final double DUTYCYCLE_LIMIT = 0.3;
 
         // Center of the robot with z at the ground to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
@@ -189,14 +190,17 @@ public class CONSTANTS {
                 .positionConversionFactor(MOTOR_GEAR_RATIO)
                 .velocityConversionFactor(MOTOR_GEAR_RATIO);
             CONFIG.closedLoop
-                .p(0.0)
-                .d(0.0)
-                .positionWrappingInputRange(-0.5, 0.5)
+                .p(3.0)
+                .d(1.0)
+                .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
+                .positionWrappingInputRange(
+                    Units.degreesToRotations(MIN_DEGREES),
+                    Units.degreesToRotations(MAX_DEGREES)
+                )
                 .positionWrappingEnabled(true);
 
             CONFIG
-                .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(10);
+                .idleMode(IdleMode.kBrake);
 
             CONFIG.softLimit
                 .reverseSoftLimitEnabled(true)
