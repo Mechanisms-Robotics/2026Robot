@@ -169,13 +169,13 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double DAMPENING = 5.0;
-        public static final double RETRACT_FEEDFORWARD_MAX_VOLTS = 6.0;
-        public static final double ROLLERS_VOLTAGE = 6.0; // untuned
+        public static final double DAMPENING = 1.5;
+        public static final double RETRACT_FEEDFORWARD_MAX_VOLTS = 2.0;
+        public static final double ROLLERS_DUTY_CYCLE = -1.0;
 
         public static enum SlamState {
-            DEPLOY_VOLTS(-0.2),
-            RETRACT_VOLTS(0.4);
+            DEPLOY_VOLTS(-0.4),
+            RETRACT_VOLTS(0.8);
 
             public double voltage;
 
@@ -196,13 +196,12 @@ public class CONSTANTS {
             CONFIG_LEFT.encoder
                 .positionConversionFactor(GEAR_RATIO_ARM)
                 .velocityConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.smartCurrentLimit(40);
             CONFIG_LEFT.idleMode(IdleMode.kBrake);
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
         static {
-            CONFIG_LEFT.smartCurrentLimit(20);
+            CONFIG_ROLLERS.idleMode(IdleMode.kCoast);
         }
     }
 

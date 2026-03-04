@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.REVLibError;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,10 +17,12 @@ public class RollersIOSparkMax implements RollersIO {
 
     @Override
     public void updateInputs(RollersIOInputs inputs) {
+        inputs.currentAmps = this.motor.getOutputCurrent();
+        inputs.motorIsConnected = this.motor.getLastError() == REVLibError.kOk;
     }
 
     @Override
-    public void setVoltage(double voltage) {
-        this.motor.setVoltage(voltage);
+    public void setDutyCycle(double dutyCycle) {
+        this.motor.set(dutyCycle);
     }
 }

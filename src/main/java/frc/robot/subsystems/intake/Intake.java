@@ -59,10 +59,10 @@ public class Intake extends SubsystemBase {
         // run the rollers if deployed
 
         if (state == SlamState.DEPLOY_VOLTS) {
-            this.rollersIO.setVoltage(IntakeConstants.ROLLERS_VOLTAGE);
+            this.rollersIO.setDutyCycle(IntakeConstants.ROLLERS_DUTY_CYCLE);
         }
         else {
-            this.rollersIO.setVoltage(0.0);
+            this.rollersIO.setDutyCycle(0.0);
         }
     }
 
