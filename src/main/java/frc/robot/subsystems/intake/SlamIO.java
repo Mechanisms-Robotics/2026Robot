@@ -7,6 +7,7 @@ public interface SlamIO {
     public class IntakeIOInputs {
         public double velocityRPS;
         public double positionRotations;
+        public double appliedVolts;
     }
 
     public default void updateInputs(IntakeIOInputs inputs) {}

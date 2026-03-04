@@ -36,9 +36,8 @@ public class Slam extends SubsystemBase {
 
         if (state == SlamState.RETRACT_VOLTS) { // only use feedforward on retraction
             // the deployedPosition is about 1/4 of a turn (geared)
-            final double DEPLOYED_ROTATIONS = 0.25; // estimated
             feedForward = IntakeConstants.RETRACT_FEEDFORWARD_MAX_VOLTS
-                *(retractedPositionDetected - this.inputs.positionRotations)/DEPLOYED_ROTATIONS;
+                *(retractedPositionDetected - this.inputs.positionRotations)/IntakeConstants.DEPLOYED_ROTATIONS;
             if (Math.abs(feedForward) > Math.abs(IntakeConstants.RETRACT_FEEDFORWARD_MAX_VOLTS)) {
                 // clamp
                 feedForward = Math.signum(feedForward)*Math.abs(IntakeConstants.RETRACT_FEEDFORWARD_MAX_VOLTS);
@@ -48,7 +47,7 @@ public class Slam extends SubsystemBase {
         double voltage = state.voltage
             - this.inputs.velocityRPS*IntakeConstants.DAMPENING
             + feedForward;
-            
+
         this.io.setVoltage(voltage);
     }
 

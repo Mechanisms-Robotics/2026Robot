@@ -19,19 +19,23 @@ public class SlamIOSparkMax implements SlamIO {
         var config_right = new SparkMaxConfig();
         config_right.follow(IntakeConstants.ARM_ID_LEFT, true);
         config_right.idleMode(IdleMode.kBrake);
-        
+
         this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         this.armLeft.configure(IntakeConstants.CONFIG_LEFT, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
+
+    public double lastAppliedVolts = 0.0;
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
         inputs.velocityRPS = this.armLeftEncoder.getVelocity() / 60.0;
         inputs.positionRotations = this.armLeftEncoder.getPosition();
+        inputs.appliedVolts = this.lastAppliedVolts;
     }
 
     @Override
     public void setVoltage(double voltage) {
         this.armLeft.setVoltage(voltage);
+        this.lastAppliedVolts = voltage;
     }
 }
