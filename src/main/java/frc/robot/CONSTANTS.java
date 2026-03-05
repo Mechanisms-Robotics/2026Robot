@@ -40,6 +40,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -61,10 +62,7 @@ public class CONSTANTS {
     //RobotContainer
     public static final int CONTROLLER_PORT = 0;
 
-    // Vision Constants
-    public static AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-
+    // MARK: Field
     public static class FieldConstants {
         public static double WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
         public static double LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
@@ -100,6 +98,10 @@ public class CONSTANTS {
             Rotation3d.kZero
         );
     }
+
+    // MARK: Vision
+    public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static final String CAMERA1_NAME = "PhotonCameraLeft";
 
@@ -140,7 +142,7 @@ public class CONSTANTS {
         : SIM_MODE;
 
     
-    // Feeder Constants
+    // MARK: Feeder
     public static final int KICKER_MOTOR_CAN_ID = 11;
     public static final int SPINDEXER_MOTOR_CAN_ID = 10;
 
@@ -166,7 +168,45 @@ public class CONSTANTS {
         REPLAY,
     }
 
+    // MARK: Intake
+    public static class IntakeConstants {
+        public static final double DAMPENING = 1.5;
+        public static final double RETRACT_FEEDFORWARD_MAX_VOLTS = 2.0;
+        public static final double ROLLERS_DUTY_CYCLE = -1.0;
 
+        public static enum SlamState {
+            DEPLOY_VOLTS(-0.4),
+            RETRACT_VOLTS(0.8);
+
+            public double voltage;
+
+            private SlamState(double voltage) {
+                this.voltage = voltage;
+            }
+        }
+
+        public static final int ARM_CAN_ID_LEFT = 12;
+        public static final int ARM_CAN_ID_RIGHT = 13;
+        public static final int ROLLERS_CAN_ID = 14;
+
+        public static final double GEAR_RATIO_ARM = 10.0 / 84.0;
+        public static final double DEPLOYED_ROTATIONS = 0.1; // determined emperically
+
+        public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
+        static {
+            CONFIG_LEFT.encoder
+                .positionConversionFactor(GEAR_RATIO_ARM)
+                .velocityConversionFactor(GEAR_RATIO_ARM);
+            CONFIG_LEFT.idleMode(IdleMode.kBrake);
+        }
+
+        public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
+        static {
+            CONFIG_ROLLERS.idleMode(IdleMode.kCoast);
+        }
+    }
+
+    // MARK: Turret
     public static class TurretConstants {
         // TODO: Find this by moving the turret to zero and recording the error.
         public static final double TURRET_OFFSET = 0.0; 
@@ -206,6 +246,7 @@ public class CONSTANTS {
         }
     }
 
+    // MARK: Flywheel
     public static class FlywheelConstants {
         public static final int LEADER_ID = 21;
         public static final int FOLLOWER_ID = 22;
@@ -229,6 +270,7 @@ public class CONSTANTS {
             );
     }
 
+    // MARK: Hood
     public static class HoodConstants {
         // number of rotations of the hood per gear rotation
         public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
@@ -253,10 +295,10 @@ public class CONSTANTS {
                     .withStatorCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(Amps.of(2))
                     .withSupplyCurrentLimitEnable(true)
-            ); //TODO: adjust SupplyCurrentLimit as needed
+            );
     }
 
-    // NEW DRIVETRAIN CONSTANTS
+    // MARK: Drivetrain
     public static class DriveConstants {
 
         // Both sets of gains need to be tuned to your individual robot.
@@ -574,6 +616,7 @@ public class CONSTANTS {
         public static final double SYSID_TIMEOUT = 1.0; // Secs
     }
 
+    // MARK: Commands
     // Manual mode constants
     public static class ManualModeConstants {
         public static final Rotation2d TURRET_PINNED_ANGLE = Rotation2d.fromDegrees(0.0);
