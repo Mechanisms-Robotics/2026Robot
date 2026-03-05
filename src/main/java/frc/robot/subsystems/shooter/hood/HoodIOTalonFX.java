@@ -1,7 +1,5 @@
 package frc.robot.subsystems.shooter.hood;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -26,6 +24,8 @@ public class HoodIOTalonFX implements HoodIO {
         double position = this.getPosition();
 
         inputs.positionDegrees = Units.radiansToDegrees(position);
+        inputs.currentAmps = this.motor.getTorqueCurrent().getValueAsDouble();
+        inputs.connected = this.motor.isConnected();
         
         this.motor.setVoltage(
             (this.desiredRadians - position) * HoodConstants.kP

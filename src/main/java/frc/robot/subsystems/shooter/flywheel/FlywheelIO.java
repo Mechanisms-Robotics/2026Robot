@@ -7,6 +7,9 @@ public interface FlywheelIO {
     public static class FlywheelIOInputs {
         public double rpm;
         public double desiredRpm;
+        public double currentAmps = 0.0;
+        public boolean leaderConnected = false;
+        public boolean followerConnected = false;
     }
     
     default void updateInputs(FlywheelIOInputs inputs) {}

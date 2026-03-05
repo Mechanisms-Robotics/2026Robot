@@ -25,6 +25,9 @@ public class FlywheelIOSim implements FlywheelIO {
 
         inputs.rpm = this.sim.getAngularVelocityRPM();
         inputs.desiredRpm = this.desiredRpm;
+        inputs.leaderConnected = true;
+        inputs.followerConnected = true;
+        inputs.currentAmps = this.sim.getCurrentDrawAmps();
     }
 
     @Override

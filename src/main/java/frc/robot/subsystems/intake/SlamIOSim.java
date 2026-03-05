@@ -36,7 +36,11 @@ public class SlamIOSim implements SlamIO {
     public void updateInputs(IntakeIOInputs inputs) {
         this.armLeftSim.update(0.02);
         this.armRightSim.update(0.02);
-        inputs.velocityRPS = armLeftSim.getAngularVelocity().in(RotationsPerSecond);
+        inputs.velocityRPS = this.armLeftSim.getAngularVelocity().in(RotationsPerSecond);
+        inputs.armLeftConnected = true;
+        inputs.armRightConnected = true;
+        inputs.armLeftAmps = this.armLeftSim.getCurrentDrawAmps();
+        inputs.armRightAmps = this.armRightSim.getCurrentDrawAmps();
     }
     
     @Override

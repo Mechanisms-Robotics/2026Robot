@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
@@ -33,6 +34,8 @@ public class SlamIOSparkMax implements SlamIO {
         inputs.velocityRPS = this.armLeftEncoder.getVelocity() / 60.0;
         inputs.positionRotations = this.armLeftEncoder.getPosition();
         inputs.appliedVolts = this.lastAppliedVolts;
+        inputs.armLeftConnected = this.armLeft.getLastError() == REVLibError.kOk;
+        inputs.armRightConnected = this.armRight.getLastError() == REVLibError.kOk;
     }
 
     @Override

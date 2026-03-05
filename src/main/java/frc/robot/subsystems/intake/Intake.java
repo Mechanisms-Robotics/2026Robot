@@ -6,9 +6,9 @@ import frc.robot.CONSTANTS.IntakeConstants;
 import frc.robot.CONSTANTS.IntakeConstants.SlamState;
 
 public class Intake extends SubsystemBase {
-    private final SlamIO io;
+    private final SlamIO slamIO;
     private final RollersIO rollersIO;
-    private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+    private final IntakeIOInputsAutoLogged slamInputs = new IntakeIOInputsAutoLogged();
     private final RollersIOInputsAutoLogged rollersInputs = new RollersIOInputsAutoLogged();
 
     SlamState state = SlamState.RETRACT_VOLTS;
@@ -17,23 +17,23 @@ public class Intake extends SubsystemBase {
     private double retractedPositionDetected = Double.MIN_VALUE;
 
     public Intake(SlamIO io, RollersIO rollersIO) {
-        this.io = io;
+        this.slamIO = io;
         this.rollersIO = rollersIO;
     }
 
     @Override
     public void periodic() {
-        this.io.updateInputs(this.inputs);
-        Logger.processInputs("Intake", this.inputs);
+        this.slamIO.updateInputs(this.slamInputs);
+        Logger.processInputs("Intake/Slam", this.slamInputs);
 
         this.rollersIO.updateInputs(this.rollersInputs);
-        Logger.processInputs("Intake", this.rollersInputs);
+        Logger.processInputs("Intake/Rollers", this.rollersInputs);
 
         // Capture the most retracted position. If we accidentally start
         // with the intake out it's okay. It probably won't retract until
         // we manually close it and capture the new retracted position.
-        if (this.inputs.positionRotations > retractedPositionDetected) {
-            retractedPositionDetected = this.inputs.positionRotations;
+        if (this.slamInputs.positionRotations > retractedPositionDetected) {
+            retractedPositionDetected = this.slamInputs.positionRotations;
         }
 
         // use voltage control but dampen speed
@@ -43,7 +43,7 @@ public class Intake extends SubsystemBase {
         if (state == SlamState.RETRACT_VOLTS) { // only use feedforward on retraction
             // the deployedPosition is about 1/4 of a turn (geared)
             feedForward = IntakeConstants.RETRACT_FEEDFORWARD_MAX_VOLTS
-                *(retractedPositionDetected - this.inputs.positionRotations)/IntakeConstants.DEPLOYED_ROTATIONS;
+                *(retractedPositionDetected - this.slamInputs.positionRotations)/IntakeConstants.DEPLOYED_ROTATIONS;
             if (Math.abs(feedForward) > Math.abs(IntakeConstants.RETRACT_FEEDFORWARD_MAX_VOLTS)) {
                 // clamp
                 feedForward = Math.signum(feedForward)*Math.abs(IntakeConstants.RETRACT_FEEDFORWARD_MAX_VOLTS);
@@ -51,10 +51,10 @@ public class Intake extends SubsystemBase {
         }
 
         double voltage = state.voltage
-            - this.inputs.velocityRPS*IntakeConstants.DAMPENING
+            - this.slamInputs.velocityRPS*IntakeConstants.DAMPENING
             + feedForward;
 
-        this.io.setVoltage(voltage);
+        this.slamIO.setVoltage(voltage);
 
         // run the rollers if deployed
 

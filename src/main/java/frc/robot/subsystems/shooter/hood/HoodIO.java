@@ -7,7 +7,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public interface HoodIO {
     @AutoLog
     public static class HoodIOInputs {
-        double positionDegrees;
+        public double positionDegrees;
+        public double currentAmps = 0.0;
+        public boolean connected = false;
     }
 
     public default void updateInputs(HoodIOInputs inputs) {}
