@@ -147,7 +147,7 @@ public class CONSTANTS {
     public static final int SPINDEXER_MOTOR_CAN_ID = 10;
 
     // minimum (tuned)
-    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -8.0;
+    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -12.0;
     public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -3.0;
     public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
@@ -621,6 +621,6 @@ public class CONSTANTS {
     public static class ManualModeConstants {
         public static final Rotation2d TURRET_PINNED_ANGLE = Rotation2d.fromDegrees(0.0);
         public static final Rotation2d HOOD_PINNED_ANGLE = Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES);
-        public static final double FLYWHEEL_RPM = 3000;
+        public static final double FLYWHEEL_RPM = 3300;
     }
 }
