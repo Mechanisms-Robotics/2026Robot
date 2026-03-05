@@ -255,7 +255,7 @@ public class RobotContainer {
             .square()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.feeder.adjustSpindexerVolts(CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                    this.feeder.stopFeeding();//(CONSTANTS.SPINDEXER_DELTA_VOLTS);
                 })
             );
 
@@ -263,7 +263,7 @@ public class RobotContainer {
             .circle()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.feeder.adjustSpindexerVolts(-CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                    this.feeder.startFeeding();//(-CONSTANTS.SPINDEXER_DELTA_VOLTS);
                 })
             );
 
