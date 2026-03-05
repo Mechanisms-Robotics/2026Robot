@@ -42,9 +42,9 @@ public class ChaosDepotAuto extends SequentialCommandGroup {
             new FollowPath(chaosLeftBackup.get(), drivetrain, true),
             new InstantCommand(hood::stow, hood),
             new ManualShoot(flywheel, feeder, 100).withTimeout(2.0),
-            // new WaitCommand(2.0),
+            // new WaitCommand(2.0)
             // new InstantCommand(() -> shooter.end(false)),
-            new ShootCommands().Shoot(feeder).withTimeout(4.0),
+            new ShootCommands.Shoot(feeder).withTimeout(2.0),
             new FollowPath(chaosLeftChaos.get(), drivetrain, false)
         );
 
