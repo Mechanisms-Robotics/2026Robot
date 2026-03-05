@@ -622,6 +622,6 @@ public class CONSTANTS {
     public static class ManualModeConstants {
         public static final Rotation2d TURRET_PINNED_ANGLE = Rotation2d.fromDegrees(0.0);
         public static final Rotation2d HOOD_PINNED_ANGLE = Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES);
-        public static final double FLYWHEEL_RPM = 3000;
+        public static final double FLYWHEEL_RPM = 3300;
     }
 }

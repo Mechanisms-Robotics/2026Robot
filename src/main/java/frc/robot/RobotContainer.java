@@ -293,8 +293,8 @@ public class RobotContainer {
         new Trigger(() -> this.controller.getHID().getPOV() == 90)
             .onTrue(
                 new InstantCommand(() -> {
-                    //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
+                    this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                    //this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
                 
                 })
             );
@@ -302,8 +302,8 @@ public class RobotContainer {
         new Trigger(() -> this.controller.getHID().getPOV() == 270)
             .onTrue(
                 new InstantCommand(() -> {
-                    //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
+                    this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                    
                 
                 })
             );

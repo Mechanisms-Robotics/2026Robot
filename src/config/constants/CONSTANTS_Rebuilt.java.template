@@ -253,6 +253,8 @@ public class CONSTANTS {
         public static final int FOLLOWER_ID = 22;
         public static final double IDLE_RPM = 0.0;
 
+        public static final double MANUAL_MODE_RPM = 3300.0;
+
         public static final TalonFXConfiguration LEADER_CONFIG = new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
