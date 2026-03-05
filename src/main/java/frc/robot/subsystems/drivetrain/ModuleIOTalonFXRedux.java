@@ -258,10 +258,10 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
             this.turnAppliedVolts,
             this.turnCurrent
         );
-        var turnEncoderStatus = Frame.waitForFrames(
-            Timeouts.STD_TIMEOUT,
-            this.turnAbsolutePosition
-        );
+        // var turnEncoderStatus = Frame.waitForFrames(
+        //     Timeouts.STD_TIMEOUT,
+        //     this.turnAbsolutePosition
+        // );
 
         // Update drive inputs
         inputs.driveConnected = this.driveConnectedDebounce.calculate(
@@ -282,7 +282,8 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
         );
         inputs.turnEncoderConnected =
             this.turnEncoderConnectedDebounce.calculate(
-                turnEncoderStatus != null
+                true
+                //turnEncoderStatus != null
             );
         inputs.turnAbsolutePosition = Rotation2d.fromRotations(
             this.cancoder.getAbsPosition()

@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.time.Instant;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -13,16 +11,23 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix6.SignalLogger;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class Robot extends LoggedRobot {
-  public Instant lastSwerveModuleSetTime = Instant.MIN;
-
   private Command autonomousCommand;
   private final RobotContainer robotContainer;
+  private final SendableChooser<Boolean> resetPoseChooser = new SendableChooser<>();
 
   public Robot() {
+    SignalLogger.enableAutoLogging(false);
+    
     switch (CONSTANTS.CURRENT_MODE) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
@@ -48,18 +53,38 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     this.robotContainer = new RobotContainer();
+
+    resetPoseChooser.setDefaultOption("None", false);
+    resetPoseChooser.addOption("All", true);
+    SmartDashboard.putData("Reset Pose", resetPoseChooser);
+    this.autonomousCommand = Commands.none();
+    DriverStation.silenceJoystickConnectionWarning(true);
+    // Sets the selected command to None even if elastic already set the auto when the robot turns on
+    // Prevents the robot from running an auto that was not intentionally selected after the robot turned on
+    SmartDashboard.putString("Auto Chooser/selected", "None");
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    if (resetPoseChooser.getSelected()) {
+      robotContainer.drivetrain.resetPose(robotContainer.drivetrain.getPose());
+    }
   }
 
   @Override
+  public void robotInit() {
+  }
+  
+  @Override
   public void disabledInit() {}
-
+  
   @Override
   public void disabledPeriodic() {
+    String autoName = this.robotContainer.autoChooser.getSelected();
+    if (!this.autonomousCommand.getName().equals(autoName)) {
+      this.autonomousCommand = this.robotContainer.getAutonomousCommand(autoName);
+    }
   }
 
   @Override
@@ -68,7 +93,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    this.autonomousCommand = this.robotContainer.getAutonomousCommand();
     if (this.autonomousCommand != null) {
       this.autonomousCommand.schedule();
     }
@@ -96,6 +120,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    this.robotContainer.turret.zero();
   }
 
   @Override

@@ -7,12 +7,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.CONSTANTS;
 import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.PoseEstimator8736;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -23,7 +28,9 @@ public class Drivetrain extends SubsystemBase {
 
     SwerveDriveKinematics kinematics;
     ChassisSpeeds desiredChassisSpeeds;
-    PoseEstimator8736 poseEstimator;
+    
+    // Made this public so the PoseCamera could access it. This could be restructured if needed  -Luke
+    public PoseEstimator8736 poseEstimator;
     //private final StructArrayPublisher<SwerveModuleState> publisher;
 
     private final SwerveModule frontLeftModule;
@@ -31,16 +38,21 @@ public class Drivetrain extends SubsystemBase {
     private final SwerveModule backLeftModule;
     private final SwerveModule backRightModule;
 
-    private final GyroIO gyroIO;
+    private final GyroIO gyroIO; // may be a real gyro or a simulated gyro
     private final GyroIOInputsAutoLogged gyroInputs =
         new GyroIOInputsAutoLogged();
 
-    static final Lock odometryLock = new ReentrantLock();
+    public static final Lock odometryLock = new ReentrantLock();
+    
+    private boolean driveClosedLoop = true;
 
     /**
-     * Remember that the front of the robot is +X and the left side of the robot is
-     * +Y.
+     * Remember that the forward direction of the robot is +X and the left direction is
+     * +Y. So if you give a ChassisSpeed of (+1, +1) the robot should translate diagonally
+     * forward and left. This also means that the swerve module positions are based
+     * on this coordinate system.
      */
+
     public Drivetrain(
         GyroIO gyroIO,
         ModuleIO frontLeftModuleIO,
@@ -58,7 +70,10 @@ public class Drivetrain extends SubsystemBase {
             frontRightModuleIO,
             "Front Right"
         );
-        this.backLeftModule = new SwerveModule(backLeftModuleIO, "Back Left");
+        this.backLeftModule = new SwerveModule(
+            backLeftModuleIO, 
+            "Back Left"
+        );
         this.backRightModule = new SwerveModule(
             backRightModuleIO,
             "Back Right"
@@ -82,6 +97,8 @@ public class Drivetrain extends SubsystemBase {
                 DriveConstants.BACK_RIGHT.LocationY
             )
         );
+
+        /* TODO: Ask Alex to add comments about the odometry thread when we do a code review. */
         PhoenixOdometryThread.getInstance().start();
 
         this.poseEstimator = new PoseEstimator8736(
@@ -94,6 +111,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void setDesiredState(ChassisSpeeds desiredChassisSpeeds) {
+        this.driveClosedLoop = true;
         this.desiredChassisSpeeds = desiredChassisSpeeds;
     }
 
@@ -116,31 +134,35 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        odometryLock.lock();
-        gyroIO.updateInputs(gyroInputs);
-        Logger.processInputs("Drive/Gyro", gyroInputs);
+        Drivetrain.odometryLock.lock();
 
-        // update module inputs
+        // gyroIO may be a real gyro or it may be simulated.
+        // These lines update gyroInputs from gyroIO
+        // gyroInputs will be used below
+        this.gyroIO.updateInputs(this.gyroInputs);
+        Logger.processInputs("Drive/Gyro", this.gyroInputs);
+
+        // calling SwerveModule.periodic() updates each module's inputs from the hardware or simulation
         this.frontLeftModule.periodic();
         this.frontRightModule.periodic();
         this.backLeftModule.periodic();
         this.backRightModule.periodic();
 
-        // Update odometry
+        Drivetrain.odometryLock.unlock();
+
+        // Send updated odometry to the pose estimator
+        // All signals are sampled together so only need timestamps from one
         double[] sampleTimestamps =
-            this.frontLeftModule.getOdometryTimestamps(); // All signals are sampled together
-        int sampleCount = sampleTimestamps.length;
-        for (int i = 0; i < sampleCount; i++) {
+            this.frontLeftModule.getOdometryTimestamps();
+        for (int i = 0; i < sampleTimestamps.length; i++) {
             // Read wheel positions from each module
-            SwerveModulePosition[] modulePositions =
-                new SwerveModulePosition[4];
+            SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
             modulePositions[0] = this.frontLeftModule.getOdometryPositions()[i];
-            modulePositions[1] =
-                this.frontRightModule.getOdometryPositions()[i];
+            modulePositions[1] = this.frontRightModule.getOdometryPositions()[i];
             modulePositions[2] = this.backLeftModule.getOdometryPositions()[i];
             modulePositions[3] = this.backRightModule.getOdometryPositions()[i];
 
-            // Update pose estimator with gyro rotation (or null to use kinematics)
+            // Update pose estimator with gyro rotation (or null to use kinematics only)
             Rotation2d gyroRotation = this.gyroInputs.connected
                 ? this.gyroInputs.odometryYawPositions[i]
                 : null;
@@ -150,41 +172,46 @@ public class Drivetrain extends SubsystemBase {
                 sampleTimestamps[i]
             );
         }
+        if (this.driveClosedLoop) {
 
-        // send the new desired states down to the modules
-        ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
-            this.desiredChassisSpeeds,
-            CONSTANTS.ROBOT_LOOP_PERIOD
-        );
-        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
-            this.desiredChassisSpeeds
-        );
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            moduleStates,
-            CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
-        );
+            // send the new desired states down to the modules
 
-        Logger.recordOutput("SwerveStates/Setpoints", moduleStates);
-        Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+            ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
+                this.desiredChassisSpeeds,
+                CONSTANTS.ROBOT_LOOP_PERIOD
+            );
 
-        SwerveModuleState frontLeftState = moduleStates[0];
-        SwerveModuleState frontRightState = moduleStates[1];
-        SwerveModuleState backLeftState = moduleStates[2];
-        SwerveModuleState backRightState = moduleStates[3];
+            SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
+                this.desiredChassisSpeeds
+            );
+            
+            SwerveDriveKinematics.desaturateWheelSpeeds(
+                moduleStates,
+                CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
+            );
 
-        this.frontLeftModule.setModuleState(frontLeftState);
-        this.frontRightModule.setModuleState(frontRightState);
-        this.backLeftModule.setModuleState(backLeftState);
-        this.backRightModule.setModuleState(backRightState);
+            Logger.recordOutput("SwerveStates/Setpoints", moduleStates);
+            Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+
+            SwerveModuleState frontLeftState = moduleStates[0];
+            SwerveModuleState frontRightState = moduleStates[1];
+            SwerveModuleState backLeftState = moduleStates[2];
+            SwerveModuleState backRightState = moduleStates[3];
+
+            this.frontLeftModule.setModuleState(frontLeftState);
+            this.frontRightModule.setModuleState(frontRightState);
+            this.backLeftModule.setModuleState(backLeftState);
+            this.backRightModule.setModuleState(backRightState);
+        }
     }
 
-    public void zeroGyro() {
-        this.resetPose(
-            new Pose2d(
-                this.poseEstimator.getEstimatedPose().getTranslation(),
-                Rotation2d.kZero
-            )
-        );
+    public void resetHeading() {
+        resetPose(new Pose2d(
+            getPose().getTranslation(),
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get().equals(Alliance.Red) ?
+                    Rotation2d.k180deg : Rotation2d.kZero
+        ));
     }
 
     public void resetPose(Pose2d pose) {
@@ -199,5 +226,41 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         this.periodic();
+    }
+    
+    /** Runs the drive in a straight line with the specified drive output. */
+    public void runCharacterization(double output) {
+        this.driveClosedLoop = false;
+        this.frontLeftModule.runCharacterization(output);
+        this.frontRightModule.runCharacterization(output);
+        this.backLeftModule.runCharacterization(output);
+        this.backRightModule.runCharacterization(output);
+    }
+
+    /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
+    public double getFFCharacterizationVelocity() {
+        double output = 0.0;
+        output += this.frontLeftModule.getFFCharacterizationVelocity();
+        output += this.frontRightModule.getFFCharacterizationVelocity();
+        output += this.backLeftModule.getFFCharacterizationVelocity();
+        output += this.backRightModule.getFFCharacterizationVelocity();
+        output /= 4;
+        /** TODO: get Feed Forward characterization velocity from modules */
+        return output;
+    }
+
+    /** Returns the position of each module in radians. */
+    public double[] getWheelRadiusCharacterizationPositions() {
+        double[] values = new double[4];
+        values[0] = this.frontLeftModule.getWheelRadiusCharacterizationPosition();
+        values[1] = this.frontRightModule.getWheelRadiusCharacterizationPosition();
+        values[2] = this.backLeftModule.getWheelRadiusCharacterizationPosition();
+        values[3] = this.backRightModule.getWheelRadiusCharacterizationPosition();
+        return values;
+    }
+
+    /** Returns the raw gyro rotation read by the IMU */
+    public Rotation2d getGyroRotation() {
+        return gyroInputs.yawPosition;
     }
 }

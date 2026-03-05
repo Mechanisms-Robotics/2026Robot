@@ -1,9 +1,10 @@
-package frc.robot;
+package frc.robot.commands;
 
 import java.util.Optional;
 
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
+import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -11,8 +12,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class FollowPath extends Command {
@@ -20,6 +25,7 @@ public class FollowPath extends Command {
   private final Trajectory<SwerveSample> trajectory;
   private final Drivetrain drivetrain;
   private final boolean resetPose;
+  private boolean isRedAlliance;
 
   private final Timer timer = new Timer();
   private final HolonomicDriveController holonomicController;
@@ -40,7 +46,6 @@ public class FollowPath extends Command {
         new ProfiledPIDController(CONSTANTS.PATH_FOLLOWER_P_THETA, 0, 0, thetaProfile);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    // TODO: Tune the controller.
     holonomicController = new HolonomicDriveController(
         new PIDController(CONSTANTS.PATH_FOLLOWER_P_X, 0, 0),
         new PIDController(CONSTANTS.PATH_FOLLOWER_P_Y, 0, 0),
@@ -60,8 +65,13 @@ public class FollowPath extends Command {
     timer.reset();
     timer.start();
 
+    this.isRedAlliance = DriverStation.getAlliance().isPresent() &&
+        DriverStation.getAlliance().get() == Alliance.Red;
+
     if (this.resetPose) {
-      Optional<Pose2d> initialPose = trajectory.getInitialPose(false); // TODO: Should we mirror for red?
+      // rotate the initial pose if we're on the red alliance
+      Optional<Pose2d> initialPose = trajectory.getInitialPose(this.isRedAlliance); 
+
       if (initialPose.isEmpty()) {
         // TODO: Why would this ever happen? Should we handle it differently?
         throw new IllegalStateException("Trajectory has no initial pose!");
@@ -75,7 +85,7 @@ public class FollowPath extends Command {
     double t = this.timer.get();
 
     Optional<SwerveSample> swerveSample = this.trajectory.sampleAt(
-      t, false); // TODO: Should we mirror for red?
+      t, isRedAlliance);
     if (swerveSample.isEmpty()) {
       return; // TODO: Why would this ever happen? Should we handle it differently?
     }

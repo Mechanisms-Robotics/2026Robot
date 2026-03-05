@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.3.2"
+    id "edu.wpi.first.GradleRIO" version "2026.2.1"
 }
 
 java {
@@ -27,12 +27,21 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
+                    // Enable VisualVM connection
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote=true")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
+                    // jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
+                    // jvmArgs.add("-Djava.rmi.server.hostname=10.87.36.2")
                 }
 
                 // Static files artifact
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
+                    deleteOldFiles = false // Change to true to delete files on roboRIO that no
+                                           // longer exist in deploy directory of this project
                 }
             }
         }
@@ -41,12 +50,12 @@ deploy {
 
 def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 
-// Set to true to use debug for JNI.
+// Set to true to use debug for all targets including JNI, which will drastically impact
+// performance.
 wpi.java.debugJni = false
 
 // Set this to true to enable desktop support.
-def includeDesktopSupport = false
-
+def includeDesktopSupport = true
 
 task(replayWatch, type: JavaExec) {
     mainClass = "org.littletonrobotics.junction.ReplayWatch"
@@ -76,14 +85,10 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    if (includeDesktopSupport) {
-        simulation wpi.sim.enableSim()
-        simulation wpi.sim.driverstation()
-    }
-
+    
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
+
 }
 
 test {
@@ -100,6 +105,9 @@ wpi.sim.addDriverstation()
 // knows where to look for our Robot Class.
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from('src') { into 'backup/src' }
+    from('vendordeps') { into 'backup/vendordeps' }
+    from('build.gradle') { into 'backup' }
     from sourceSets.main.allSource
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -140,141 +148,141 @@ tasks.withType(JavaCompile) {
 // ****
 // **********************************************************
 
-// Define a build parameter for selecting the target robot
-def targetRobot = project.hasProperty('targetRobot') ? project.getProperty('targetRobot') : 'mechiatto'
+// // Define a build parameter for selecting the target robot
+// def targetRobot = project.hasProperty('targetRobot') ? project.getProperty('targetRobot') : 'mechiatto'
 
-// **********************************************************
-// ****   Pre-Build Validation Tasks for CONSTANTS
-// **********************************************************
+// // **********************************************************
+// // ****   Pre-Build Validation Tasks for CONSTANTS
+// // **********************************************************
 
-// Validate that CONSTANTS.java hasn't been modified before overwriting
-task validateConstantsNotModified {
-    doLast {
-        def destinationFile = file("src/main/java/frc/robot/CONSTANTS.java")
+// // Validate that CONSTANTS.java hasn't been modified before overwriting
+// task validateConstantsNotModified {
+//     doLast {
+//         def destinationFile = file("src/main/java/frc/robot/CONSTANTS.java")
         
-        if (!destinationFile.exists()) {
-            println "INFO: CONSTANTS.java does not exist yet. Will be created."
-            return
-        }
+//         if (!destinationFile.exists()) {
+//             println "INFO: CONSTANTS.java does not exist yet. Will be created."
+//             return
+//         }
         
-        def mechiatto = file("src/config/constants/CONSTANTS_Mechiatto.java.template")
-        def rebuilt = file("src/config/constants/CONSTANTS_Rebuilt.java.template")
+//         def mechiatto = file("src/config/constants/CONSTANTS_Mechiatto.java.template")
+//         def rebuilt = file("src/config/constants/CONSTANTS_Rebuilt.java.template")
         
-        if (!mechiatto.exists() || !rebuilt.exists()) {
-            println "WARNING: One or more source constants files are missing. Skipping validation."
-            return
-        }
+//         if (!mechiatto.exists() || !rebuilt.exists()) {
+//             println "WARNING: One or more source constants files are missing. Skipping validation."
+//             return
+//         }
         
-        def destContent = destinationFile.text
-        def mechiattoContent = mechiatto.text
-        def rebuiltContent = rebuilt.text
+//         def destContent = destinationFile.text
+//         def mechiattoContent = mechiatto.text
+//         def rebuiltContent = rebuilt.text
         
-        boolean matchesMechiatto = destContent.equals(mechiattoContent)
-        boolean matchesRebuilt = destContent.equals(rebuiltContent)
+//         boolean matchesMechiatto = destContent.equals(mechiattoContent)
+//         boolean matchesRebuilt = destContent.equals(rebuiltContent)
         
-        if (!matchesMechiatto && !matchesRebuilt) {
-            throw new GradleException("""
-================================================================================
-❌ ERROR: CONSTANTS.java has been modified!
-================================================================================
+//         if (!matchesMechiatto && !matchesRebuilt) {
+//             throw new GradleException("""
+// ================================================================================
+// ❌ ERROR: CONSTANTS.java has been modified!
+// ================================================================================
 
-The CONSTANTS.java file contains changes that don't match either:
-  - CONSTANTS_Mechiatto.java
-  - CONSTANTS_Rebuilt.java
+// The CONSTANTS.java file contains changes that don't match either:
+//   - CONSTANTS_Mechiatto.java
+//   - CONSTANTS_Rebuilt.java
 
-This usually means you made changes directly to CONSTANTS.java instead of 
-editing the appropriate source file in src/config/constants/.
+// This usually means you made changes directly to CONSTANTS.java instead of 
+// editing the appropriate source file in src/config/constants/.
 
-⚠️  If we continue, your changes will be LOST!
+// ⚠️  If we continue, your changes will be LOST!
 
-HOW TO FIX:
-1. Review your changes in CONSTANTS.java
-2. Copy those changes to the appropriate file:
-   - For Mechiatto: src/config/constants/CONSTANTS_Mechiatto.java
-   - For Rebuilt: src/config/constants/CONSTANTS_Rebuilt.java
-3. Run the build again
+// HOW TO FIX:
+// 1. Review your changes in CONSTANTS.java
+// 2. Copy those changes to the appropriate file:
+//    - For Mechiatto: src/config/constants/CONSTANTS_Mechiatto.java
+//    - For Rebuilt: src/config/constants/CONSTANTS_Rebuilt.java
+// 3. Run the build again
 
-Location: ${destinationFile.absolutePath}
+// Location: ${destinationFile.absolutePath}
 
-================================================================================
-""")
-        }
+// ================================================================================
+// """)
+//         }
         
-        println "✓ Validation passed: CONSTANTS.java matches a known source configuration"
-    }
-}
+//         println "✓ Validation passed: CONSTANTS.java matches a known source configuration"
+//     }
+// }
 
-// Pre-build task to copy the appropriate constants file
-task prepareConstants {
-    dependsOn validateConstantsNotModified
+// // Pre-build task to copy the appropriate constants file
+// task prepareConstants {
+//     dependsOn validateConstantsNotModified
     
-    doLast {
-        println "========================================="
-        println "PREPARE CONSTANTS TASK"
-        println "========================================="
-        println "Target Robot: ${targetRobot}"
+//     doLast {
+//         println "========================================="
+//         println "PREPARE CONSTANTS TASK"
+//         println "========================================="
+//         println "Target Robot: ${targetRobot}"
         
-        def sourceFile
-        def destinationFile = file("src/main/java/frc/robot/CONSTANTS.java")
+//         def sourceFile
+//         def destinationFile = file("src/main/java/frc/robot/CONSTANTS.java")
 
-        // Determine the source file based on the targetRobot parameter
-        if (targetRobot == 'mechiatto') {
-            sourceFile = file("src/config/constants/CONSTANTS_Mechiatto.java.template")
-            println "Selected: MECHIATTO (Practice Bot)"
-        } else if (targetRobot == 'rebuilt') {
-            sourceFile = file("src/config/constants/CONSTANTS_Rebuilt.java.template")
-            println "Selected: REBUILT (Competition Bot)"
-        } else {
-            throw new GradleException("Unknown targetRobot: ${targetRobot}. Valid options are 'mechiatto' or 'rebuilt'.")
-        }
+//         // Determine the source file based on the targetRobot parameter
+//         if (targetRobot == 'mechiatto') {
+//             sourceFile = file("src/config/constants/CONSTANTS_Mechiatto.java.template")
+//             println "Selected: MECHIATTO (Practice Bot)"
+//         } else if (targetRobot == 'rebuilt') {
+//             sourceFile = file("src/config/constants/CONSTANTS_Rebuilt.java.template")
+//             println "Selected: REBUILT (Competition Bot)"
+//         } else {
+//             throw new GradleException("Unknown targetRobot: ${targetRobot}. Valid options are 'mechiatto' or 'rebuilt'.")
+//         }
 
-        println "-----------------------------------------"
-        println "Source File:"
-        println "  Path: ${sourceFile.absolutePath}"
-        println "  Exists: ${sourceFile.exists()}"
-        if (sourceFile.exists()) {
-            println "  Size: ${sourceFile.length()} bytes"
-        }
+//         println "-----------------------------------------"
+//         println "Source File:"
+//         println "  Path: ${sourceFile.absolutePath}"
+//         println "  Exists: ${sourceFile.exists()}"
+//         if (sourceFile.exists()) {
+//             println "  Size: ${sourceFile.length()} bytes"
+//         }
         
-        println "-----------------------------------------"
-        println "Destination File:"
-        println "  Path: ${destinationFile.absolutePath}"
-        println "  Exists (before copy): ${destinationFile.exists()}"
+//         println "-----------------------------------------"
+//         println "Destination File:"
+//         println "  Path: ${destinationFile.absolutePath}"
+//         println "  Exists (before copy): ${destinationFile.exists()}"
         
-        // Copy the selected constants file to CONSTANTS.java
-        copy {
-            from sourceFile
-            into destinationFile.parent
-            rename { "CONSTANTS.java" }
-        }
+//         // Copy the selected constants file to CONSTANTS.java
+//         copy {
+//             from sourceFile
+//             into destinationFile.parent
+//             rename { "CONSTANTS.java" }
+//         }
 
-        println "-----------------------------------------"
-        println "Copy Operation:"
-        println "  Destination Exists (after copy): ${destinationFile.exists()}"
-        if (destinationFile.exists()) {
-            println "  Destination Size: ${destinationFile.length()} bytes"
-        }
-        println "  Copy Status: SUCCESS"
-        println "========================================="
-        println "Copied ${sourceFile.name} to CONSTANTS.java"
-        println "========================================="
-    }
-}
+//         println "-----------------------------------------"
+//         println "Copy Operation:"
+//         println "  Destination Exists (after copy): ${destinationFile.exists()}"
+//         if (destinationFile.exists()) {
+//             println "  Destination Size: ${destinationFile.length()} bytes"
+//         }
+//         println "  Copy Status: SUCCESS"
+//         println "========================================="
+//         println "Copied ${sourceFile.name} to CONSTANTS.java"
+//         println "========================================="
+//     }
+// }
 
-// Ensure the prepareConstants task runs before compilation
-tasks.withType(JavaCompile).configureEach {
-    dependsOn prepareConstants
-}
+// // Ensure the prepareConstants task runs before compilation
+// tasks.withType(JavaCompile).configureEach {
+//     dependsOn prepareConstants
+// }
 
-// Ensure the prepareConstants task runs before the WPILib build, deploy, and simulation tasks
-tasks.named('build').configure {
-    dependsOn prepareConstants
-}
+// // Ensure the prepareConstants task runs before the WPILib build, deploy, and simulation tasks
+// tasks.named('build').configure {
+//     dependsOn prepareConstants
+// }
 
-tasks.named('deploy').configure {
-    dependsOn prepareConstants
-}
+// tasks.named('deploy').configure {
+//     dependsOn prepareConstants
+// }
 
-tasks.named('simulateJava').configure {
-    dependsOn prepareConstants
-}
+// tasks.named('simulateJava').configure {
+//     dependsOn prepareConstants
+// }
