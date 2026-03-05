@@ -43,7 +43,7 @@ public class SuperStructure extends SubsystemBase {
     private final Trigger intakeButton;
     private final Trigger manualButton;
 
-    private boolean manualMode = false;
+    private boolean manualMode = true;  // for Dalton we start in manual mode
 
     public SuperStructure(
         Flywheel flywheel,
