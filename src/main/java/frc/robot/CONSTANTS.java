@@ -39,6 +39,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -172,7 +173,7 @@ public class CONSTANTS {
     public static class IntakeConstants {
         public static final double DAMPENING = 1.5;
         public static final double RETRACT_FEEDFORWARD_MAX_VOLTS = 2.0;
-        public static final double ROLLERS_DUTY_CYCLE = -1.0;
+        public static final double ROLLERS_DUTY_CYCLE = -0.7;
 
         public static enum SlamState {
             DEPLOY_VOLTS(-0.4),

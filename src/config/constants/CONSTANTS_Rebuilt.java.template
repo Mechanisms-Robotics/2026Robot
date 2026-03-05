@@ -172,7 +172,7 @@ public class CONSTANTS {
     public static class IntakeConstants {
         public static final double DAMPENING = 1.5;
         public static final double RETRACT_FEEDFORWARD_MAX_VOLTS = 2.0;
-        public static final double ROLLERS_DUTY_CYCLE = -1.0;
+        public static final double ROLLERS_DUTY_CYCLE = -0.7;
 
         public static enum SlamState {
             DEPLOY_VOLTS(-0.4),
