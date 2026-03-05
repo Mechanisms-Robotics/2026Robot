@@ -146,14 +146,15 @@ public class CONSTANTS {
     public static final int KICKER_MOTOR_CAN_ID = 11;
     public static final int SPINDEXER_MOTOR_CAN_ID = 10;
 
-    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -10.0;
-    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -4.0;
+    // minimum (tuned)
+    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -8.0;
+    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -3.0;
     public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
     //TEST Constants
-    public static final double SPINDEXER_DELTA_VOLTS = 3; // volts per press
-    public static final double KICKER_DELTA_VOLTS = 11; // volts per press
-    public static final double FLYWHEEL_DELTA_RPM = 3000.0; // rpm per press
+    public static final double SPINDEXER_DELTA_VOLTS = 0.2; // volts per press. 
+    public static final double KICKER_DELTA_VOLTS = 0.2; // volts per press. 
+    public static final double FLYWHEEL_DELTA_RPM = 100; // rpm per press
     public static final double HOOD_DELTA_DEGREES = 1.0; // degrees per press
 
     public static enum Mode {
@@ -259,8 +260,9 @@ public class CONSTANTS {
             )
             .withSlot0(
                 new Slot0Configs()
-                .withKP(0.8)
-                    .withKD(0.0)
+                    .withKP(0.1)
+                    .withKV(0.116)
+                    .withKS(0.22)
             )
             .withMotorOutput(
                 new MotorOutputConfigs()
