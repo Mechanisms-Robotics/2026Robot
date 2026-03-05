@@ -17,6 +17,7 @@ public class FieldUtil {
             alliance = DriverStation.getAlliance().get();
             return alliance;
         }
+        
         return Alliance.Blue;
     }
     
