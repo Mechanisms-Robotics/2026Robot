@@ -115,7 +115,7 @@ public class CONSTANTS {
         new Rotation3d(
             0, 
             0, 
-            Math.toRadians(-90)    // camera is mounted sideways
+            Math.toRadians(90)    // camera is mounted sideways
         )
     );
 
@@ -127,7 +127,7 @@ public class CONSTANTS {
         new Rotation3d(
             0,
             0,
-            Math.toRadians(90)
+            Math.toRadians(-90)
         )
     );
     //Localization
@@ -218,8 +218,8 @@ public class CONSTANTS {
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
         // Clockwise and counter clockwise maximum rotation the turret should rotate
-        public static final double MIN_DEGREES = -135.0;
-        public static final double MAX_DEGREES = 135.0;
+        public static final double MIN_DEGREES = -180.0;
+        public static final double MAX_DEGREES = 61.0;
         public static final double DUTYCYCLE_LIMIT = 0.3;
 
         // Center of the robot with z at the ground to the center of turret
