@@ -51,19 +51,19 @@ import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
 import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
-
+import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
+import frc.robot.subsystems.intake.SlamIO;
 import frc.robot.subsystems.intake.SlamIOSim;
 import frc.robot.subsystems.intake.SlamIOSparkMax;
 import frc.robot.subsystems.intake.RollersIO;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
-
+import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
@@ -126,6 +126,8 @@ public class RobotContainer {
 
             this.feeder = new Feeder(
                 // Instantiate TalonFX-based feeder IO with explicit CAN IDs for the motors.
+                // new FeederIO() {},
+                // new FeederIO() {}
                 new FeederIOTalonFX(
                     CONSTANTS.KICKER_MOTOR_CAN_ID
                 ),
@@ -144,10 +146,7 @@ public class RobotContainer {
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
             this.hood = new Hood(new HoodIOTalonFX());
-
-            // TODO: These are empty while we build and test the robot
-            this.turret = new Turret(new TurretIO() {});
-
+            this.turret = new Turret(new TurretIOSparkMax());
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
@@ -181,6 +180,28 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
+
+        this.controller.povLeft().onTrue(
+            new InstantCommand(
+                () -> 
+                    this.turret.setAngle(
+                        this.turret.getAngle()
+                            .rotateBy(Rotation2d.fromDegrees(3.0))
+                    ),
+                this.turret
+            )
+        );
+
+        this.controller.povRight().onTrue(
+            new InstantCommand(
+                () -> 
+                    this.turret.setAngle(
+                        this.turret.getAngle()
+                            .rotateBy(Rotation2d.fromDegrees(-3.0))
+                    ),
+                this.turret
+            )
+        );
         
         this.drivetrain.setDefaultCommand(
             new RunCommand(
@@ -285,7 +306,7 @@ public class RobotContainer {
             .onTrue(
                 new InstantCommand(() -> {
                     this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    //this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
+                    
                 
                 })
             );
