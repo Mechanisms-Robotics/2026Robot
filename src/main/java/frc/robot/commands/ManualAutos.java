@@ -40,4 +40,18 @@ public class ManualAutos {
             );
         }
     }
+
+    public static class DepotBackup extends SequentialCommandGroup {
+        public DepotBackup(Drivetrain drivetrain, Flywheel flywheel, Feeder feeder) {
+            Optional<Trajectory<SwerveSample>> backupLeft = Choreo.loadTrajectory(
+                        "ShootPreloadLeft"
+                    );
+    
+            addRequirements(drivetrain, flywheel, feeder);
+            addCommands(
+                new FollowPath(backupLeft.get(), drivetrain, true),
+                new ShootCommands.ManualShoot(flywheel, feeder, ManualModeConstants.FLYWHEEL_RPM).withTimeout(4.0)
+            );
+        }
+    }
 }

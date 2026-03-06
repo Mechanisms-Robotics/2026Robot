@@ -369,11 +369,12 @@ public class RobotContainer {
             // "BackUpLeft",
             // "OverBump",
             // "VisionTesting2026",
-            "Manual Shoot From Outpost Side",
-            "Backup to Tower Shoot (Drives Left of Robot)",
-            "Depot Auto",
-            "Chaos Right Auto",
-            "Chaos Left Auto"
+            "ShootPreloadRight",
+            "ShootPreloadCenter",
+            "ShootPreloadLeft"
+            // "Depot Auto",
+            // "Chaos Right Auto",
+            // "Chaos Left Auto"
             
         };
 
@@ -391,11 +392,14 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
-            case "Backup to Tower Shoot (Drives Left of Robot)":
+            case "ShootPreloadCenter":
                 autoCommand = new ManualAutos.CenterHubBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
-            case "Manual Shoot From Outpost Side":
+            case "ShootPreloadRight":
                 autoCommand = new ManualAutos.OutpostBackup(this.drivetrain, this.flywheel, this.feeder);
+                break;
+            case "ShootPreloadLeft":
+                autoCommand = new ManualAutos.DepotBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
             case "Depot Auto":
                 autoCommand = new DepotAuto(this.drivetrain);
