@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
 
         // run the rollers if deployed
 
-        if (state == SlamState.DEPLOY_VOLTS && (this.inputs.positionRotations < -0.08)) {
+        if (state == SlamState.DEPLOY_VOLTS && ((retractedPositionDetected - this.inputs.positionRotations) < -0.08)) {
             this.rollersIO.setDutyCycle(IntakeConstants.ROLLERS_DUTY_CYCLE);
         }
         else {
