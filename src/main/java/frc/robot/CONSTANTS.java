@@ -105,11 +105,13 @@ public class CONSTANTS {
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static final String CAMERA1_NAME = "PhotonCameraLeft";
+    public static final double LENGTH_METERS = 0.7;
+    public static final double WIDTH_METERS = 0.695;
 
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(0.5), // forward distances from the center of the robot
-        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
-        Units.inchesToMeters(25.375), 
+        -LENGTH_METERS / 2.0 + 0.19, // forward distances from the center of the robot
+        WIDTH_METERS / 2.0, // leftward distance from the center of the robot
+        0.46, 
         new Rotation3d(
             0, 
             0, 
@@ -117,11 +119,11 @@ public class CONSTANTS {
         )
     );
 
-    public static final String CAMERA2_NAME = "PhotonCamera2";
+    public static final String CAMERA2_NAME = "PhotonCameraRight";
     public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(0.5), // figure out these
-        Units.inchesToMeters(13.0), 
-        Units.inchesToMeters(25.375), 
+        -LENGTH_METERS / 2.0 + 0.21,
+        -WIDTH_METERS / 2.0, 
+        0.1825, 
         new Rotation3d(
             0,
             0,
