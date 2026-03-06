@@ -25,10 +25,9 @@ public class ShotCalculator {
         this.shooterPoseSupplier = shooterPoseSupplier;
 
         this.hoodAngleMap.put(1.0, Rotation2d.fromDegrees(22.0));
-        this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(45.0));
-        this.rpmMap.put(1.0, 10.0);
-        this.rpmMap.put(5.0, 100.0);
-        this.rpmMap.put(10.0, 300.0);
+        this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(22.0));
+        this.rpmMap.put(1.0, 3300.0);
+        this.rpmMap.put(5.0, 3300.0);
     }
 
     public record ShotData(

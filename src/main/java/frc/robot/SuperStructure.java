@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -118,9 +119,12 @@ public class SuperStructure extends SubsystemBase {
 
         manualButton.onTrue(new InstantCommand(() -> {
             this.manualMode = !this.manualMode;
-            if (this.manualMode)
+            if (this.manualMode) {
                 this.hood.stow();
-        }, this.hood));
+                this.turret.setAngle(Rotation2d.fromDegrees(90));
+            }
+                
+        }, this.hood, this.turret));
 
         intakeButton.whileTrue(this.intakeCommand);
     }

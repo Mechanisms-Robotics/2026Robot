@@ -213,7 +213,7 @@ public class CONSTANTS {
     public static class TurretConstants {
         public static final int MOTOR_ID = 20;
         // The zero position of the turret in degrees
-        public static final double TURRET_OFFSET_DEGREES = 0.0; 
+        public static final double TURRET_OFFSET_DEGREES = 0; 
 
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
