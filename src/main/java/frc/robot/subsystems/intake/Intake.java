@@ -2,8 +2,8 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Timeouts.IntakeConstants;
-import frc.robot.Timeouts.IntakeConstants.SlamState;
+import frc.robot.CONSTANTS.IntakeConstants;
+import frc.robot.CONSTANTS.IntakeConstants.SlamState;
 
 public class Intake extends SubsystemBase {
     private final SlamIO io;

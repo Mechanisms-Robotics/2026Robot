@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Timeouts;
-import frc.robot.Timeouts.DriveConstants;
+import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class FollowPath extends Command {
@@ -40,15 +40,15 @@ public class FollowPath extends Command {
     this.resetPose = resetPose;
 
     Constraints thetaProfile = new TrapezoidProfile.Constraints(
-        Timeouts.DriveConstants.ANGLE_MAX_ACCELERATION, Timeouts.DriveConstants.ANGLE_MAX_ACCELERATION);
+        CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION, CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION);
 
     ProfiledPIDController thetaController =
-        new ProfiledPIDController(Timeouts.PATH_FOLLOWER_P_THETA, 0, 0, thetaProfile);
+        new ProfiledPIDController(CONSTANTS.PATH_FOLLOWER_P_THETA, 0, 0, thetaProfile);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     holonomicController = new HolonomicDriveController(
-        new PIDController(Timeouts.PATH_FOLLOWER_P_X, 0, 0),
-        new PIDController(Timeouts.PATH_FOLLOWER_P_Y, 0, 0),
+        new PIDController(CONSTANTS.PATH_FOLLOWER_P_X, 0, 0),
+        new PIDController(CONSTANTS.PATH_FOLLOWER_P_Y, 0, 0),
         thetaController
     );
 

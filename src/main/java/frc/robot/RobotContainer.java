@@ -368,7 +368,7 @@ public class RobotContainer {
 
         switch (name) {
             case "Depot Auto":
-                autoCommand = new DepotAuto(this.drivetrain);
+                autoCommand = new DepotAuto(this.drivetrain, this.flywheel, this.feeder);
                 break;
             case "Chaos Right Auto":
                 autoCommand = new ChaosOutpostAuto(this.drivetrain);

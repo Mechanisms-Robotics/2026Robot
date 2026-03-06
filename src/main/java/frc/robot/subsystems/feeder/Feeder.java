@@ -1,7 +1,7 @@
 package frc.robot.subsystems.feeder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Timeouts;
+import frc.robot.CONSTANTS;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -43,8 +43,8 @@ public class Feeder extends SubsystemBase {
     }
 
     public void startFeeding() {
-        this.desiredVoltsKicker = Timeouts.FEEDER_MOTOR_KICKER_VOLTAGE;
-        this.desiredVoltsSpindexer = Timeouts.FEEDER_MOTOR_SPINDEXER_VOLTAGE;
+        this.desiredVoltsKicker = CONSTANTS.FEEDER_MOTOR_KICKER_VOLTAGE;
+        this.desiredVoltsSpindexer = CONSTANTS.FEEDER_MOTOR_SPINDEXER_VOLTAGE;
 
         this.setMotorOpenLoop(this.desiredVoltsKicker, this.kickFeederIO);
         this.setMotorOpenLoop(this.desiredVoltsSpindexer, this.spindexerFeederIO);
@@ -56,8 +56,8 @@ public class Feeder extends SubsystemBase {
     }
 
     public void reverseFeeding() {
-        this.desiredVoltsKicker = Timeouts.FEEDER_MOTOR_UNJAM_VOLTAGE;
-        this.desiredVoltsSpindexer = Timeouts.FEEDER_MOTOR_UNJAM_VOLTAGE;
+        this.desiredVoltsKicker = CONSTANTS.FEEDER_MOTOR_UNJAM_VOLTAGE;
+        this.desiredVoltsSpindexer = CONSTANTS.FEEDER_MOTOR_UNJAM_VOLTAGE;
         
         this.setMotorOpenLoop(this.desiredVoltsKicker, this.kickFeederIO);
         this.setMotorOpenLoop(this.desiredVoltsSpindexer, this.spindexerFeederIO);

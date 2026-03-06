@@ -4,13 +4,13 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Timeouts;
-import frc.robot.Timeouts.DriveConstants;
+import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.DriveConstants;
 import java.util.Queue;
 
 public class GyroIOCTRE implements GyroIO {
 
-    private final Pigeon2 gyro = new Pigeon2(Timeouts.GYRO_CAN_ID);
+    private final Pigeon2 gyro = new Pigeon2(CONSTANTS.GYRO_CAN_ID);
 
     private final Queue<Double> yawTimestampQueue;
     private final Queue<Double> yawPositionQueue;

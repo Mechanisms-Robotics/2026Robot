@@ -27,8 +27,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Timeouts.DriveConstants;
-import frc.robot.Timeouts.Timeouts;
+import frc.robot.CONSTANTS.DriveConstants;
+import frc.robot.CONSTANTS.Timeouts;
 import java.util.Queue;
 
 /**

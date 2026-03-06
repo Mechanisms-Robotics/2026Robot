@@ -14,7 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Timeouts.DriveConstants;
+import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class DriveCommands {

@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Timeouts;
-import frc.robot.Timeouts.DriveConstants;
+import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.PoseEstimator8736;
 
 import java.util.concurrent.locks.Lock;
@@ -178,7 +178,7 @@ public class Drivetrain extends SubsystemBase {
 
             ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(
                 this.desiredChassisSpeeds,
-                Timeouts.ROBOT_LOOP_PERIOD
+                CONSTANTS.ROBOT_LOOP_PERIOD
             );
 
             SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(
@@ -187,7 +187,7 @@ public class Drivetrain extends SubsystemBase {
             
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 moduleStates,
-                Timeouts.DriveConstants.SPEED_AT_12_VOLTS
+                CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS
             );
 
             Logger.recordOutput("SwerveStates/Setpoints", moduleStates);
