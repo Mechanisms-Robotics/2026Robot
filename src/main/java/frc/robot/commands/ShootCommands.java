@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.PoseEstimator8736;
@@ -74,6 +75,7 @@ public class ShootCommands {
         @Override
         public void end(boolean interupted) {
             this.hood.stow();
+            this.turret.setAngle(Rotation2d.fromDegrees(90));
             this.flywheel.setVelocity(FlywheelConstants.IDLE_RPM);
         }
     }
