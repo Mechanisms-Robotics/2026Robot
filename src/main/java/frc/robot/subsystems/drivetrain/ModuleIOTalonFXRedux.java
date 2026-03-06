@@ -30,9 +30,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.CONSTANTS;
-import frc.robot.CONSTANTS.DriveConstants;
-import frc.robot.CONSTANTS.Timeouts;
+import frc.robot.Timeouts;
+import frc.robot.Timeouts.DriveConstants;
+import frc.robot.Timeouts.Timeouts;
 import java.util.Queue;
 
 /**
@@ -182,7 +182,7 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
         settings.setPositionFramePeriod(
             DriveConstants.DRIVE_CAN_FRAME_PERIOD_SEC
         );
-        cancoder.setSettings(settings, CONSTANTS.Timeouts.STD_TIMEOUT_LONG);
+        cancoder.setSettings(settings, Timeouts.Timeouts.STD_TIMEOUT_LONG);
 
         // Create timestamp queue
         this.timestampQueue =
@@ -238,7 +238,7 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
         tryUntilOk(10, () ->
             turnTalon.setPosition(
                 this.cancoder.getAbsPosition(),
-                CONSTANTS.Timeouts.STD_TIMEOUT_LONG
+                Timeouts.Timeouts.STD_TIMEOUT_LONG
             )
         );
     }

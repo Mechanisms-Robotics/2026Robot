@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.CONSTANTS.HoodConstants;
+import frc.robot.Timeouts.HoodConstants;
 
 public class HoodIOSim implements HoodIO {
     private final DCMotor motorModel = DCMotor.getKrakenX44(1);

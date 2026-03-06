@@ -18,7 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.CONSTANTS;
+import frc.robot.Timeouts;
 import frc.robot.PoseEstimator8736;
 
 public class PoseCameraIOSim implements PoseCameraIO {
@@ -38,7 +38,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         this.cameraToRobot = cameraToRobot;
 
         this.visionSim = new VisionSystemSim("visionSim");
-        this.visionSim.addAprilTags(CONSTANTS.APRILTAG_FIELD_LAYOUT);
+        this.visionSim.addAprilTags(Timeouts.APRILTAG_FIELD_LAYOUT);
 
         SimCameraProperties cameraProp = new SimCameraProperties();
         cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
@@ -56,7 +56,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         this.visionSim.addCamera(cameraSim, cameraToRobot);
 
         this.photonEstimator = new PhotonPoseEstimator(
-            CONSTANTS.APRILTAG_FIELD_LAYOUT, 
+            Timeouts.APRILTAG_FIELD_LAYOUT, 
             PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             this.cameraToRobot);
 

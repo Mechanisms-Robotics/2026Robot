@@ -4,7 +4,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.CONSTANTS;
+import frc.robot.Timeouts;
 import edu.wpi.first.math.MathUtil;
 
 /**
@@ -42,7 +42,7 @@ public class FeederIOSim implements FeederIO {
     appliedVolts = MathUtil.clamp(appliedVolts, -12.0, 12.0);
 
     motorSim.setInputVoltage(appliedVolts);
-    motorSim.update(CONSTANTS.ROBOT_LOOP_PERIOD);
+    motorSim.update(Timeouts.ROBOT_LOOP_PERIOD);
 
 
         // Fill inputs for logging/Shuffleboard/Advantage scope
@@ -71,12 +71,12 @@ public class FeederIOSim implements FeederIO {
     @Override
     public void setMotorOpenLoop(double volts) {
         this.motorSim.setInputVoltage(volts);
-        this.motorSim.update(CONSTANTS.ROBOT_LOOP_PERIOD);
+        this.motorSim.update(Timeouts.ROBOT_LOOP_PERIOD);
     }
 
     @Override
     public void stopMotor() {
         this.motorSim.setInputVoltage(0.0);
-        this.motorSim.update(CONSTANTS.ROBOT_LOOP_PERIOD);
+        this.motorSim.update(Timeouts.ROBOT_LOOP_PERIOD);
     }
 }

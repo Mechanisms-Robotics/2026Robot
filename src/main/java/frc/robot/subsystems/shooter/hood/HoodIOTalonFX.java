@@ -7,7 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.CONSTANTS.HoodConstants;
+import frc.robot.Timeouts.HoodConstants;
 import frc.robot.util.PhoenixUtil;
 
 public class HoodIOTalonFX implements HoodIO {

@@ -28,7 +28,7 @@ public class Robot extends LoggedRobot {
   public Robot() {
     SignalLogger.enableAutoLogging(false);
     
-    switch (CONSTANTS.CURRENT_MODE) {
+    switch (Timeouts.CURRENT_MODE) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
         //Logger.addDataReceiver(new WPILOGWriter());

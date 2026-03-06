@@ -4,14 +4,14 @@ import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import com.reduxrobotics.sensors.canandgyro.CanandgyroSettings;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.CONSTANTS;
-import frc.robot.CONSTANTS.DriveConstants;
-import frc.robot.CONSTANTS.Timeouts;
+import frc.robot.Timeouts;
+import frc.robot.Timeouts.DriveConstants;
+import frc.robot.Timeouts.Timeouts;
 import java.util.Queue;
 
 public class GyroIORedux implements GyroIO {
 
-    private final Canandgyro gyro = new Canandgyro(CONSTANTS.GYRO_CAN_ID);
+    private final Canandgyro gyro = new Canandgyro(Timeouts.GYRO_CAN_ID);
 
     private final Queue<Double> yawTimestampQueue;
     private final Queue<Double> yawPositionQueue;

@@ -1,7 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.CONSTANTS.DriveConstants;
+import static frc.robot.Timeouts.DriveConstants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -10,7 +10,7 @@ import edu.wpi.first.math.util.Units;
 
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.CONSTANTS;
+import frc.robot.Timeouts;
 
 public class SwerveModule {
 
@@ -32,7 +32,7 @@ public class SwerveModule {
 
     public SwerveModulePosition getModulePosition() {
         return new SwerveModulePosition(
-            inputs.drivePositionRad * CONSTANTS.DriveConstants.WHEEL_RADIUS.in(Meters),
+            inputs.drivePositionRad * Timeouts.DriveConstants.WHEEL_RADIUS.in(Meters),
             inputs.turnPosition
         );
     }

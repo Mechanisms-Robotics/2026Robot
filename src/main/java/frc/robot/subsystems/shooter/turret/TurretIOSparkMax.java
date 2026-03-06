@@ -15,7 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CONSTANTS.TurretConstants;
+import frc.robot.Timeouts.TurretConstants;
 
 /**
  * The IO layer of the turret for the competition robot.

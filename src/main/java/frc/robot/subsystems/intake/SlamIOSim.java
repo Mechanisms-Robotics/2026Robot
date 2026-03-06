@@ -5,7 +5,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.CONSTANTS.IntakeConstants;
+import frc.robot.Timeouts.IntakeConstants;
 
 public class SlamIOSim implements SlamIO {
     private final DCMotor armMotorModel = DCMotor.getNEO(1);

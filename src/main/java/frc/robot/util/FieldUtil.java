@@ -4,8 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.CONSTANTS.FieldConstants;
-import frc.robot.CONSTANTS.Hub;
+import frc.robot.Timeouts.FieldConstants;
+import frc.robot.Timeouts.Hub;
 
 public class FieldUtil {
     private static Alliance alliance = null;

@@ -6,7 +6,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import frc.robot.CONSTANTS.IntakeConstants;
+import frc.robot.Timeouts.IntakeConstants;
 
 public class RollersIOSparkMax implements RollersIO {
     private final SparkMax motor = new SparkMax(IntakeConstants.ROLLERS_CAN_ID, MotorType.kBrushless);

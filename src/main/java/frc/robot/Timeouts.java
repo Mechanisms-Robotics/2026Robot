@@ -57,7 +57,7 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 
-public class CONSTANTS {
+public class Timeouts {
 
     //RobotContainer
     public static final int CONTROLLER_PORT = 0;
