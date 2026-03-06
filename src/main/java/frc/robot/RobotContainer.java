@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DepotAuto;
 import frc.robot.commands.ChaosRightAuto;
+import frc.robot.commands.BackupShoot;
 import frc.robot.commands.ChaosLeftAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FollowPath;
@@ -347,6 +348,7 @@ public class RobotContainer {
             // "BackUpLeft",
             // "OverBump",
             // "VisionTesting2026",
+            "Backup to Tower Shoot (Drives Left of Robot)",
             "Depot Auto",
             "Chaos Right Auto",
             "Chaos Left Auto"
@@ -367,6 +369,9 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
+            case "Backup to Tower Shoot (Drives Left of Robot)":
+                autoCommand = new BackupShoot(this.drivetrain, this.flywheel, this.feeder);
+                break;
             case "Depot Auto":
                 autoCommand = new DepotAuto(this.drivetrain);
                 break;
