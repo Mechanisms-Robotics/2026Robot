@@ -49,9 +49,9 @@ public class ShootCommands {
         }
 
         public boolean isAimed() {
-            return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 100
-                && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 3.0
-                && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.robotPose.getRotation())).getDegrees()) < 3.0;
+            return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 1000
+                && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 5.0
+                && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.robotPose.getRotation())).getDegrees()) < 10.0;
         }
 
         public static boolean anyAimed() {
