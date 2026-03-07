@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
+import edu.wpi.first.math.util.Units;
 
 public class ShotCalculator {
     private final Supplier<Pose3d> shooterPoseSupplier;
@@ -26,8 +27,10 @@ public class ShotCalculator {
 
         this.hoodAngleMap.put(1.0, Rotation2d.fromDegrees(22.0));
         this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(22.0));
-        this.rpmMap.put(1.0, 3300.0);
-        this.rpmMap.put(5.0, 3300.0);
+
+        this.rpmMap.put(Units.inchesToMeters(62), 2700.0);
+        this.rpmMap.put(Units.inchesToMeters(99), 3100.0);
+        this.rpmMap.put(Units.inchesToMeters(140), 3400.0);
     }
 
     public record ShotData(
