@@ -119,6 +119,9 @@ public class SuperStructure extends SubsystemBase {
 
         manualButton.onTrue(new InstantCommand(() -> {
             this.manualMode = !this.manualMode;
+
+            this.poseEstimator.setVisionEnabled(!this.manualMode); // disable vision in manual mode to prevent pose jumps
+
             if (this.manualMode) {
                 this.hood.stow();
                 this.turret.setAngle(Rotation2d.fromDegrees(90));
