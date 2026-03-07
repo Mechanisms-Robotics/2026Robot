@@ -35,6 +35,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DepotAuto;
 import frc.robot.commands.ChaosRightAuto;
 import frc.robot.commands.ManualAutos;
+import frc.robot.commands.BeachLeftAuto;
+import frc.robot.commands.BeachRightAuto;
 import frc.robot.commands.ChaosLeftAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FollowPath;
@@ -374,8 +376,10 @@ public class RobotContainer {
             "ShootPreloadLeft",
             // "Depot Auto",
             "Chaos Right Auto",
-            "Chaos Left Auto"
-            
+            "Chaos Left Auto",
+            "Beach Right Auto",
+            "Beach Left Auto"
+        
         };
 
 
@@ -409,6 +413,12 @@ public class RobotContainer {
                 break;
             case "Chaos Left Auto":
                 autoCommand = new ChaosLeftAuto(this.drivetrain);
+                break;
+            case "Beach Right Auto":
+                autoCommand = new BeachRightAuto(this.drivetrain);
+                break;
+            case "Beach Left Auto":
+                autoCommand = new BeachLeftAuto(this.drivetrain);
                 break;
             case "Wheel Characterization":
                 autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);

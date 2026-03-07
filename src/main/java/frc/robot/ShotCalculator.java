@@ -28,9 +28,16 @@ public class ShotCalculator {
         this.hoodAngleMap.put(1.0, Rotation2d.fromDegrees(22.0));
         this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(22.0));
 
-        this.rpmMap.put(Units.inchesToMeters(62), 2700.0);
-        this.rpmMap.put(Units.inchesToMeters(99), 3100.0);
-        this.rpmMap.put(Units.inchesToMeters(140), 3400.0);
+        this.rpmMap.put(1.47, 2700.0);
+        this.rpmMap.put(2.12, 2900.0);
+        this.rpmMap.put(2.99, 3300.0);
+        this.rpmMap.put(3.72, 3500.0);
+        this.rpmMap.put(4.49, 3700.0);
+
+
+        // this.rpmMap.put(Units.inchesToMeters(62), 2700.0);
+        // this.rpmMap.put(Units.inchesToMeters(99), 3100.0);
+        // this.rpmMap.put(Units.inchesToMeters(140), 3400.0);
     }
 
     public record ShotData(
