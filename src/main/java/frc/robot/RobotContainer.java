@@ -371,10 +371,10 @@ public class RobotContainer {
             // "VisionTesting2026",
             "ShootPreloadRight",
             "ShootPreloadCenter",
-            "ShootPreloadLeft"
+            "ShootPreloadLeft",
             // "Depot Auto",
-            // "Chaos Right Auto",
-            // "Chaos Left Auto"
+            "Chaos Right Auto",
+            "Chaos Left Auto"
             
         };
 

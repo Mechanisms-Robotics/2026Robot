@@ -16,7 +16,7 @@ public class ChaosLeftAuto extends SequentialCommandGroup {
 
 
         addCommands(
-            new FollowPath(chaosLeftChaos.get(), drivetrain, false)
+            new FollowPath(chaosLeftChaos.get(), drivetrain, true)
         );
 
         addRequirements(drivetrain);
