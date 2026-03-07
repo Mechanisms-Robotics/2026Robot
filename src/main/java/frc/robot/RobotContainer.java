@@ -182,27 +182,27 @@ public class RobotContainer {
                 })
             );
 
-        this.controller.povLeft().onTrue(
-            new InstantCommand(
-                () -> 
-                    this.turret.setAngle(
-                        this.turret.getAngle()
-                            .rotateBy(Rotation2d.fromDegrees(3.0))
-                    ),
-                this.turret
-            )
-        );
+        // this.controller.povLeft().onTrue(
+        //     new InstantCommand(
+        //         () -> 
+        //             this.turret.setAngle(
+        //                 this.turret.getAngle()
+        //                     .rotateBy(Rotation2d.fromDegrees(3.0))
+        //             ),
+        //         this.turret
+        //     )
+        // );
 
-        this.controller.povRight().onTrue(
-            new InstantCommand(
-                () -> 
-                    this.turret.setAngle(
-                        this.turret.getAngle()
-                            .rotateBy(Rotation2d.fromDegrees(-3.0))
-                    ),
-                this.turret
-            )
-        );
+        // this.controller.povRight().onTrue(
+        //     new InstantCommand(
+        //         () -> 
+        //             this.turret.setAngle(
+        //                 this.turret.getAngle()
+        //                     .rotateBy(Rotation2d.fromDegrees(-3.0))
+        //             ),
+        //         this.turret
+        //     )
+        // );
         
         this.drivetrain.setDefaultCommand(
             new RunCommand(

@@ -156,6 +156,6 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
-        return ShootCommands.Aim.anyAimed();
+        return true;//ShootCommands.Aim.anyAimed();
     }
 }
