@@ -107,12 +107,9 @@ public class SuperStructure extends SubsystemBase {
 
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
-        shootButton.and(() -> !this.manualMode).whileTrue(
-            Commands.either(
-                this.aimHubCommand,
-                this.aimShuttleCommand,
-                () -> FieldUtil.inAllianceZone(this.poseEstimator.getEstimatedPose().getX())
-            )
+        // always aim turret at hub while in autoaim
+        new Trigger(() -> !this.manualMode).whileTrue(
+            this.aimHubCommand
         );
 
         shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);

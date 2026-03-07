@@ -200,7 +200,7 @@ public class CONSTANTS {
             CONFIG_LEFT.encoder
                 .positionConversionFactor(GEAR_RATIO_ARM)
                 .velocityConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.idleMode(IdleMode.kBrake);
+            CONFIG_LEFT.idleMode(IdleMode.kCoast);
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
