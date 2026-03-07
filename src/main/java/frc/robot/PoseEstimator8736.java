@@ -32,6 +32,8 @@ public class PoseEstimator8736 {
             new SwerveModulePosition(),
         };
 
+    private boolean visionEnabled = false; // default to false for safety
+
     /**
      * Creates a new PoseEstimator.
      *
@@ -122,11 +124,19 @@ public class PoseEstimator8736 {
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs
     ) {
+        if (!visionEnabled) {
+            return; // ignore vision measurements if vision is disabled
+        }
+
         poseEstimator.addVisionMeasurement(
             visionRobotPoseMeters,
             timestampSeconds,
             visionMeasurementStdDevs
         );
+    }
+
+    public void setVisionEnabled(boolean enabled) {
+        this.visionEnabled = enabled;
     }
 
     /**
@@ -139,6 +149,10 @@ public class PoseEstimator8736 {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds
     ) {
+        if (!visionEnabled) {
+            return; // ignore vision measurements if vision is disabled
+        }
+
         poseEstimator.addVisionMeasurement(
             visionRobotPoseMeters,
             timestampSeconds
