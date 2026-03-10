@@ -72,7 +72,8 @@ public class SuperStructure extends SubsystemBase {
                         TurretConstants.ROBOT_TO_TURRET.getRotation().toRotation2d()
                     )
                 )
-            )
+            ),
+            () -> this.poseEstimator.getSimulatedPose()
         );
 
         this.shootButton = shootButton;
