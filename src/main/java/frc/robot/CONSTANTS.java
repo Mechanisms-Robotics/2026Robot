@@ -105,27 +105,29 @@ public class CONSTANTS {
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static final String CAMERA1_NAME = "PhotonCameraLeft";
+    public static final double LENGTH_METERS = 0.7;
+    public static final double WIDTH_METERS = 0.695;
 
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(0.5), // forward distances from the center of the robot
-        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
-        Units.inchesToMeters(25.375), 
+        -LENGTH_METERS / 2.0 + 0.19, // forward distances from the center of the robot
+        WIDTH_METERS / 2.0, // leftward distance from the center of the robot
+        0.46, 
         new Rotation3d(
             0, 
             0, 
-            Math.toRadians(-90)    // camera is mounted sideways
+            Math.toRadians(90)    // camera is mounted sideways
         )
     );
 
-    public static final String CAMERA2_NAME = "PhotonCamera2";
+    public static final String CAMERA2_NAME = "PhotonCameraRight";
     public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(0.5), // figure out these
-        Units.inchesToMeters(13.0), 
-        Units.inchesToMeters(25.375), 
+        -LENGTH_METERS / 2.0 + 0.21,
+        -WIDTH_METERS / 2.0, 
+        0.1825, 
         new Rotation3d(
             0,
             0,
-            Math.toRadians(90)
+            Math.toRadians(-90)
         )
     );
     //Localization
@@ -198,7 +200,7 @@ public class CONSTANTS {
             CONFIG_LEFT.encoder
                 .positionConversionFactor(GEAR_RATIO_ARM)
                 .velocityConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.idleMode(IdleMode.kBrake);
+            CONFIG_LEFT.idleMode(IdleMode.kCoast);
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
@@ -209,25 +211,18 @@ public class CONSTANTS {
 
     // MARK: Turret
     public static class TurretConstants {
-        // TODO: Find this by moving the turret to zero and recording the error.
-        public static final double TURRET_OFFSET = 0.0; 
+        public static final int MOTOR_ID = 20;
+        // The zero position of the turret in degrees
+        public static final double TURRET_OFFSET_DEGREES = 0; 
 
-        // TODO: set these correctly
-        public static final double FORWARD_LIMIT = 3.2;
-        public static final double REVERSE_LIMIT = -3.2;
-        public static final double MIN_POSITION = -0.5;
-        public static final double MAX_POSITION = 0.5;
         public static final double TURRET_TEETH = 202.0;
-        public static final int GEER1_TEETH = 30;
-        public static final int GEER2_TEETH = 28;
-        public static final double RATIO1 = (double) TURRET_TEETH / GEER1_TEETH;
-        public static final double RATIO2 = (double) TURRET_TEETH / GEER2_TEETH;
-        public static final double MOTOR_GEAR_RATIO = (30.0 * 10.0) / TURRET_TEETH;
+        public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
+        // Clockwise and counter clockwise maximum rotation the turret should rotate
+        public static final double MIN_DEGREES = -180.0;
+        public static final double MAX_DEGREES = 61.0;
+        public static final double DUTYCYCLE_LIMIT = 0.3;
 
-        public static final double kP = 0.0;
-        public static final double kD = 0.0;
-
-        // Center of the robot to the center of turret
+        // Center of the robot with z at the ground to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
             0.0, 0.0, 0.372845, Rotation3d.kZero
         );
@@ -235,15 +230,23 @@ public class CONSTANTS {
         public static final SparkMaxConfig CONFIG = new SparkMaxConfig();
 
         static {
-            CONFIG.absoluteEncoder
-                .setSparkMaxDataPortConfig()
-                    .positionConversionFactor(1)
-                    .velocityConversionFactor(1)
-                    .inverted(false);
+            CONFIG.encoder
+                .positionConversionFactor(MOTOR_GEAR_RATIO)
+                .velocityConversionFactor(MOTOR_GEAR_RATIO);
+            CONFIG.closedLoop
+                .p(3.0)
+                .d(1.0)
+                .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
+                .positionWrappingEnabled(false);
 
             CONFIG
-                .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(20); // amps
+                .idleMode(IdleMode.kBrake);
+
+            CONFIG.softLimit
+                .reverseSoftLimitEnabled(true)
+                .forwardSoftLimitEnabled(true)
+                .reverseSoftLimit(Units.degreesToRotations(MIN_DEGREES))
+                .forwardSoftLimit(Units.degreesToRotations(MAX_DEGREES));
         }
     }
 

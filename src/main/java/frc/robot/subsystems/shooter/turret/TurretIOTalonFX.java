@@ -33,8 +33,10 @@ public class TurretIOTalonFX implements TurretIO {
         this.currentMotorRotations = this.motor.getPosition().getValueAsDouble();
         this.velocity = this.motor.getVelocity().getValueAsDouble();
 
-        inputs.positionRadians = Units.rotationsToRadians(this.currentMotorRotations);
-        inputs.velocityRadiansPerSec = Units.rotationsToRadians(this.velocity);
+        inputs.positionDegrees = Units.rotationsToDegrees(this.currentMotorRotations);
+        inputs.velocityDegreesPerSecond = Units.rotationsToDegrees(this.velocity);
+        inputs.current = this.motor.getTorqueCurrent().getValueAsDouble();
+        inputs.connected = this.motor.isConnected();
 
         // The shortest possible rotation for the turret to move, which if done may break the wire chain
         Rotation2d relative = Rotation2d.fromRotations(desiredRotations).relativeTo(Rotation2d.fromRotations(this.currentMotorRotations));

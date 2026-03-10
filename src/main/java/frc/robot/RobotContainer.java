@@ -34,6 +34,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DepotAuto;
 import frc.robot.commands.ChaosRightAuto;
+import frc.robot.commands.ManualAutos;
+import frc.robot.commands.BeachLeftAuto;
+import frc.robot.commands.BeachRightAuto;
 import frc.robot.commands.ChaosLeftAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FollowPath;
@@ -44,26 +47,22 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
-import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
 import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
-
+import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
 import frc.robot.subsystems.intake.SlamIOSim;
 import frc.robot.subsystems.intake.SlamIOSparkMax;
 import frc.robot.subsystems.intake.RollersIO;
-import frc.robot.subsystems.intake.RollersIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
-
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
@@ -126,6 +125,8 @@ public class RobotContainer {
 
             this.feeder = new Feeder(
                 // Instantiate TalonFX-based feeder IO with explicit CAN IDs for the motors.
+                // new FeederIO() {},
+                // new FeederIO() {}
                 new FeederIOTalonFX(
                     CONSTANTS.KICKER_MOTOR_CAN_ID
                 ),
@@ -144,10 +145,7 @@ public class RobotContainer {
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
             this.hood = new Hood(new HoodIOTalonFX());
-
-            // TODO: These are empty while we build and test the robot
-            this.turret = new Turret(new TurretIO() {});
-
+            this.turret = new Turret(new TurretIOSparkMax());
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
@@ -285,7 +283,7 @@ public class RobotContainer {
             .onTrue(
                 new InstantCommand(() -> {
                     this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    //this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
+                    
                 
                 })
             );
@@ -347,10 +345,15 @@ public class RobotContainer {
             // "BackUpLeft",
             // "OverBump",
             // "VisionTesting2026",
-            "Depot Auto",
+            // "Depot Auto",
+            "Shoot Right Preload",
+            "Shoot Center Preload",
+            "Shoot Left Preload",
             "Chaos Right Auto",
-            "Chaos Left Auto"
-            
+            "Chaos Left Auto",
+            "Beach Right Auto",
+            "Beach Left Auto"
+        
         };
 
 
@@ -367,6 +370,15 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
+            case "Shoot Center Preload":
+                autoCommand = new ManualAutos.CenterHubBackup(this.drivetrain, this.flywheel, this.feeder);
+                break;
+            case "Shoot Right Preload":
+                autoCommand = new ManualAutos.OutpostBackup(this.drivetrain, this.flywheel, this.feeder);
+                break;
+            case "Shoot Left Preload":
+                autoCommand = new ManualAutos.DepotBackup(this.drivetrain, this.flywheel, this.feeder);
+                break;
             case "Depot Auto":
                 autoCommand = new DepotAuto(this.drivetrain);
                 break;
@@ -375,6 +387,12 @@ public class RobotContainer {
                 break;
             case "Chaos Left Auto":
                 autoCommand = new ChaosLeftAuto(this.drivetrain);
+                break;
+            case "Beach Right Auto":
+                autoCommand = new BeachRightAuto(this.drivetrain);
+                break;
+            case "Beach Left Auto":
+                autoCommand = new BeachLeftAuto(this.drivetrain);
                 break;
             case "Wheel Characterization":
                 autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);

@@ -8,15 +8,15 @@ import choreo.trajectory.Trajectory;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class ChaosRightAuto extends SequentialCommandGroup {
-    public ChaosRightAuto(Drivetrain drivetrain) {
-        Optional<Trajectory<SwerveSample>> chaosRightChaos = Choreo.loadTrajectory(
-                    "ChaosRightChaos"
+public class BeachLeftAuto extends SequentialCommandGroup {
+    public BeachLeftAuto(Drivetrain drivetrain) {
+        Optional<Trajectory<SwerveSample>> beachDepot = Choreo.loadTrajectory(
+                    "BeachDepot"
                 );
 
 
         addCommands(
-            new FollowPath(chaosRightChaos.get(), drivetrain, true)
+            new FollowPath(beachDepot.get(), drivetrain, true)
         );
 
         addRequirements(drivetrain);

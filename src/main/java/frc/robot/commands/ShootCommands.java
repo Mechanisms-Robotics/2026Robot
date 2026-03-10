@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.PoseEstimator8736;
@@ -48,9 +49,9 @@ public class ShootCommands {
         }
 
         public boolean isAimed() {
-            return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 100
-                && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 3.0
-                && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.robotPose.getRotation())).getDegrees()) < 3.0;
+            return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 1000
+                && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 5.0
+                && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.robotPose.getRotation())).getDegrees()) < 10.0;
         }
 
         public static boolean anyAimed() {
@@ -74,6 +75,7 @@ public class ShootCommands {
         @Override
         public void end(boolean interupted) {
             this.hood.stow();
+            this.turret.setAngle(Rotation2d.fromDegrees(90));
             this.flywheel.setVelocity(FlywheelConstants.IDLE_RPM);
         }
     }

@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -106,21 +107,24 @@ public class SuperStructure extends SubsystemBase {
 
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
-        shootButton.and(() -> !this.manualMode).whileTrue(
-            Commands.either(
-                this.aimHubCommand,
-                this.aimShuttleCommand,
-                () -> FieldUtil.inAllianceZone(this.poseEstimator.getEstimatedPose().getX())
-            )
+        // always aim turret at hub while in autoaim
+        new Trigger(() -> !this.manualMode).whileTrue(
+            this.aimHubCommand
         );
 
         shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);
 
         manualButton.onTrue(new InstantCommand(() -> {
             this.manualMode = !this.manualMode;
-            if (this.manualMode)
+
+            this.poseEstimator.setVisionEnabled(!this.manualMode); // disable vision in manual mode to prevent pose jumps
+
+            if (this.manualMode) {
                 this.hood.stow();
-        }, this.hood));
+                this.turret.setAngle(Rotation2d.fromDegrees(90));
+            }
+                
+        }, this.hood, this.turret));
 
         intakeButton.whileTrue(this.intakeCommand);
     }
@@ -152,6 +156,6 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
-        return ShootCommands.Aim.anyAimed();
+        return true;//ShootCommands.Aim.anyAimed();
     }
 }
