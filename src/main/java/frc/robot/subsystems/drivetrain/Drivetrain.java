@@ -123,6 +123,19 @@ public class Drivetrain extends SubsystemBase {
         return this.kinematics;
     }
 
+    public SwerveModuleState[] getStates() {
+        return new SwerveModuleState[] {
+            this.frontLeftModule.getModuleState(),
+            this.frontRightModule.getModuleState(),
+            this.backLeftModule.getModuleState(),
+            this.backRightModule.getModuleState(),
+        };
+    }
+
+    public ChassisSpeeds getVelocity() {
+        return this.kinematics.toChassisSpeeds(this.getStates());
+    }
+
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
             this.frontLeftModule.getModulePosition(),
