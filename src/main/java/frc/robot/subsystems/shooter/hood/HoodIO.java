@@ -12,4 +12,5 @@ public interface HoodIO {
 
     public default void updateInputs(HoodIOInputs inputs) {}
     public default void setAngle(Rotation2d angle) {}
+    public default void changeAngle(Rotation2d delta) {}
 }

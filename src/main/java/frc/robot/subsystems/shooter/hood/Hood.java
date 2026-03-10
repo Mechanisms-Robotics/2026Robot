@@ -25,6 +25,10 @@ public class Hood extends SubsystemBase {
         this.io.setAngle(angle);
     }
 
+    public void changeAngle(Rotation2d delta) {
+        this.io.changeAngle(delta);
+    }
+
     public void stow() {
         setAngle(Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES));
     }
