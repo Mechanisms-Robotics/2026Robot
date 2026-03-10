@@ -1,7 +1,5 @@
 package frc.robot.subsystems.shooter.turret;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.revrobotics.PersistMode;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;

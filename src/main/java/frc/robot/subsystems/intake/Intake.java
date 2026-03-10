@@ -71,7 +71,6 @@ public class Intake extends SubsystemBase {
      */
     public void deploy() {
         this.state = SlamState.DEPLOY_VOLTS;
-
     }
 
     /**

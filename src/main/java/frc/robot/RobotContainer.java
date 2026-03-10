@@ -47,7 +47,6 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
-import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
@@ -59,14 +58,11 @@ import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
-import frc.robot.subsystems.intake.SlamIO;
 import frc.robot.subsystems.intake.SlamIOSim;
 import frc.robot.subsystems.intake.SlamIOSparkMax;
 import frc.robot.subsystems.intake.RollersIO;
-import frc.robot.subsystems.intake.RollersIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
@@ -183,28 +179,6 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
-
-        // this.controller.povLeft().onTrue(
-        //     new InstantCommand(
-        //         () -> 
-        //             this.turret.setAngle(
-        //                 this.turret.getAngle()
-        //                     .rotateBy(Rotation2d.fromDegrees(3.0))
-        //             ),
-        //         this.turret
-        //     )
-        // );
-
-        // this.controller.povRight().onTrue(
-        //     new InstantCommand(
-        //         () -> 
-        //             this.turret.setAngle(
-        //                 this.turret.getAngle()
-        //                     .rotateBy(Rotation2d.fromDegrees(-3.0))
-        //             ),
-        //         this.turret
-        //     )
-        // );
         
         this.drivetrain.setDefaultCommand(
             new RunCommand(
@@ -371,10 +345,10 @@ public class RobotContainer {
             // "BackUpLeft",
             // "OverBump",
             // "VisionTesting2026",
-            "ShootPreloadRight",
-            "ShootPreloadCenter",
-            "ShootPreloadLeft",
             // "Depot Auto",
+            "Shoot Right Preload",
+            "Shoot Center Preload",
+            "Shoot Left Preload",
             "Chaos Right Auto",
             "Chaos Left Auto",
             "Beach Right Auto",
@@ -396,13 +370,13 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
-            case "ShootPreloadCenter":
+            case "Shoot Center Preload":
                 autoCommand = new ManualAutos.CenterHubBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
-            case "ShootPreloadRight":
+            case "Shoot Right Preload":
                 autoCommand = new ManualAutos.OutpostBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
-            case "ShootPreloadLeft":
+            case "Shoot Left Preload":
                 autoCommand = new ManualAutos.DepotBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
             case "Depot Auto":

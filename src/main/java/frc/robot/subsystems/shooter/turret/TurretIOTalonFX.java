@@ -33,8 +33,8 @@ public class TurretIOTalonFX implements TurretIO {
         this.currentMotorRotations = this.motor.getPosition().getValueAsDouble();
         this.velocity = this.motor.getVelocity().getValueAsDouble();
 
-        inputs.positionDegrees = Units.rotationsToRadians(this.currentMotorRotations);
-        inputs.velocityDegreesPerSecond = Units.rotationsToRadians(this.velocity);
+        inputs.positionDegrees = Units.rotationsToDegrees(this.currentMotorRotations);
+        inputs.velocityDegreesPerSecond = Units.rotationsToDegrees(this.velocity);
         inputs.current = this.motor.getTorqueCurrent().getValueAsDouble();
         inputs.connected = this.motor.isConnected();
 
