@@ -257,15 +257,20 @@ public class CONSTANTS {
         public static final double IDLE_RPM = 0.0;
 
         public static final TalonFXConfiguration LEADER_CONFIG = new TalonFXConfiguration()
+            .withFeedback(
+                new FeedbackConfigs()
+                    .withSensorToMechanismRatio(16.0 / 18.0) 
+            )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
                     .withSupplyCurrentLimit(Amps.of(60.0))
             )
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(0.1)
-                    .withKV(0.116)
+                    .withKP(0.35)
+                    .withKV(0.1)
                     .withKS(0.22)
+
             )
             .withMotorOutput(
                 new MotorOutputConfigs()
