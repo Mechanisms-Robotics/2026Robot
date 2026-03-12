@@ -18,7 +18,7 @@ public class FieldUtil {
             return alliance;
         }
         
-        return Alliance.Blue;
+        return Alliance.Red;
     }
     
     public static boolean inAllianceZone(double robotX) {

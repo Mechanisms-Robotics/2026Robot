@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -65,7 +66,7 @@ public class ShootCommands {
         @Override
         public void execute() {
             this.robotPose = this.poseEstimator.getEstimatedPose();
-            this.shotData = this.shotCalculator.calculateShot(this.target.get());
+            this.shotData = this.shotCalculator.calculateShot(this.target.get(), FieldUtil.inAllianceZone(robotPose.getX()));
 
             this.hood.setAngle(shotData.hoodAngle());
             this.flywheel.setVelocity(shotData.rpm());
