@@ -33,7 +33,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DepotScoringAuto;
+import frc.robot.commands.OutpostScoringAuto;
 import frc.robot.commands.ChaosRightAuto;
+import frc.robot.commands.DepotAndOutpostScoringAuto;
 import frc.robot.commands.ManualAutos;
 import frc.robot.commands.BeachLeftAuto;
 import frc.robot.commands.BeachRightAuto;
@@ -348,7 +350,9 @@ public class RobotContainer {
             "Chaos Left Auto",
             "Beach Right Auto",
             "Beach Left Auto",
-            "Depot Scoring Auto"
+            "Depot Scoring Auto",
+            "Outpost Scoring Auto",
+            "Depot And Outpost Scoring Auto"
         
         };
 
@@ -377,6 +381,12 @@ public class RobotContainer {
                 break;
             case "Depot Scoring Auto":
                 autoCommand = new DepotScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Outpost Scoring Auto":
+                autoCommand = new OutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Depot And Outpost Scoring Auto":
+                autoCommand = new DepotAndOutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Chaos Auto Outpost Side":
                 autoCommand = new ChaosRightAuto(this.drivetrain);
