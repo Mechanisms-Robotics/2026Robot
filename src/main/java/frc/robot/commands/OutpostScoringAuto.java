@@ -18,17 +18,18 @@ import frc.robot.PoseEstimator8736;
 import frc.robot.util.FieldUtil;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class DepotScoringAuto extends SequentialCommandGroup {
-    public DepotScoringAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class OutpostScoringAuto extends SequentialCommandGroup {
+    public OutpostScoringAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> hubBackup = Choreo.loadTrajectory(
                     "HubBackup"
                 );
-        Optional<Trajectory<SwerveSample>> depotForward = Choreo.loadTrajectory(
-                    "DepotForward"
-                );
-        Optional<Trajectory<SwerveSample>> hubToDepot = Choreo.loadTrajectory(
-                    "HubToDepot"
+        // Optional<Trajectory<SwerveSample>> depotForward = Choreo.loadTrajectory(
+        //             "DepotForward"
+        //         );
+        Optional<Trajectory<SwerveSample>> hubToOutpost = Choreo.loadTrajectory(
+                    "HubToOutpost"
                 );
         final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
@@ -40,8 +41,8 @@ public class DepotScoringAuto extends SequentialCommandGroup {
             new FollowPath(hubBackup.get(), drivetrain, true),
             aim,
             new ShootCommands.Shoot(feeder).withTimeout(null),
-            new FollowPath(hubToDepot.get(), drivetrain, false),
-            intakeCommand.withTimeout(2.0),
+            new FollowPath(hubToOutpost.get(), drivetrain, false),
+            new WaitCommand(2.0),
             // new FollowPath(depotForward.get(), drivetrain, false),
             aim,
             new ShootCommands.Shoot(feeder).withTimeout(3.0)
