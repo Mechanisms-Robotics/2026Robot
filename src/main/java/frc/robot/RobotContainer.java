@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DepotAuto;
+import frc.robot.commands.DepotScoringAuto;
 import frc.robot.commands.ChaosRightAuto;
 import frc.robot.commands.ManualAutos;
 import frc.robot.commands.BeachLeftAuto;
@@ -347,7 +347,8 @@ public class RobotContainer {
             "Chaos Right Auto",
             "Chaos Left Auto",
             "Beach Right Auto",
-            "Beach Left Auto"
+            "Beach Left Auto",
+            "Depot Scoring Auto"
         
         };
 
@@ -374,19 +375,19 @@ public class RobotContainer {
             case "Shoot Left Preload":
                 autoCommand = new ManualAutos.DepotBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
-            case "Depot Auto":
-                autoCommand = new DepotAuto(this.drivetrain);
+            case "Depot Scoring Auto":
+                autoCommand = new DepotScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Chaos Right Auto":
+            case "Chaos Auto Outpost Side":
                 autoCommand = new ChaosRightAuto(this.drivetrain);
                 break;
-            case "Chaos Left Auto":
+            case "Chaos Auto Depot Side":
                 autoCommand = new ChaosLeftAuto(this.drivetrain);
                 break;
-            case "Beach Right Auto":
+            case "Beach Auto Outpost Side":
                 autoCommand = new BeachRightAuto(this.drivetrain);
                 break;
-            case "Beach Left Auto":
+            case "Beach Auto Depot Side":
                 autoCommand = new BeachLeftAuto(this.drivetrain);
                 break;
             case "Wheel Characterization":
