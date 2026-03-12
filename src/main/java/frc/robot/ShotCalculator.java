@@ -4,37 +4,30 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class ShotCalculator {
     private final Supplier<Pose3d> shooterPoseSupplier;
-    private final Supplier<Pose2d> robotOdometrySupplier;
+    private final Supplier<ChassisSpeeds> shooterVelocity;
 
     private final InterpolatingTreeMap<Double, Rotation2d> hoodAngleMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
     private final InterpolatingDoubleTreeMap rpmMap = new InterpolatingDoubleTreeMap();
     private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
 
-    private double dt;
-    private Pose2d lastOdometryPose;
-    
     /**
      * @param shooterPoseSupplier position of the shooter mechanism field relative, used for distance calculation.
-     * @param robotOdometrySupplier velocity of the robot, used for shoot-on-the-move.
+     * @param shooterVelocity velocity of the robot field relative, used for shoot-on-the-move.
      */
-    public ShotCalculator(Supplier<Pose3d> shooterPoseSupplier, Supplier<Pose2d> robotOdometrySupplier) {
+    public ShotCalculator(Supplier<Pose3d> shooterPoseSupplier, Supplier<ChassisSpeeds> shooterVelocity) {
         this.shooterPoseSupplier = shooterPoseSupplier;
-        this.robotOdometrySupplier = robotOdometrySupplier;
+        this.shooterVelocity = shooterVelocity;
 
         this.hoodAngleMap.put(1.0, Rotation2d.fromDegrees(22.0));
         this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(22.0));
@@ -45,11 +38,12 @@ public class ShotCalculator {
         this.rpmMap.put(3.72, 3500.0);
         this.rpmMap.put(4.49, 3700.0);
 
-        // just examples for now. this needs to be tuned
-        timeOfFlightMap.put(1.0, 0.5);
-        timeOfFlightMap.put(2.0, 1.0);
-
-        lastOdometryPose = robotOdometrySupplier.get();
+        timeOfFlightMap.put(1.98, 0.86);
+        timeOfFlightMap.put(2.58, 0.86);
+        timeOfFlightMap.put(2.99, 1.0);
+        timeOfFlightMap.put(3.65, 0.85);
+        timeOfFlightMap.put(4.57, 1.09);
+        timeOfFlightMap.put(5.56, 1.03);
     }
 
     public record ShotData(
@@ -58,41 +52,42 @@ public class ShotCalculator {
         double rpm
     ) {}
 
-    public ShotData calculateShot(Pose3d target) {
-        // stubbed for now. velocity of robot, in m/s
-        double robotVelocityX = 0;
-        double robotVelocityY = 0;
-
-        Pose3d shooterPose = this.shooterPoseSupplier.get();
+    public ShotData calculateShot(Pose2d target) {
+        Pose2d shooterPose = this.shooterPoseSupplier.get().toPose2d();
+        ChassisSpeeds shooterVelocity = this.shooterVelocity.get();
         double targetDistance = target.relativeTo(shooterPose).getTranslation().getNorm();
 
-        double timeOfFlight = timeOfFlightMap.get(targetDistance);
-
+        
         // the new, lookahead target based on the robot's velocity and time of flight.
-        Pose3d lookAheadTarget = new Pose3d(
-            new Translation3d(
-                target.getX() - (robotVelocityX * timeOfFlight),
-                target.getY() - (robotVelocityY * timeOfFlight),
-                target.getZ()
-            ),
-            Rotation3d.kZero
-        );
+        double timeOfFlight = timeOfFlightMap.get(targetDistance);
+        Pose2d lookAheadTarget = shooterPose;
+        double lookAheadTargetDistance = targetDistance;
+        
+        /* Account for the velocity of the robot by calculating a new target to point at */
+        for (int i = 0; i < 20; i++) {
+            timeOfFlight = 
+                timeOfFlightMap.get(lookAheadTargetDistance);
+            /* Calculate the new target to shoot at based on the velocity of the robot (and therefore shooter)
+               and the time of flight for the 'most up to date time of flight'. */
+            // The x and y offsets based on the 
+            double offsetX = shooterVelocity.vxMetersPerSecond * timeOfFlight;
+            double offsetY = shooterVelocity.vyMetersPerSecond * timeOfFlight;
+            lookAheadTarget =
+                new Pose2d(
+                    shooterPose.getTranslation().plus(new Translation2d(offsetX, offsetY)),
+                    shooterPose.getRotation());
+            lookAheadTargetDistance = target.getTranslation().getDistance(lookAheadTarget.getTranslation());   
+        }
 
-        double lookAheadTargetDistance = lookAheadTarget.relativeTo(shooterPose).getTranslation().getNorm();
+        Translation2d shooterToTarget = lookAheadTarget.minus(shooterPose).getTranslation();
+        Rotation2d desiredYaw = shooterToTarget.getAngle();
         
         Rotation2d desiredHoodAngle = this.hoodAngleMap.get(lookAheadTargetDistance);
         double desiredRPM = this.rpmMap.get(lookAheadTargetDistance);
-
-        Translation2d shooterToTarget = lookAheadTarget.getTranslation().minus(shooterPose.getTranslation()).toTranslation2d();
-        Rotation2d desiredYaw = shooterToTarget.getAngle();
 
         Logger.recordOutput("ShotCalculator/targetDistance", targetDistance);
         Logger.recordOutput("ShotCalculator/lookAheadTargetDistance", lookAheadTargetDistance);
         
         return new ShotData(desiredYaw, desiredHoodAngle, desiredRPM);
-    }
-
-    public ShotData calculateShot(Pose2d target) {
-        return calculateShot(new Pose3d(target));
     }
 }
