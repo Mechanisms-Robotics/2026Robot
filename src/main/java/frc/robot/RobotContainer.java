@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,9 +48,11 @@ import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIO;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
 import frc.robot.subsystems.shooter.hood.Hood;
+import frc.robot.subsystems.shooter.hood.HoodIO;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
 import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
@@ -143,8 +146,8 @@ public class RobotContainer {
                 new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
             );
 
-            this.flywheel = new Flywheel(new FlywheelIOTalonFX());
-            this.hood = new Hood(new HoodIOTalonFX());
+            this.flywheel = new Flywheel(new FlywheelIO() {});
+            this.hood = new Hood(new HoodIO() {});
             this.turret = new Turret(new TurretIOSparkMax());
         }
 
@@ -165,7 +168,7 @@ public class RobotContainer {
             this.controller.R1() // right bumper
         );
 
-        configureBindings();
+      //  configureBindings();
         configureTestBindings(); // testing individual mechanisms 
         publishAutoNames();
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
@@ -230,12 +233,36 @@ public class RobotContainer {
     }
 
     private void configureTestBindings() {
-        
+        /*
+            Triangle:   go to -90
+            Plus:       go to 0
+            Square:     bump -45
+            circle:     bump +45
+         */
+
          this.controller
+            .triangle()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.turret.setAngle(new Rotation2d(Units.degreesToRadians(-90)));
+                })
+            );
+
+        this.controller
+            .cross()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.turret.setAngle(new Rotation2d(Units.degreesToRadians(0)));
+                })
+            );
+
+        this.controller
             .square()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.feeder.stopFeeding();//(CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                    this.turret.setAngle(new Rotation2d(Units.degreesToRadians(
+                        this.turret.getAngle().getDegrees() - 45
+                    )));
                 })
             );
 
@@ -243,95 +270,12 @@ public class RobotContainer {
             .circle()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.feeder.startFeeding();//(-CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                    this.turret.setAngle(new Rotation2d(Units.degreesToRadians(
+                        this.turret.getAngle().getDegrees() + 45
+                    )));
                 })
             );
 
-        // D-Pad up/down move the hood (use POV via Trigger since CommandPS4Controller doesn't expose dpad triggers)
-        new Trigger(() -> this.controller.getHID().getPOV() == 0)
-            .onTrue(
-               /*  new InstantCommand(() -> {
-                    this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                })*/
-
-                new InstantCommand(() -> {
-                     double newRPM = this.flywheel.getDesiredRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
-                    this.flywheel.setVelocity(newRPM);
-                })
-            );
-
-        new Trigger(() -> this.controller.getHID().getPOV() == 180)
-            .onTrue(
-                new InstantCommand(() -> {
-                    //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-
-                     double newRPM = this.flywheel.getDesiredRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
-                    this.flywheel.setVelocity(newRPM);
-                })
-            );
-
-        new Trigger(() -> this.controller.getHID().getPOV() == 90)
-            .onTrue(
-                new InstantCommand(() -> {
-                    this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    //this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
-                
-                })
-            );
-
-        new Trigger(() -> this.controller.getHID().getPOV() == 270)
-            .onTrue(
-                new InstantCommand(() -> {
-                    this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    
-                
-                })
-            );
-        
-        this.controller
-        .triangle().onTrue(
-            new InstantCommand(() -> {
-                this.feeder.stopFeeding();
-                this.flywheel.setVelocity(0);
-            })
-        );
-
-        // Flywheel: R1 = decrease, R2 = increase
-       /* this.controller
-            .R1()
-            .onTrue(
-                new InstantCommand(() -> {
-                    double newRPM = this.flywheel.getRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
-                    this.flywheel.setVelocity(4000);//newRPM);
-                })
-            );
-
-        this.controller
-            .R2()
-            .onTrue(
-                new InstantCommand(() -> {
-                    double newRPM = this.flywheel.getRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
-                    this.flywheel.setVelocity(4000);
-                })
-            );*/
-
-        // Kicker: L1 = decrease, L2 = increase
-       /*  this.controller
-            .L1()
-            .onTrue(
-                new InstantCommand(() -> {
-                    this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
-
-                })
-            );
-
-        this.controller
-            .L2()
-            .onTrue(
-                new InstantCommand(() -> {
-                    this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
-                })
-            );*/
     }
 
     private void publishAutoNames() {
