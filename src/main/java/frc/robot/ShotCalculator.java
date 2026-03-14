@@ -24,14 +24,23 @@ public class ShotCalculator {
     public ShotCalculator(Supplier<Pose3d> shooterPoseSupplier) {
         this.shooterPoseSupplier = shooterPoseSupplier;
 
-        this.hoodAngleMap.put(1.0, Rotation2d.fromDegrees(22.0));
-        this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(22.0));
+        this.hoodAngleMap.put(1.898, Rotation2d.fromDegrees(24.29));
+        this.hoodAngleMap.put(2.284, Rotation2d.fromDegrees(28.67));
+        this.hoodAngleMap.put(2.713, Rotation2d.fromDegrees(29.82));
+        this.hoodAngleMap.put(3.260, Rotation2d.fromDegrees(31.93));
+        this.hoodAngleMap.put(3.618, Rotation2d.fromDegrees(33.96));
+        this.hoodAngleMap.put(4.015, Rotation2d.fromDegrees(36.76));
+        this.hoodAngleMap.put(4.451, Rotation2d.fromDegrees(34.74));
+        this.hoodAngleMap.put(5.332, Rotation2d.fromDegrees(36.06));
 
-        this.rpmMap.put(1.47, 2700.0);
-        this.rpmMap.put(2.12, 2900.0);
-        this.rpmMap.put(2.99, 3300.0);
-        this.rpmMap.put(3.72, 3500.0);
-        this.rpmMap.put(4.49, 3700.0);
+        this.rpmMap.put(1.898, 3300.0);
+        this.rpmMap.put(2.284, 3400.0);
+        this.rpmMap.put(2.713, 3500.0);
+        this.rpmMap.put(3.260, 3700.0);
+        this.rpmMap.put(3.618, 3900.0);
+        this.rpmMap.put(4.015, 4100.0);
+        this.rpmMap.put(4.451, 4200.0);
+        this.rpmMap.put(5.332, 4500.0);
     }
 
     public record ShotData(

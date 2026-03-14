@@ -230,12 +230,11 @@ public class RobotContainer {
     }
 
     private void configureTestBindings() {
-        
          this.controller
             .square()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.feeder.stopFeeding();//(CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                    this.feeder.stopFeeding();
                 })
             );
 
@@ -243,11 +242,10 @@ public class RobotContainer {
             .circle()
             .onTrue(
                 new InstantCommand(() -> {
-                    this.feeder.startFeeding();//(-CONSTANTS.SPINDEXER_DELTA_VOLTS);
+                    this.feeder.startFeeding();
                 })
             );
 
-        // D-Pad up/down move the hood (use POV via Trigger since CommandPS4Controller doesn't expose dpad triggers)
         new Trigger(() -> this.controller.getHID().getPOV() == 0)
             .onTrue(
                /*  new InstantCommand(() -> {
@@ -255,7 +253,7 @@ public class RobotContainer {
                 })*/
 
                 new InstantCommand(() -> {
-                     double newRPM = this.flywheel.getDesiredRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    double newRPM = this.flywheel.getDesiredRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
                     this.flywheel.setVelocity(newRPM);
                 })
             );
@@ -265,7 +263,7 @@ public class RobotContainer {
                 new InstantCommand(() -> {
                     //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
 
-                     double newRPM = this.flywheel.getDesiredRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    double newRPM = this.flywheel.getDesiredRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
                     this.flywheel.setVelocity(newRPM);
                 })
             );
@@ -273,26 +271,21 @@ public class RobotContainer {
         new Trigger(() -> this.controller.getHID().getPOV() == 90)
             .onTrue(
                 new InstantCommand(() -> {
-                    this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    //this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
-                
+                    this.hood.changeAngle(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES));
                 })
             );
 
         new Trigger(() -> this.controller.getHID().getPOV() == 270)
             .onTrue(
                 new InstantCommand(() -> {
-                    this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
-                    
-                
+                    this.hood.changeAngle(Rotation2d.fromDegrees(-CONSTANTS.HOOD_DELTA_DEGREES));
                 })
             );
         
         this.controller
         .triangle().onTrue(
             new InstantCommand(() -> {
-                this.feeder.stopFeeding();
-                this.flywheel.setVelocity(0);
+                this.drivetrain.poseEstimator.setVisionEnabled(true);
             })
         );
 
