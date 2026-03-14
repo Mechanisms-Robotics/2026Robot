@@ -38,6 +38,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
@@ -234,10 +235,11 @@ public class CONSTANTS {
                 .positionConversionFactor(MOTOR_GEAR_RATIO)
                 .velocityConversionFactor(MOTOR_GEAR_RATIO);
             CONFIG.closedLoop
-                .p(3.0)
-                .d(1.0)
+                .p(15.0)
+                .d(25.0)
                 .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
-                .positionWrappingEnabled(false);
+                .positionWrappingEnabled(false)
+                .allowedClosedLoopError(Units.degreesToRotations(0.75),ClosedLoopSlot.kSlot0);
 
             CONFIG
                 .idleMode(IdleMode.kBrake);
