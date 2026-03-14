@@ -12,7 +12,7 @@ public class IntakeCommands {
     public static Command intake(Intake intake) {
         return Commands.runEnd(
             () -> intake.deploy(),
-            () -> intake.retract(),
+            () -> intake.stow(),
             intake
         );
     }
