@@ -21,7 +21,7 @@ public class SlapIOSparkMax implements SlapIO {
     public SlapIOSparkMax() {
         var config_right = new SparkMaxConfig();
         config_right.follow(IntakeConstants.ARM_CAN_ID_LEFT, true);
-        config_right.idleMode(IdleMode.kBrake);
+        config_right.idleMode(IdleMode.kCoast);
 
         // Configure the leader first, then the follower. Some firmware versions
         // apply follower settings better when the leader is configured first.
@@ -44,6 +44,5 @@ public class SlapIOSparkMax implements SlapIO {
 
     public void setAngle(Rotation2d angle) {
         this.armLeft.getClosedLoopController().setSetpoint(angle.getRotations(), ControlType.kPosition);
-        this.armRight.getClosedLoopController().setSetpoint(angle.getRotations(), ControlType.kPosition);
     }
 }

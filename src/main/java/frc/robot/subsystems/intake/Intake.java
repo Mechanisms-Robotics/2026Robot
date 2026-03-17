@@ -22,6 +22,13 @@ public class Intake extends SubsystemBase {
 
         this.rollersIO.updateInputs(this.rollersInputs);
         Logger.processInputs("Intake/Rollers", this.rollersInputs);
+
+        double rollerAngleThreshold = 45.0;
+        if (this.slapInputs.positionDegrees < rollerAngleThreshold && this.slapInputs.setPointDegrees < rollerAngleThreshold) {
+            this.runRollers();
+        } else {
+            this.stopRollers();
+        }
     }
 
     public void runRollers() {
@@ -34,13 +41,14 @@ public class Intake extends SubsystemBase {
 
     /** Deploy the intake arms ans spin the rollers */
     public void deploy() {
-        //this.slapIO.setAngle(IntakeConstants.DEPLOY_ANGLE);
-        runRollers();
+        this.slapIO.setAngle(IntakeConstants.DEPLOY_ANGLE);
+        //runRollers();
+
     }
 
     /** Stow the intake arms */
     public void stow() {
-        //this.slapIO.setAngle(IntakeConstants.STOW_ANGLE);
-        stopRollers();
+        this.slapIO.setAngle(IntakeConstants.STOW_ANGLE);
+        //stopRollers();
     }
 }

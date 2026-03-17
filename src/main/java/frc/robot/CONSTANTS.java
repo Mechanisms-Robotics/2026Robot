@@ -173,7 +173,7 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double ROLLERS_DUTY_CYCLE = -0.7;
+        public static final double ROLLERS_DUTY_CYCLE = -1.0;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
@@ -183,8 +183,8 @@ public class CONSTANTS {
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
         public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
-        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(80.0);
-        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(10.0);
+        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
+        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
 
         static {
             CONFIG_LEFT.encoder
@@ -193,12 +193,11 @@ public class CONSTANTS {
 
             // TODO: Make controller constants work at all
             CONFIG_LEFT.closedLoop
-                .p(0.0)
+                .p(3.2)
                 .d(0.0);
 
             // CONFIG_LEFT.closedLoop.feedForward
-            //     .kS(0.0, ClosedLoopSlot.kSlot0);
-            //     .kCos(1.0);
+            //     .kCos(0.17);
 
             CONFIG_LEFT.closedLoop.maxMotion
                 .cruiseVelocity(60.0) // rpm
