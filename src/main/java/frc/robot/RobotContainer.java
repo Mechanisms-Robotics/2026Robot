@@ -37,6 +37,10 @@ import frc.robot.commands.OutpostScoringAuto;
 import frc.robot.commands.ChaosRightAuto;
 import frc.robot.commands.DepotAndOutpostScoringAuto;
 import frc.robot.commands.ManualAutos;
+import frc.robot.commands.MaxScoringAuto;
+import frc.robot.commands.NeutralAndDepotAuto;
+import frc.robot.commands.NeutralAndOutpostAuto;
+import frc.robot.commands.NeutralDepotAndOutpostAuto;
 import frc.robot.commands.BeachLeftAuto;
 import frc.robot.commands.BeachRightAuto;
 import frc.robot.commands.ChaosLeftAuto;
@@ -352,8 +356,11 @@ public class RobotContainer {
             "Beach Left Auto",
             "Depot Scoring Auto",
             "Outpost Scoring Auto",
-            "Depot And Outpost Scoring Auto"
-        
+            "Depot And Outpost Scoring Auto",
+            "Neutral And Outpost Auto",
+            "Neutral And Depot Auto",
+            "Neutral Depot And Outpost Auto",
+            "Max Scoring Auto"
         };
 
 
@@ -387,6 +394,18 @@ public class RobotContainer {
                 break;
             case "Depot And Outpost Scoring Auto":
                 autoCommand = new DepotAndOutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral And Outpost Auto":
+                autoCommand = new NeutralAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral And Depot Auto":
+                autoCommand = new NeutralAndDepotAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral Depot And Outpost Auto":
+                autoCommand = new NeutralDepotAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Max Scoring Auto":
+                autoCommand = new MaxScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Chaos Auto Outpost Side":
                 autoCommand = new ChaosRightAuto(this.drivetrain);
