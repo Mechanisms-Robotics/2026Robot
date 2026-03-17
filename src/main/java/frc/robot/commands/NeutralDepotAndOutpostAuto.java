@@ -1,0 +1,63 @@
+package frc.robot.commands;
+
+import java.lang.StackWalker.Option;
+import java.util.Optional;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
+import choreo.Choreo;
+import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
+import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.shooter.hood.Hood;
+import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.ShotCalculator;
+import frc.robot.PoseEstimator8736;
+import frc.robot.util.FieldUtil;
+import frc.robot.commands.ShootCommands.Aim;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
+public class NeutralDepotAndOutpostAuto extends SequentialCommandGroup {
+    public NeutralDepotAndOutpostAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+        Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
+                    "TrenchToNeutralLeft"
+                );
+        Optional<Trajectory<SwerveSample>> trenchToDepot = Choreo.loadTrajectory(
+                    "TrenchToDepot"
+                );
+        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
+                    "NeutralToTrenchLeft"
+                );
+        Optional<Trajectory<SwerveSample>> depotToOutpost = Choreo.loadTrajectory(
+                    "DepotToOutpost"
+                );
+        final Command intakeCommand = IntakeCommands.intake(intake);
+        Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
+
+        addRequirements(drivetrain, flywheel, feeder, intake, turret);
+
+
+        addCommands(
+            new FollowPath(trenchToNeutral.get(), drivetrain, true),
+            intakeCommand.withTimeout(2.0),
+            new FollowPath(neutralToTrench.get(), drivetrain, false),
+            aim,
+            new ShootCommands.Shoot(feeder).withTimeout(3.0),
+            new FollowPath(trenchToDepot.get(), drivetrain, false),
+            intakeCommand.withTimeout(2.0),
+            aim,
+            new ShootCommands.Shoot(feeder).withTimeout(3.0),
+            new FollowPath(depotToOutpost.get(), drivetrain, false),
+            new WaitCommand(2.0),
+            aim,
+            new ShootCommands.Shoot(feeder).withTimeout(3.0)
+        );
+
+        addRequirements(drivetrain);
+        // TODO: add shooter and other requirements here
+    }
+}
