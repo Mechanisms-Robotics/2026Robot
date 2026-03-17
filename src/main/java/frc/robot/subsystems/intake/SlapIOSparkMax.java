@@ -28,7 +28,7 @@ public class SlapIOSparkMax implements SlapIO {
         this.armLeft.configure(IntakeConstants.CONFIG_LEFT, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        // this.armLeftEncoder.setPosition(IntakeConstants.START_ANGLE.getRotations());
+        this.armLeftEncoder.setPosition(IntakeConstants.START_ANGLE.getRotations());
     }
 
 

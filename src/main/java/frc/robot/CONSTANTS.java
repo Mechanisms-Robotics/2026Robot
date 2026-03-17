@@ -179,16 +179,15 @@ public class CONSTANTS {
         public static final int ARM_CAN_ID_RIGHT = 13;
         public static final int ROLLERS_CAN_ID = 14;
 
-        public static final double GEAR_RATIO_ARM = 5.0 * 5.0 * 28.0 / 84.0;
+        public static final double GEAR_RATIO_ARM = 1.0 / 75.0;//84.0 / 5.0 / 5.0 / 28.0;
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
-        public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(100.0);
+        public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
         public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(80.0);
         public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(10.0);
 
         static {
             CONFIG_LEFT.encoder
-                .inverted(true)
                 .positionConversionFactor(GEAR_RATIO_ARM)
                 .velocityConversionFactor(GEAR_RATIO_ARM);
 
@@ -197,8 +196,9 @@ public class CONSTANTS {
                 .p(0.0)
                 .d(0.0);
 
-            CONFIG_LEFT.closedLoop.feedForward
-                .kCos(3);
+            // CONFIG_LEFT.closedLoop.feedForward
+            //     .kS(0.0, ClosedLoopSlot.kSlot0);
+            //     .kCos(1.0);
 
             CONFIG_LEFT.closedLoop.maxMotion
                 .cruiseVelocity(60.0) // rpm

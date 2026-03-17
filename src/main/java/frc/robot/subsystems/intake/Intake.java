@@ -22,21 +22,25 @@ public class Intake extends SubsystemBase {
 
         this.rollersIO.updateInputs(this.rollersInputs);
         Logger.processInputs("Intake/Rollers", this.rollersInputs);
+    }
 
-        if (this.slapInputs.positionDegrees < 20.0) {
-            this.rollersIO.setDutyCycle(IntakeConstants.ROLLERS_DUTY_CYCLE);
-        } else {
-            this.rollersIO.setDutyCycle(0.0);
-        }
+    public void runRollers() {
+        this.rollersIO.setDutyCycle(IntakeConstants.ROLLERS_DUTY_CYCLE);
+    }
+
+    public void stopRollers() {
+        this.rollersIO.setDutyCycle(0.0);
     }
 
     /** Deploy the intake arms ans spin the rollers */
     public void deploy() {
-        this.slapIO.setAngle(IntakeConstants.DEPLOY_ANGLE);
+        //this.slapIO.setAngle(IntakeConstants.DEPLOY_ANGLE);
+        runRollers();
     }
 
     /** Stow the intake arms */
     public void stow() {
-        this.slapIO.setAngle(IntakeConstants.STOW_ANGLE);
+        //this.slapIO.setAngle(IntakeConstants.STOW_ANGLE);
+        stopRollers();
     }
 }
