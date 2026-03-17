@@ -185,24 +185,16 @@ public class CONSTANTS {
         public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(100.0);
         public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(80.0);
         public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(10.0);
+        public static final double kP = 0.0;
+        public static final double kD = 0.0;
+        public static final double kCos = 0.0;
+        public static final double MAX_VELOCITY_RADIANS_PER_SECOND = 0.0;
+        public static final double MAX_ACCELERATION_RADIANS_PER_SECOND = 0.0;
 
         static {
             CONFIG_LEFT.encoder
-                .inverted(true)
                 .positionConversionFactor(GEAR_RATIO_ARM)
                 .velocityConversionFactor(GEAR_RATIO_ARM);
-
-            // TODO: Make controller constants work at all
-            CONFIG_LEFT.closedLoop
-                .p(0.0)
-                .d(0.0);
-
-            CONFIG_LEFT.closedLoop.feedForward
-                .kCos(3);
-
-            CONFIG_LEFT.closedLoop.maxMotion
-                .cruiseVelocity(60.0) // rpm
-                .maxAcceleration(720.0); // rpm/s
 
             CONFIG_LEFT
                 .inverted(true);

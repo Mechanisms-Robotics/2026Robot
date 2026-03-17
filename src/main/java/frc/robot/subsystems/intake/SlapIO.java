@@ -9,7 +9,7 @@ public interface SlapIO {
     public class IntakeIOInputs {
         public double velocityDegreesPerSecond;
         public double positionDegrees;
-        public double setPointDegrees;
+        public double setpointDegrees;
         public double currentAmps = 0.0;
         public boolean leftConnected = false;
         public boolean rightConnected = false;
