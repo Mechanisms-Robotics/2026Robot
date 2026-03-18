@@ -16,8 +16,10 @@ import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import frc.robot.CONSTANTS.DriveConstants;
+import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -81,6 +83,7 @@ public class RobotContainer {
     public final Intake intake;
     
     public final SuperStructure superStructure;
+    public final ShotCalculator shotCalculator;
     @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
@@ -156,6 +159,17 @@ public class RobotContainer {
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         
+        this.shotCalculator = new ShotCalculator(
+            () -> new Pose3d(
+                this.drivetrain.poseEstimator.getEstimatedPose().transformBy(
+                    new Transform2d(
+                        TurretConstants.ROBOT_TO_TURRET.getTranslation().toTranslation2d(),
+                        TurretConstants.ROBOT_TO_TURRET.getRotation().toRotation2d()
+                    )
+                )
+            )
+        );
+        
         this.superStructure = new SuperStructure(
             this.flywheel,
             this.turret,
@@ -163,6 +177,7 @@ public class RobotContainer {
             this.feeder,
             this.intake,
             this.drivetrain.poseEstimator,
+            this.shotCalculator,
             // shoot button
             this.controller.R2(), // right trigger
             // intake button
@@ -387,25 +402,25 @@ public class RobotContainer {
                 autoCommand = new ManualAutos.DepotBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
             case "Depot Scoring Auto":
-                autoCommand = new DepotScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new DepotScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Outpost Scoring Auto":
-                autoCommand = new OutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new OutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Depot And Outpost Scoring Auto":
-                autoCommand = new DepotAndOutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new DepotAndOutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Neutral And Outpost Auto":
-                autoCommand = new NeutralAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new NeutralAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Neutral And Depot Auto":
-                autoCommand = new NeutralAndDepotAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new NeutralAndDepotAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Neutral Depot And Outpost Auto":
-                autoCommand = new NeutralDepotAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new NeutralDepotAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Max Scoring Auto":
-                autoCommand = new MaxScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.superStructure.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new MaxScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Chaos Auto Outpost Side":
                 autoCommand = new ChaosRightAuto(this.drivetrain);

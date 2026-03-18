@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -52,6 +51,7 @@ public class SuperStructure extends SubsystemBase {
         Feeder feeder,
         Intake intake,
         PoseEstimator8736 poseEstimator,
+        ShotCalculator shotCalculator,
         Trigger shootButton,
         Trigger intakeButton,
         Trigger manualButton,
@@ -64,16 +64,7 @@ public class SuperStructure extends SubsystemBase {
         this.intake = intake;
 
         this.poseEstimator = poseEstimator;
-        this.shotCalculator = new ShotCalculator(
-            () -> new Pose3d(
-                this.poseEstimator.getEstimatedPose().transformBy(
-                    new Transform2d(
-                        TurretConstants.ROBOT_TO_TURRET.getTranslation().toTranslation2d(),
-                        TurretConstants.ROBOT_TO_TURRET.getRotation().toRotation2d()
-                    )
-                )
-            )
-        );
+        this.shotCalculator = shotCalculator;
 
         this.shootButton = shootButton;
         this.intakeButton = intakeButton;
