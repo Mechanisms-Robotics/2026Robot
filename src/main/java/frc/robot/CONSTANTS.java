@@ -204,7 +204,10 @@ public class CONSTANTS {
                 .maxAcceleration(720.0); // rpm/s
 
             CONFIG_LEFT
-                .inverted(true);
+                .inverted(true)
+                .idleMode(IdleMode.kBrake);
+
+
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
