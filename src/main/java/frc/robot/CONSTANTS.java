@@ -40,7 +40,6 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -174,34 +173,41 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double DAMPENING = 1.5;
-        public static final double RETRACT_FEEDFORWARD_MAX_VOLTS = 2.0;
-        public static final double ROLLERS_DUTY_CYCLE = -0.7;
-
-        public static enum SlamState {
-            DEPLOY_VOLTS(-0.4),
-            RETRACT_VOLTS(0.8);
-
-            public double voltage;
-
-            private SlamState(double voltage) {
-                this.voltage = voltage;
-            }
-        }
+        public static final double ROLLERS_DUTY_CYCLE = -1.0;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
         public static final int ROLLERS_CAN_ID = 14;
 
-        public static final double GEAR_RATIO_ARM = 10.0 / 84.0;
-        public static final double DEPLOYED_ROTATIONS = 0.1; // determined emperically
+        public static final double GEAR_RATIO_ARM = 1.0 / 75.0;//84.0 / 5.0 / 5.0 / 28.0;
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
+        public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
+        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
+        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
+
         static {
             CONFIG_LEFT.encoder
                 .positionConversionFactor(GEAR_RATIO_ARM)
                 .velocityConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.idleMode(IdleMode.kCoast);
+
+            // TODO: Make controller constants work at all
+            CONFIG_LEFT.closedLoop
+                .p(3.2)
+                .d(0.0);
+
+            // CONFIG_LEFT.closedLoop.feedForward
+            //     .kCos(0.17);
+
+            CONFIG_LEFT.closedLoop.maxMotion
+                .cruiseVelocity(60.0) // rpm
+                .maxAcceleration(720.0); // rpm/s
+
+            CONFIG_LEFT
+                .inverted(true)
+                .idleMode(IdleMode.kBrake);
+
+
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
