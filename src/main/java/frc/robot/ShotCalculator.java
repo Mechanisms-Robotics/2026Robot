@@ -51,11 +51,11 @@ public class ShotCalculator {
         this.shuttleHoodAngleMap.put(5.75, Rotation2d.fromDegrees(47.75));
         this.shuttleHoodAngleMap.put(10.11, Rotation2d.fromDegrees(45));
 
-        this.scoreRPMMap.put(1.05, 3000.0);
-        this.scoreRPMMap.put(2.22, 3200.0);
-        this.scoreRPMMap.put(3.79, 3800.0);
-        this.scoreRPMMap.put(5.75, 4600.0);
-        this.scoreRPMMap.put(10.11, 7000.0);
+        this.shuttleRPMMap.put(1.05, 3000.0);
+        this.shuttleRPMMap.put(2.22, 3200.0);
+        this.shuttleRPMMap.put(3.79, 3800.0);
+        this.shuttleRPMMap.put(5.75, 4600.0);
+        this.shuttleRPMMap.put(10.11, 7000.0);
     }
 
     public record ShotData(
@@ -64,17 +64,24 @@ public class ShotCalculator {
         double rpm
     ) {}
 
+    /**
+     * Calculates desired shooter values based on the target. 
+     * @param target target position
+     * @param shuttle whether or not this is shuttling. if true, then the shuttling interpolation maps will be used, otherwise the scoring maps will be used
+     * @return shot data
+     */
     public ShotData calculateShot(Pose2d target, boolean shuttle) {
         Pose2d shooterPose = this.shooterPoseSupplier.get().toPose2d();
 
         double targetDistance = target.relativeTo(shooterPose).getTranslation().getNorm();
         Rotation2d desiredHoodAngle = shuttle ? (this.shuttleHoodAngleMap.get(targetDistance)) : (this.scoreHoodAngleMap.get(targetDistance));
-        double desiredRPM = shuttle ? (this.shuttleRPMMap.get(targetDistance)) : (this.scoreRPMMap.get(targetDistance));
+        double desiredRPM = shuttle ? this.shuttleRPMMap.get(targetDistance) : this.scoreRPMMap.get(targetDistance);
 
         Translation2d shooterToTarget = target.getTranslation().minus(shooterPose.getTranslation());
         Rotation2d desiredYaw = shooterToTarget.getAngle();
 
         Logger.recordOutput("ShotCalculator/targetDistance", targetDistance);
+        Logger.recordOutput("ShotCalculator/targetPose", target);
         
         return new ShotData(desiredYaw, desiredHoodAngle, desiredRPM);
     }

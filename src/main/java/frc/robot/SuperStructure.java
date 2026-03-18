@@ -16,11 +16,13 @@ import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
+import frc.robot.commands.ShootCommands.Aim;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.util.FieldUtil;
 
 public class SuperStructure extends SubsystemBase {
     private final Flywheel flywheel;
@@ -32,8 +34,7 @@ public class SuperStructure extends SubsystemBase {
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
 
-    private final Command aimHubCommand;
-    private final Command aimShuttleCommand;
+    private final Command aimCommand;
     private final Command shootCommand;
     private final Command manualShootCommand;
     private final Command intakeCommand;
@@ -77,20 +78,13 @@ public class SuperStructure extends SubsystemBase {
         this.intakeButton = intakeButton;
         this.manualButton = manualButton;
         
-        this.aimHubCommand = ShootCommands.aimHubCommand(
-            this.hood,
-            this.flywheel,
-            this.turret,
-            this.shotCalculator,
-            this.poseEstimator
-        );
-
-        this.aimShuttleCommand = ShootCommands.aimShuttleCommand(
-            this.hood,
-            this.flywheel,
-            this.turret,
-            this.shotCalculator,
-            this.poseEstimator
+        this.aimCommand = new Aim(
+            hood, 
+            flywheel, 
+            turret, 
+            shotCalculator, 
+            poseEstimator, 
+            () -> !FieldUtil.inAllianceZone(poseEstimator.getEstimatedPose().getX())
         );
 
         this.shootCommand = new ShootCommands.Shoot(this.feeder);
@@ -105,9 +99,9 @@ public class SuperStructure extends SubsystemBase {
 
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
-        // always aim turret at hub while in autoaim
+        // aimCommand handles switching between shooting and shuttling
         new Trigger(() -> !this.manualMode).whileTrue(
-            this.aimHubCommand
+            this.aimCommand
         );
 
         shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);
@@ -143,8 +137,7 @@ public class SuperStructure extends SubsystemBase {
             ).rotateBy(TurretConstants.ROBOT_TO_TURRET.getRotation())
         );
 
-        Logger.recordOutput("SuperStructure/AimingHub", this.aimHubCommand.isScheduled());
-        Logger.recordOutput("SuperStructure/AimingShuttle", this.aimShuttleCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Aiming", this.aimCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
