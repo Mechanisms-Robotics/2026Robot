@@ -39,8 +39,8 @@ public class NeutralAndOutpostAuto extends SequentialCommandGroup {
 
 
         addCommands(
+            intakeCommand,
             new FollowPath(trenchToNeutral.get(), drivetrain, true),
-            intakeCommand.withTimeout(2.0),
             new FollowPath(neutralToTrench.get(), drivetrain, false),
             aim,
             new ShootCommands.Shoot(feeder).withTimeout(3.0),
