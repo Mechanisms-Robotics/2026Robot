@@ -151,6 +151,7 @@ public class RobotContainer {
         this.drivetrainController = new DrivetrainController(this.drivetrain);
         
         this.superStructure = new SuperStructure(
+            this.drivetrain,
             this.flywheel,
             this.turret,
             this.hood,

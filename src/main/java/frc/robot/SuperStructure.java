@@ -8,8 +8,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -17,14 +17,15 @@ import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.util.FieldUtil;
 
 public class SuperStructure extends SubsystemBase {
+    private final Drivetrain drivetrain;
     private final Flywheel flywheel;
     private final Turret turret;
     private final Hood hood;
@@ -47,6 +48,7 @@ public class SuperStructure extends SubsystemBase {
     private boolean manualMode = true;  // for Dalton we start in manual mode
 
     public SuperStructure(
+        Drivetrain drivetrain,
         Flywheel flywheel,
         Turret turret,
         Hood hood,
@@ -57,6 +59,7 @@ public class SuperStructure extends SubsystemBase {
         Trigger intakeButton,
         Trigger manualButton
     ) {
+        this.drivetrain = drivetrain;
         this.flywheel = flywheel;
         this.turret = turret;
         this.hood = hood;
@@ -72,7 +75,12 @@ public class SuperStructure extends SubsystemBase {
                         TurretConstants.ROBOT_TO_TURRET.getRotation().toRotation2d()
                     )
                 )
-            )
+            ),
+            () -> 
+                ChassisSpeeds.fromRobotRelativeSpeeds(
+                    this.drivetrain.getVelocity(),
+                    this.poseEstimator.getEstimatedPose().getRotation()
+                )
         );
 
         this.shootButton = shootButton;
