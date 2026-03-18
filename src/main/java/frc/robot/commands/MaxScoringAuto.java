@@ -41,14 +41,13 @@ public class MaxScoringAuto extends SequentialCommandGroup {
 
 
         addCommands(
+            intakeCommand,
             new FollowPath(trenchToNeutral.get(), drivetrain, true),
-            intakeCommand.withTimeout(2.0),
             new FollowPath(neutralToTrench.get(), drivetrain, false),
             aim,
             new ShootCommands.Shoot(feeder).withTimeout(3.0),
             new FollowPath(trenchToNeutral.get(), drivetrain, false),
             new FollowPath(neutralMaxCollect.get(), drivetrain, false),
-            intakeCommand.withTimeout(2.0),
             new FollowPath(neutralMaxBackup.get(), drivetrain, false),
             new FollowPath(neutralToTrench.get(), drivetrain, false),
             aim,
