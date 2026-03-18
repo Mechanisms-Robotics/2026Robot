@@ -6,7 +6,7 @@ public interface RollersIO {
     @AutoLog
     public class RollersIOInputs {
         public double currentAmps = 0.0;
-        public boolean motorIsConnected = false;
+        public boolean isConnected = false;
     }
 
     public default void updateInputs(RollersIOInputs inputs) {}
