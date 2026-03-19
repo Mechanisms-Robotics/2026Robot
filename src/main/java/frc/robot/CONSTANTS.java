@@ -173,18 +173,18 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double ROLLERS_DUTY_CYCLE = -0.7;
+        public static final double ROLLERS_DUTY_CYCLE = -1.0;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
         public static final int ROLLERS_CAN_ID = 14;
 
-        public static final double GEAR_RATIO_ARM = 5.0 * 5.0 * 28.0 / 84.0;
+        public static final double GEAR_RATIO_ARM = 1.0 / 75.0;//84.0 / 5.0 / 5.0 / 28.0;
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
-        public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(100.0);
-        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(80.0);
-        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(10.0);
+        public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
+        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
+        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
         public static final double kP = 0.0;
         public static final double kD = 0.0;
         public static final double kCos = 0.0;
@@ -197,7 +197,10 @@ public class CONSTANTS {
                 .velocityConversionFactor(GEAR_RATIO_ARM);
 
             CONFIG_LEFT
-                .inverted(true);
+                .inverted(true)
+                .idleMode(IdleMode.kBrake);
+
+
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();

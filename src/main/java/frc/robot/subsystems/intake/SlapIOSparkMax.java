@@ -39,7 +39,6 @@ public class SlapIOSparkMax implements SlapIO {
         this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.armLeftEncoder.setPosition(IntakeConstants.START_ANGLE.getRotations());
-
         SmartDashboard.putData("Intake/test/controller", this.controller);
     }
 

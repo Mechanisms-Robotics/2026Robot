@@ -160,7 +160,7 @@ public class RobotContainer {
             // shoot button
             this.controller.R2(), // right trigger
             // intake button
-            this.controller.button(1), // left trigger
+            this.controller.L2(), // left trigger
             // manual mode toggle
             this.controller.R1() // right bumper
         );
