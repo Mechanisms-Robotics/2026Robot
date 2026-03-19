@@ -44,7 +44,7 @@ public class SlapIOSparkMax implements SlapIO {
 
 
     @Override
-    public void updateInputs(IntakeIOInputs inputs) {
+    public void updateInputs(SlapIOInputs inputs) {
         inputs.velocityDegreesPerSecond = this.armLeftEncoder.getVelocity() / 60.0 * 360.0; // rpm -> rps -> degrees/s
         inputs.positionDegrees = this.armLeftEncoder.getPosition() * 360.0;
         inputs.currentAmps = this.armLeft.getOutputCurrent();

@@ -7,7 +7,7 @@ import frc.robot.CONSTANTS.IntakeConstants;
 public class Intake extends SubsystemBase {
     private final SlapIO slapIO;
     private final RollersIO rollersIO;
-    private final IntakeIOInputsAutoLogged slapInputs = new IntakeIOInputsAutoLogged();
+    private final SlapIOInputsAutoLogged slapInputs = new SlapIOInputsAutoLogged();
     private final RollersIOInputsAutoLogged rollersInputs = new RollersIOInputsAutoLogged();
 
     public Intake(SlapIO slapIO, RollersIO rollersIO) {
@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
         Logger.processInputs("Intake/Rollers", this.rollersInputs);
 
         double rollerAngleThreshold = 45.0;
-        if (this.slapInputs.positionDegrees < rollerAngleThreshold && this.slapInputs.setPointDegrees < rollerAngleThreshold) {
+        if (this.slapInputs.positionDegrees < rollerAngleThreshold && this.slapInputs.setpointDegrees < rollerAngleThreshold) {
             this.runRollers();
         } else {
             this.stopRollers();

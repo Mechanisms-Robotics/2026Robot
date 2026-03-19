@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public interface SlapIO {
     @AutoLog
-    public class IntakeIOInputs {
+    public class SlapIOInputs {
         public double velocityDegreesPerSecond;
         public double positionDegrees;
         public double setpointDegrees;
@@ -15,7 +15,7 @@ public interface SlapIO {
         public boolean rightConnected = false;
     }
 
-    public default void updateInputs(IntakeIOInputs inputs) {}
+    public default void updateInputs(SlapIOInputs inputs) {}
     /**
      * Set the angle the intake arms move toward
      * @param angle angle as a Rotation2d to start moving toward

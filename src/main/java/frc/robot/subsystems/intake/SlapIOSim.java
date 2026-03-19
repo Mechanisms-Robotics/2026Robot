@@ -42,7 +42,7 @@ public class SlapIOSim implements SlapIO {
     }
     
     @Override
-    public void updateInputs(IntakeIOInputs inputs) {
+    public void updateInputs(SlapIOInputs inputs) {
         this.armLeftSim.update(0.02);
         this.armRightSim.update(0.02);
 
