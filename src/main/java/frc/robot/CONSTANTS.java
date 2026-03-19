@@ -199,8 +199,6 @@ public class CONSTANTS {
             CONFIG_LEFT
                 .inverted(true)
                 .idleMode(IdleMode.kBrake);
-
-
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();

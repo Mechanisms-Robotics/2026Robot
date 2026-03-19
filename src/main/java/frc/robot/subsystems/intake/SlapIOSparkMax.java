@@ -31,6 +31,9 @@ public class SlapIOSparkMax implements SlapIO {
 
     public SlapIOSparkMax() {
         var config_right = new SparkMaxConfig();
+        config_right.encoder
+            .positionConversionFactor(IntakeConstants.GEAR_RATIO_ARM)
+            .velocityConversionFactor(IntakeConstants.GEAR_RATIO_ARM);
         config_right.follow(IntakeConstants.ARM_CAN_ID_LEFT, true);
         config_right.idleMode(IdleMode.kBrake);
 
