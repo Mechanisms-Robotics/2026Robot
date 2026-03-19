@@ -188,8 +188,8 @@ public class CONSTANTS {
         public static final double kP = 0.0;
         public static final double kD = 0.0;
         public static final double kCos = 0.0;
-        public static final double MAX_VELOCITY_RADIANS_PER_SECOND = 0.0;
-        public static final double MAX_ACCELERATION_RADIANS_PER_SECOND = 0.0;
+        public static final double MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI;
+        public static final double MAX_ACCELERATION_RADIANS_PER_SECOND = Math.PI * 4.0;
 
         static {
             CONFIG_LEFT.encoder
