@@ -7,8 +7,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public interface SlapIO {
     @AutoLog
     public class SlapIOInputs {
-        public double velocityDegreesPerSecond;
-        public double positionDegrees;
+        public double velocityRadiansPerSecondLeft;
+        public double positionDegreesLeft;
+        public double velocityRadiansPerSecondRight;
+        public double positionDegreesRight;
         public double setpointDegrees;
         public double currentAmps = 0.0;
         public boolean leftConnected = false;

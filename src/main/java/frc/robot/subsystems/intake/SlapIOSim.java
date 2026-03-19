@@ -48,8 +48,8 @@ public class SlapIOSim implements SlapIO {
 
         inputs.leftConnected = true;
         inputs.rightConnected = true;
-        inputs.velocityDegreesPerSecond = this.armLeftSim.getAngularVelocity().in(DegreesPerSecond);
-        inputs.positionDegrees = this.armLeftSim.getAngularPosition().in(Degrees);
+        inputs.velocityRadiansPerSecondLeft = this.armLeftSim.getAngularVelocity().in(DegreesPerSecond);
+        inputs.positionDegreesLeft = this.armLeftSim.getAngularPosition().in(Degrees);
         inputs.currentAmps = this.armLeftSim.getCurrentDrawAmps();
         inputs.setpointDegrees = this.controller.getGoal().position / Math.PI * 180.0;
 

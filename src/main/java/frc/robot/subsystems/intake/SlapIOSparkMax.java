@@ -19,13 +19,14 @@ public class SlapIOSparkMax implements SlapIO {
     private final SparkMax armLeft = new SparkMax(IntakeConstants.ARM_CAN_ID_LEFT, MotorType.kBrushless);
     private final SparkMax armRight = new SparkMax(IntakeConstants.ARM_CAN_ID_RIGHT, MotorType.kBrushless);
     private final RelativeEncoder armLeftEncoder = this.armLeft.getEncoder();
+    private final RelativeEncoder armRightEncoder = this.armRight.getEncoder();
 
     private final ProfiledPIDController controller = 
         new ProfiledPIDController(
             IntakeConstants.kP,
             0,
             IntakeConstants.kD,
-            new Constraints(Math.PI, Math.PI * 4.0)
+            new Constraints(IntakeConstants.MAX_VELOCITY_RADIANS_PER_SECOND, IntakeConstants.MAX_ACCELERATION_RADIANS_PER_SECOND)
         );
 
     public SlapIOSparkMax() {
@@ -45,8 +46,11 @@ public class SlapIOSparkMax implements SlapIO {
 
     @Override
     public void updateInputs(SlapIOInputs inputs) {
-        inputs.velocityDegreesPerSecond = this.armLeftEncoder.getVelocity() / 60.0 * 360.0; // rpm -> rps -> degrees/s
-        inputs.positionDegrees = this.armLeftEncoder.getPosition() * 360.0;
+        inputs.velocityRadiansPerSecondLeft = this.armLeftEncoder.getVelocity() / 60.0 * 2 * Math.PI; // rpm -> rps -> radians/s
+        inputs.positionDegreesLeft = this.armLeftEncoder.getPosition() * 360.0;
+        inputs.velocityRadiansPerSecondRight= this.armRightEncoder.getVelocity() / 60.0 * 2 * Math.PI; // rpm -> rps -> radians/s
+        inputs.positionDegreesRight = this.armRightEncoder.getPosition() * 360.0;
+
         inputs.currentAmps = this.armLeft.getOutputCurrent();
         inputs.leftConnected = this.armLeft.getLastError() == REVLibError.kOk;
         inputs.rightConnected = this.armRight.getLastError() == REVLibError.kOk;
