@@ -12,7 +12,14 @@ public class IntakeCommands {
     public static Command intake(Intake intake) {
         return Commands.runEnd(
             () -> intake.deploy(),
-            () -> intake.stow(),
+            () -> intake.feed(),
+            intake
+        );
+    }
+
+    public static Command stow(Intake intake) {
+        return Commands.runOnce(
+            intake::stow, 
             intake
         );
     }

@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -60,7 +61,18 @@ public class SlapIOSparkMax implements SlapIO {
         inputs.rightConnected = this.armRight.getLastError() == REVLibError.kOk;
         inputs.setpointDegrees = this.controller.getGoal().position / Math.PI * 180.0;
 
-        double angleRadians = this.armLeftEncoder.getPosition() * Math.PI * 2.0;
+        double angleRadians = 
+            this.armLeftEncoder.getPosition() * Math.PI * 2.0;
+        if (this.controller.getGoal().position < IntakeConstants.MIN_ANGLE.getRadians()
+         || this.controller.getGoal().position > IntakeConstants.MAX_ANGLE.getRadians())
+        {
+            this.controller.setGoal(MathUtil.clamp(
+                IntakeConstants.MIN_ANGLE.getRadians(),
+                IntakeConstants.MAX_ANGLE.getRadians(),
+                this.controller.getGoal().position
+            ));
+
+        }
         double volts = this.controller.calculate(angleRadians) + IntakeConstants.kCos * Math.cos(angleRadians);
         this.armLeft.setVoltage(volts);
     }

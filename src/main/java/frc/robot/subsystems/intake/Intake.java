@@ -51,4 +51,9 @@ public class Intake extends SubsystemBase {
         this.slapIO.setAngle(IntakeConstants.STOW_ANGLE);
         //stopRollers();
     }
+    /** Feed the intake arms position */
+    public void feed() {
+        this.slapIO.setAngle(IntakeConstants.FEED_ANGLE);
+        //stopRollers();
+    }
 }

@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -22,7 +21,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.util.FieldUtil;
 
 public class SuperStructure extends SubsystemBase {
     private final Flywheel flywheel;
@@ -55,7 +53,8 @@ public class SuperStructure extends SubsystemBase {
         PoseEstimator8736 poseEstimator,
         Trigger shootButton,
         Trigger intakeButton,
-        Trigger manualButton
+        Trigger manualButton,
+        Trigger stowButton
     ) {
         this.flywheel = flywheel;
         this.turret = turret;
