@@ -3,7 +3,7 @@ package frc.robot.commands;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.Commands;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
@@ -18,6 +18,7 @@ import frc.robot.PoseEstimator8736;
 import frc.robot.util.FieldUtil;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class DepotScoringAuto extends SequentialCommandGroup {
     public DepotScoringAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
@@ -37,14 +38,21 @@ public class DepotScoringAuto extends SequentialCommandGroup {
 
 
         addCommands(
-            new FollowPath(hubBackup.get(), drivetrain, true),
-            aim,
-            new ShootCommands.Shoot(feeder).withTimeout(null),
-            new FollowPath(hubToDepot.get(), drivetrain, false),
-            intakeCommand.withTimeout(2.0),
-            // new FollowPath(depotForward.get(), drivetrain, false),
-            aim,
-            new ShootCommands.Shoot(feeder).withTimeout(3.0)
+            Commands.parallel(
+                aim,
+                Commands.sequence(
+                    new WaitCommand(2.0),
+                    intakeCommand
+                ),
+                Commands.sequence(
+                    new FollowPath(hubBackup.get(), drivetrain, true),
+                    new ShootCommands.Shoot(feeder).withTimeout(null),
+                    new FollowPath(hubToDepot.get(), drivetrain, false),
+                    intakeCommand.withTimeout(2.0),
+                    // new FollowPath(depotForward.get(), drivetrain, false),
+                    new ShootCommands.Shoot(feeder).withTimeout(3.0)
+                )
+            )
         );
 
         addRequirements(drivetrain);

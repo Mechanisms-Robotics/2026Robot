@@ -4,7 +4,7 @@ import java.lang.StackWalker.Option;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.Commands;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
@@ -39,15 +39,21 @@ public class NeutralAndOutpostAuto extends SequentialCommandGroup {
 
 
         addCommands(
-            intakeCommand,
-            new FollowPath(trenchToNeutral.get(), drivetrain, true),
-            new FollowPath(neutralToTrench.get(), drivetrain, false),
-            aim,
-            new ShootCommands.Shoot(feeder).withTimeout(3.0),
-            new FollowPath(trenchToOutpost.get(), drivetrain, false),
-            new WaitCommand(2.0),
-            aim,
-            new ShootCommands.Shoot(feeder).withTimeout(3.0)
+            Commands.parallel(
+                aim,
+                Commands.sequence(
+                    new WaitCommand(2.0),
+                    intakeCommand
+                ),
+                Commands.sequence(
+                    new FollowPath(trenchToNeutral.get(), drivetrain, true),
+                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    new FollowPath(trenchToOutpost.get(), drivetrain, false),
+                    new WaitCommand(2.0),
+                    new ShootCommands.Shoot(feeder).withTimeout(3.0)
+                )
+            )
         );
 
         addRequirements(drivetrain);
