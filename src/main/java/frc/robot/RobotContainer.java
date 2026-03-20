@@ -39,7 +39,7 @@ import frc.robot.commands.OutpostScoringAuto;
 import frc.robot.commands.ChaosRightAuto;
 import frc.robot.commands.DepotAndOutpostScoringAuto;
 import frc.robot.commands.ManualAutos;
-import frc.robot.commands.MaxScoringAuto;
+import frc.robot.commands.MaxScoringAutoRight;
 import frc.robot.commands.NeutralAndDepotAuto;
 import frc.robot.commands.NeutralAndOutpostAuto;
 import frc.robot.commands.NeutralDepotAndOutpostAuto;
@@ -375,7 +375,7 @@ public class RobotContainer {
             "Neutral And Outpost Auto",
             "Neutral And Depot Auto",
             "Neutral Depot And Outpost Auto",
-            "Max Scoring Auto"
+            "Max Scoring Auto Outpost Side"
         };
 
 
@@ -419,8 +419,8 @@ public class RobotContainer {
             case "Neutral Depot And Outpost Auto":
                 autoCommand = new NeutralDepotAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Max Scoring Auto":
-                autoCommand = new MaxScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+            case "Max Scoring Auto Outpost Side":
+                autoCommand = new MaxScoringAutoRight(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Chaos Auto Outpost Side":
                 autoCommand = new ChaosRightAuto(this.drivetrain);
