@@ -50,7 +50,7 @@ public class DepotAndOutpostScoringAuto extends SequentialCommandGroup {
                 ),
                 Commands.sequence(
                     new FollowPath(hubBackup.get(), drivetrain, true),
-                    new ShootCommands.Shoot(feeder).withTimeout(null),
+                    new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     new FollowPath(hubToDepot.get(), drivetrain, false),
                     // new FollowPath(depotForward.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),

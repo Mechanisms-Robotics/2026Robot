@@ -42,7 +42,7 @@ public class OutpostScoringAuto extends SequentialCommandGroup {
                 aim,
                 Commands.sequence(
                     new FollowPath(hubBackup.get(), drivetrain, true),
-                    new ShootCommands.Shoot(feeder).withTimeout(null),
+                    new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     new FollowPath(hubToOutpost.get(), drivetrain, false),
                     new WaitCommand(2.0),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0)
