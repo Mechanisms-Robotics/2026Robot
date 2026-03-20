@@ -21,16 +21,16 @@ import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class MaxScoringAuto extends SequentialCommandGroup {
-    public MaxScoringAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class MaxScoringAutoRight extends SequentialCommandGroup {
+    public MaxScoringAutoRight(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
                     "TrenchToNeutralRight"
                 );
         Optional<Trajectory<SwerveSample>> neutralMaxBackup = Choreo.loadTrajectory(
-                    "NeutralMaxBackup"
+                    "NeutralMaxBackupRight"
                 );
         Optional<Trajectory<SwerveSample>> neutralMaxCollect = Choreo.loadTrajectory(
-                    "NeutralMaxCollect"
+                    "NeutralMaxCollectRight"
                 );
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
                     "NeutralToTrenchRight"
