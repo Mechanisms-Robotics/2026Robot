@@ -14,12 +14,10 @@ public class ChaosLeftAuto extends SequentialCommandGroup {
                     "ChaosLeftChaos"
                 );
 
-
         addCommands(
             new FollowPath(chaosLeftChaos.get(), drivetrain, true)
         );
 
         addRequirements(drivetrain);
-        // TODO: add shooter and other requirements here
     }
 }

@@ -25,9 +25,6 @@ public class DepotAndOutpostScoringAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> hubBackup = Choreo.loadTrajectory(
                     "HubBackup"
                 );
-        // Optional<Trajectory<SwerveSample>> depotForward = Choreo.loadTrajectory(
-        //             "DepotForward"
-        //         );
         Optional<Trajectory<SwerveSample>> hubToDepot = Choreo.loadTrajectory(
                     "HubToDepot"
                 );
@@ -37,9 +34,6 @@ public class DepotAndOutpostScoringAuto extends SequentialCommandGroup {
 
         final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
-
-        addRequirements(drivetrain, flywheel, feeder, intake, turret);
-
 
         addCommands(
             Commands.parallel(
@@ -52,7 +46,6 @@ public class DepotAndOutpostScoringAuto extends SequentialCommandGroup {
                     new FollowPath(hubBackup.get(), drivetrain, true),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     new FollowPath(hubToDepot.get(), drivetrain, false),
-                    // new FollowPath(depotForward.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     new FollowPath(hubToOutpost.get(), drivetrain, false),
                     new WaitCommand(2.0),
@@ -61,7 +54,6 @@ public class DepotAndOutpostScoringAuto extends SequentialCommandGroup {
             )
         );
 
-        addRequirements(drivetrain);
-        // TODO: add shooter and other requirements here
+        addRequirements(drivetrain, flywheel, feeder, intake, turret);
     }
 }
