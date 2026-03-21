@@ -20,19 +20,19 @@ import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class MaxScoringAutoLeft extends SequentialCommandGroup {
-    public MaxScoringAutoLeft(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class NeutralAndHubBackRightAuto extends SequentialCommandGroup {
+    public NeutralAndHubBackRightAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
-                    "TrenchToNeutralLeft"
+                    "TrenchToNeutralRight"
                 );
-        Optional<Trajectory<SwerveSample>> neutralMaxBackup = Choreo.loadTrajectory(
-                    "NeutralMaxBackupLeft"
+        Optional<Trajectory<SwerveSample>> trenchToHubBack = Choreo.loadTrajectory(
+                    "TrenchToHubBackRight"
                 );
-        Optional<Trajectory<SwerveSample>> neutralMaxCollect = Choreo.loadTrajectory(
-                    "NeutralMaxCollectLeft"
+        Optional<Trajectory<SwerveSample>> hubBackToTrench = Choreo.loadTrajectory(
+                    "HubBackToTrenchRight"
                 );
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchLeft"
+                    "NeutralToTrenchRight"
                 );
         final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
@@ -48,10 +48,8 @@ public class MaxScoringAutoLeft extends SequentialCommandGroup {
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
-                    new FollowPath(trenchToNeutral.get(), drivetrain, false),
-                    new FollowPath(neutralMaxCollect.get(), drivetrain, false),
-                    new FollowPath(neutralMaxBackup.get(), drivetrain, false),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(trenchToHubBack.get(), drivetrain, false),
+                    new FollowPath(hubBackToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0)
                 )
             )
