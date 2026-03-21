@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -34,8 +35,7 @@ public class SlapIOSim implements SlapIO {
                 armMotorModel
             );
 
-    private ProfiledPIDController controller = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(Math.PI, Math.PI * 4.0));
-    private final double kCos = 0.1;
+    private ProfiledPIDController controller = new ProfiledPIDController(2.0, 0, 0.0, new Constraints(Math.PI, Math.PI * 4.0));
     
     public SlapIOSim() {
         SmartDashboard.putData("Intake/sim/controller", this.controller);
@@ -48,13 +48,13 @@ public class SlapIOSim implements SlapIO {
 
         inputs.leftConnected = true;
         inputs.rightConnected = true;
-        inputs.velocityRadiansPerSecondLeft = this.armLeftSim.getAngularVelocity().in(DegreesPerSecond);
+        inputs.velocityRadiansPerSecondLeft = this.armLeftSim.getAngularVelocity().in(RadiansPerSecond);
         inputs.positionDegreesLeft = this.armLeftSim.getAngularPosition().in(Degrees);
         inputs.currentAmps = this.armLeftSim.getCurrentDrawAmps();
         inputs.setpointDegrees = this.controller.getGoal().position / Math.PI * 180.0;
 
         double angleRadians = this.armLeftSim.getAngularPositionRad();
-        double volts = this.kCos * Math.cos(angleRadians);
+        double volts = this.controller.calculate(angleRadians);
 
         this.armLeftSim.setInputVoltage(volts);
         this.armRightSim.setInputVoltage(volts);
