@@ -36,6 +36,7 @@ public class SuperStructure extends SubsystemBase {
     private final Command shootCommand;
     private final Command manualShootCommand;
     private final Command intakeCommand;
+    private final Command stowCommand;
 
     private final Trigger shootButton;
     private final Trigger intakeButton;
@@ -53,7 +54,8 @@ public class SuperStructure extends SubsystemBase {
         ShotCalculator shotCalculator,
         Trigger shootButton,
         Trigger intakeButton,
-        Trigger manualButton
+        Trigger manualButton,
+        Trigger stowButton
     ) {
         this.flywheel = flywheel;
         this.turret = turret;
@@ -94,6 +96,8 @@ public class SuperStructure extends SubsystemBase {
 
         this.intakeCommand = IntakeCommands.intake(this.intake);
 
+        this.stowCommand = IntakeCommands.stow(this.intake);
+
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
         // always aim turret at hub while in autoaim
@@ -116,6 +120,7 @@ public class SuperStructure extends SubsystemBase {
         }, this.hood, this.turret));
 
         intakeButton.whileTrue(this.intakeCommand);
+        stowButton.onTrue(this.stowCommand);
     }
 
 
@@ -139,6 +144,7 @@ public class SuperStructure extends SubsystemBase {
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/ManualToggle", this.manualButton.getAsBoolean());
