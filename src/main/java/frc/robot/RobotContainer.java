@@ -158,9 +158,9 @@ public class RobotContainer {
             this.intake,
             this.drivetrain.poseEstimator,
             // shoot button
-            this.controller.button(1), // right trigger
+            this.controller.R2(), // right trigger
             // intake button
-            this.controller.button(2), // left trigger
+            this.controller.L2(), // left trigger
             // manual mode toggle
             this.controller.R1(), // right bumper
             // stow intake button

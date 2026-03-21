@@ -23,7 +23,7 @@ public class Intake extends SubsystemBase {
         this.rollersIO.updateInputs(this.rollersInputs);
         Logger.processInputs("Intake/Rollers", this.rollersInputs);
 
-        double rollerAngleThreshold = 45.0;
+        double rollerAngleThreshold = 30.0;
         if (this.slapInputs.positionDegreesLeft < rollerAngleThreshold && this.slapInputs.setpointDegrees < rollerAngleThreshold) {
             this.runRollers();
         } else {
