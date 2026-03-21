@@ -407,7 +407,7 @@ public class RobotContainer {
                 autoCommand = new DepotScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Outpost Scoring Auto":
-                autoCommand = new OutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                autoCommand = new OutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Depot And Outpost Scoring Auto":
                 autoCommand = new DepotAndOutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);

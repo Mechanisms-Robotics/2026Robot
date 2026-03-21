@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import java.util.Optional;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
@@ -11,7 +10,6 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
@@ -21,21 +19,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class OutpostScoringAuto extends SequentialCommandGroup {
-    public OutpostScoringAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+    public OutpostScoringAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> hubBackup = Choreo.loadTrajectory(
                     "HubBackup"
                 );
-        // Optional<Trajectory<SwerveSample>> depotForward = Choreo.loadTrajectory(
-        //             "DepotForward"
-        //         );
         Optional<Trajectory<SwerveSample>> hubToOutpost = Choreo.loadTrajectory(
                     "HubToOutpost"
                 );
-        final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
-
-        addRequirements(drivetrain, flywheel, feeder, intake, turret);
-
 
         addCommands(
             Commands.parallel(
@@ -50,7 +41,6 @@ public class OutpostScoringAuto extends SequentialCommandGroup {
             )
         );
 
-        addRequirements(drivetrain);
-        // TODO: add shooter and other requirements here
+        addRequirements(drivetrain, hood, flywheel, feeder, turret);
     }
 }

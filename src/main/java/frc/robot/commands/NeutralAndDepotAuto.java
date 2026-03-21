@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import java.lang.StackWalker.Option;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,9 +34,6 @@ public class NeutralAndDepotAuto extends SequentialCommandGroup {
         final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
 
-        addRequirements(drivetrain, flywheel, feeder, intake, turret);
-
-
         addCommands(
             Commands.parallel(
                 aim,
@@ -55,7 +51,6 @@ public class NeutralAndDepotAuto extends SequentialCommandGroup {
             )
         );
 
-        addRequirements(drivetrain);
-        // TODO: add shooter and other requirements here
+        addRequirements(drivetrain, flywheel, feeder, intake, turret);
     }
 }
