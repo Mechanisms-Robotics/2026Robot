@@ -215,7 +215,7 @@ public class CONSTANTS {
     public static class TurretConstants {
         public static final int MOTOR_ID = 20;
         // The zero position of the turret in degrees
-        public static final double TURRET_OFFSET_DEGREES = 0; 
+        public static final double TURRET_OFFSET_DEGREES = -90.0; 
 
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
@@ -223,6 +223,8 @@ public class CONSTANTS {
         public static final double MIN_DEGREES = -180.0;
         public static final double MAX_DEGREES = 61.0;
         public static final double DUTYCYCLE_LIMIT = 0.3;
+        public static final double MAX_RPM = 30.0;
+        public static final double MAX_RPM_PER_SECOND = 120.0;
 
         // Center of the robot with z at the ground to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
@@ -241,6 +243,10 @@ public class CONSTANTS {
                 .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
                 .positionWrappingEnabled(false)
                 .allowedClosedLoopError(Units.degreesToRotations(0.75),ClosedLoopSlot.kSlot0);
+            
+            CONFIG.closedLoop.maxMotion
+                .maxAcceleration(MAX_RPM_PER_SECOND)
+                .cruiseVelocity(MAX_RPM);
 
             CONFIG
                 .idleMode(IdleMode.kBrake);
