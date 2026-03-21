@@ -38,15 +38,15 @@ public class NeutralAndDepotAuto extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new WaitCommand(2.0),
-                    intakeCommand
-                ),
-                Commands.sequence(
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
+                    IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToDepot.get(), drivetrain, false),
-                    new ShootCommands.Shoot(feeder).withTimeout(3.0)
+                    new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    IntakeCommands.feed(intake)
                 )
             )
         );

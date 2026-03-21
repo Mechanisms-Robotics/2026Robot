@@ -41,15 +41,15 @@ public class MaxScoringLeftAuto extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new WaitCommand(2.0),
-                    intakeCommand
-                ),
-                Commands.sequence(
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
+                    IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, false),
                     new FollowPath(neutralMaxCollect.get(), drivetrain, false),
+                    IntakeCommands.feed(intake),
                     new FollowPath(neutralMaxBackup.get(), drivetrain, false),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0)

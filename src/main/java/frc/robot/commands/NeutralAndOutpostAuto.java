@@ -31,18 +31,15 @@ public class NeutralAndOutpostAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
                     "NeutralToTrenchRight"
                 );
-        final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
 
         addCommands(
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new WaitCommand(2.0),
-                    intakeCommand
-                ),
-                Commands.sequence(
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
+                    IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     new FollowPath(trenchToOutpost.get(), drivetrain, false),

@@ -34,21 +34,20 @@ public class NeutralDepotAndOutpostAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> depotToOutpost = Choreo.loadTrajectory(
                     "DepotToOutpost"
                 );
-        final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
 
         addCommands(
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new WaitCommand(2.0),
-                    intakeCommand
-                ),
-                Commands.sequence(
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
+                    IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToDepot.get(), drivetrain, false),
+                    IntakeCommands.feed(intake),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     new FollowPath(depotToOutpost.get(), drivetrain, false),
                     new WaitCommand(2.0),

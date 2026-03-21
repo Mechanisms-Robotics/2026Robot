@@ -39,13 +39,11 @@ public class DepotAndOutpostScoringAuto extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new WaitCommand(2.0),
-                    intakeCommand
-                ),
-                Commands.sequence(
                     new FollowPath(hubBackup.get(), drivetrain, true),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    IntakeCommands.deploy(intake),
                     new FollowPath(hubToDepot.get(), drivetrain, false),
+                    IntakeCommands.feed(intake),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     new FollowPath(hubToOutpost.get(), drivetrain, false),
                     new WaitCommand(2.0),
