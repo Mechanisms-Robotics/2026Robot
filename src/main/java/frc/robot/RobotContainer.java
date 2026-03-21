@@ -162,7 +162,9 @@ public class RobotContainer {
             // intake button
             this.controller.L2(), // left trigger
             // manual mode toggle
-            this.controller.R1() // right bumper
+            this.controller.R1(), // right bumper
+            // stow intake button
+            this.controller.L1() // right bumper
         );
 
         configureBindings();

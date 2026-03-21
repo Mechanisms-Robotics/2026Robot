@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -22,7 +21,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.util.FieldUtil;
 
 public class SuperStructure extends SubsystemBase {
     private final Flywheel flywheel;
@@ -39,6 +37,7 @@ public class SuperStructure extends SubsystemBase {
     private final Command shootCommand;
     private final Command manualShootCommand;
     private final Command intakeCommand;
+    private final Command stowCommand;
 
     private final Trigger shootButton;
     private final Trigger intakeButton;
@@ -55,7 +54,8 @@ public class SuperStructure extends SubsystemBase {
         PoseEstimator8736 poseEstimator,
         Trigger shootButton,
         Trigger intakeButton,
-        Trigger manualButton
+        Trigger manualButton,
+        Trigger stowButton
     ) {
         this.flywheel = flywheel;
         this.turret = turret;
@@ -105,6 +105,8 @@ public class SuperStructure extends SubsystemBase {
 
         this.intakeCommand = IntakeCommands.intake(this.intake);
 
+        this.stowCommand = IntakeCommands.stow(this.intake);
+
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
         // always aim turret at hub while in autoaim
@@ -127,6 +129,7 @@ public class SuperStructure extends SubsystemBase {
         }, this.hood, this.turret));
 
         intakeButton.whileTrue(this.intakeCommand);
+        stowButton.onTrue(this.stowCommand);
     }
 
 
@@ -150,6 +153,7 @@ public class SuperStructure extends SubsystemBase {
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/ManualToggle", this.manualButton.getAsBoolean());
