@@ -224,7 +224,7 @@ public class CONSTANTS {
         public static final double MAX_DEGREES = 61.0;
         public static final double DUTYCYCLE_LIMIT = 0.3;
         public static final double MAX_RPM = 30.0;
-        public static final double MAX_RPM_PER_SECOND = 120.0;
+        public static final double MAX_RPM_PER_SECOND = 30.0;
 
         // Center of the robot with z at the ground to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
