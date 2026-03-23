@@ -381,7 +381,8 @@ public class RobotContainer {
             "Neutral And Hub Back Outpost Side",
             "Neutral And Hub Back Depot Side",
             "Max Scoring Auto Outpost Side",
-            "Max Scoring Auto Depot Side"
+
+            "Max Scoring Auto Left Side"
         };
 
 
@@ -434,7 +435,7 @@ public class RobotContainer {
             case "Max Scoring Auto Outpost Side":
                 autoCommand = new MaxScoringRightAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Max Scoring Auto Depot Side":
+            case "Max Scoring Auto Left Side":
                 autoCommand = new MaxScoringLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Chaos Auto Outpost Side":

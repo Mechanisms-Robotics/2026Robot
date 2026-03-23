@@ -29,8 +29,6 @@ public class ShootCommands {
         private ShotData shotData;
         private Pose2d robotPose;
 
-        private static final List<Aim> instances = new ArrayList<>();
-
         public Aim(Hood hood, Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator, Supplier<Pose2d> target) {
             this.hood = hood;
             this.flywheel = flywheel;
@@ -40,7 +38,6 @@ public class ShootCommands {
             this.poseEstimator = poseEstimator;
             this.target = target;
             
-            instances.add(this);
             addRequirements(this.hood, this.flywheel);
         }
 
@@ -52,14 +49,6 @@ public class ShootCommands {
             return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 1000
                 && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 5.0
                 && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.robotPose.getRotation())).getDegrees()) < 10.0;
-        }
-
-        public static boolean anyAimed() {
-            for (Aim instant : instances) {
-                if (instant.isScheduled() && instant.isAimed())
-                    return true;
-            }
-            return false;
         }
 
         @Override
