@@ -25,11 +25,11 @@ public class NeutralAndDepotAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
                     "TrenchToNeutralLeft"
                 );
-        Optional<Trajectory<SwerveSample>> trenchToDepot = Choreo.loadTrajectory(
-                    "TrenchToDepot"
+        Optional<Trajectory<SwerveSample>> hairpinDepot = Choreo.loadTrajectory(
+                    "HairpinDepot"
                 );
-        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchLeft"
+        Optional<Trajectory<SwerveSample>> neutralHairpin = Choreo.loadTrajectory(
+                    "NeutralHairpin"
                 );
         final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
@@ -41,12 +41,13 @@ public class NeutralAndDepotAuto extends SequentialCommandGroup {
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralHairpin.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder).withTimeout(3.0),
                     IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToDepot.get(), drivetrain, false),
-                    new ShootCommands.Shoot(feeder).withTimeout(3.0),
-                    IntakeCommands.feed(intake)
+                    new FollowPath(hairpinDepot.get(), drivetrain, false),
+                    new WaitCommand(1.0),
+                    IntakeCommands.feed(intake),
+                    new ShootCommands.Shoot(feeder).withTimeout(3.0)
                 )
             )
         );
