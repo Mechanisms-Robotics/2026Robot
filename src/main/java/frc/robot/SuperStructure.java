@@ -123,7 +123,7 @@ public class SuperStructure extends SubsystemBase {
 
             if (this.manualMode) {
                 this.hood.stow();
-                this.turret.setAngle(Rotation2d.fromDegrees(90));
+                this.turret.setAngle(Rotation2d.fromDegrees(-90.0));
             }
                 
         }, this.hood, this.turret));
