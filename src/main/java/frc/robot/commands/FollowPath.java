@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
-import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CONSTANTS;
-import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class FollowPath extends Command {

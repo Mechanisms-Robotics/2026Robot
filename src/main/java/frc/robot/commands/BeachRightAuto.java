@@ -14,12 +14,10 @@ public class BeachRightAuto extends SequentialCommandGroup {
                     "BeachOutpost"
                 );
 
-
         addCommands(
             new FollowPath(beachOutpost.get(), drivetrain, true)
         );
 
         addRequirements(drivetrain);
-        // TODO: add shooter and other requirements here
     }
 }
