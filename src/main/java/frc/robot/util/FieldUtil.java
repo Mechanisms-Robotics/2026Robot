@@ -8,14 +8,9 @@ import frc.robot.CONSTANTS.FieldConstants;
 import frc.robot.CONSTANTS.Hub;
 
 public class FieldUtil {
-    private static Alliance alliance = null;
-
     public static Alliance getAlliance() {
-        if (alliance != null)
-            return alliance;
         if (DriverStation.getAlliance().isPresent()) {
-            alliance = DriverStation.getAlliance().get();
-            return alliance;
+            return DriverStation.getAlliance().get();
         }
         
         return Alliance.Red;
