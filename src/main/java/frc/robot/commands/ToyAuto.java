@@ -17,6 +17,7 @@ import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
 import frc.robot.util.FieldUtil;
 import frc.robot.commands.ShootCommands.Aim;
+import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -37,7 +38,8 @@ public class ToyAuto extends SequentialCommandGroup {
                     IntakeCommands.deploy(intake),
                     new FollowPath(toyAutoForward.get(), drivetrain, true),
                     IntakeCommands.feed(intake),
-                    new FollowPath(toyAutoBackwards.get(), drivetrain, false)
+                    new FollowPath(toyAutoBackwards.get(), drivetrain, false),
+                    new Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )
         );
