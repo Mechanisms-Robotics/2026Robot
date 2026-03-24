@@ -34,7 +34,7 @@ public class MaxScoringLeftAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
                     "NeutralToTrenchLeft"
                 );
-        final Command intakeCommand = IntakeCommands.intake(intake);
+
         Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
 
         addCommands(
