@@ -20,7 +20,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.util.FieldUtil;
 
 public class SuperStructure extends SubsystemBase {
     private final Flywheel flywheel;
@@ -71,11 +70,10 @@ public class SuperStructure extends SubsystemBase {
         this.manualButton = manualButton;
         
         this.aimCommand = new ShootCommands.Aim(
-            flywheel, 
-            turret, 
-            shotCalculator, 
-            poseEstimator, 
-            () -> !FieldUtil.inAllianceZone(poseEstimator.getEstimatedPose().getX())
+            this.flywheel, 
+            this.turret, 
+            this.shotCalculator, 
+            this.poseEstimator
         );
 
         this.shootCommand = new ShootCommands.Shoot(this.feeder, this.hood, this.aimCommand::getShot);

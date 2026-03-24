@@ -15,7 +15,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
-import frc.robot.util.FieldUtil;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -35,7 +34,7 @@ public class NeutralDepotAndOutpostAuto extends SequentialCommandGroup {
                     "DepotToOutpost"
                 );
         final Command intakeCommand = IntakeCommands.intake(intake);
-        Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
+        Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
         addCommands(
             Commands.parallel(
@@ -47,12 +46,12 @@ public class NeutralDepotAndOutpostAuto extends SequentialCommandGroup {
                 Commands.sequence(
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
-                    new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
                     new FollowPath(trenchToDepot.get(), drivetrain, false),
-                    new ShootCommands.Shoot(feeder).withTimeout(3.0),
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
                     new FollowPath(depotToOutpost.get(), drivetrain, false),
                     new WaitCommand(2.0),
-                    new ShootCommands.Shoot(feeder).withTimeout(3.0)
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )
         );

@@ -26,19 +26,16 @@ public class ShootCommands {
         private ShotData shotData;
         private Pose2d robotPose;
 
-        public Aim(Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator, Supplier<Boolean> isShuttling) {
+        public Aim(Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
             this.flywheel = flywheel;
             this.turret = turret;
             this.shotCalculator = shotCalculator;
             this.poseEstimator = poseEstimator;
-            this.isShuttling = isShuttling;
+            this.isShuttling = () -> !FieldUtil.inAllianceZone(this.poseEstimator.getEstimatedPose().getX());
             
             addRequirements(this.flywheel, this.turret);
         }
 
-        public Aim(Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator, boolean isShuttling) {
-            this(flywheel, turret, shotCalculator, poseEstimator, () -> isShuttling);
-        }
 
         public ShotData getShot() {
             return this.shotData;
