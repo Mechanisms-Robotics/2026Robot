@@ -24,7 +24,7 @@ public class FlywheelIOSim implements FlywheelIO {
                 (desiredRpm - this.sim.getAngularVelocityRPM()) * this.kP
                 -this.sim.getAngularVelocityRadPerSec() / (2.0 * Math.PI) * this.kD);
         }
-        this.sim.update(0.2);
+        this.sim.update(0.02);
 
         inputs.rpm = this.sim.getAngularVelocityRPM();
         inputs.desiredRpm = this.desiredRpm;
