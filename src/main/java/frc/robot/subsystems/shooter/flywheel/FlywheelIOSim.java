@@ -13,14 +13,17 @@ public class FlywheelIOSim implements FlywheelIO {
     private double kD = 0.01;
 
     private double desiredRpm = 0.0;
+    private boolean closedLoop = false;
     
     public FlywheelIOSim() {}
 
     @Override
     public void updateInputs(FlywheelIOInputs inputs) {
-        this.sim.setInputVoltage(
-            (desiredRpm - this.sim.getAngularVelocityRPM()) * this.kP
-            -this.sim.getAngularVelocityRadPerSec() / (2.0 * Math.PI) * this.kD);
+        if (this.closedLoop) {
+            this.sim.setInputVoltage(
+                (desiredRpm - this.sim.getAngularVelocityRPM()) * this.kP
+                -this.sim.getAngularVelocityRadPerSec() / (2.0 * Math.PI) * this.kD);
+        }
         this.sim.update(0.2);
 
         inputs.rpm = this.sim.getAngularVelocityRPM();
@@ -30,5 +33,13 @@ public class FlywheelIOSim implements FlywheelIO {
     @Override
     public void setVelocity(double rpm) {
         this.desiredRpm = rpm;
+        this.closedLoop = true;
+    }
+
+    @Override
+    public void setVoltage(double voltage) {
+        this.sim.setInputVoltage(voltage);
+        this.desiredRpm = 0.0;
+        this.closedLoop = false;
     }
 }
