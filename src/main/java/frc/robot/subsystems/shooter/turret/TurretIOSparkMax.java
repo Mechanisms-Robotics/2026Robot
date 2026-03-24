@@ -37,6 +37,6 @@ public class TurretIOSparkMax implements TurretIO {
 
     @Override
     public void zero() {
-        this.encoder.setPosition(Units.degreesToRotations(TurretConstants.TURRET_OFFSET_DEGREES));
+        this.encoder.setPosition(Units.degreesToRotations(TurretConstants.START_DEGREES));
     }
 }
