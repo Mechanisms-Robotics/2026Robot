@@ -16,8 +16,6 @@ import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
-import frc.robot.commands.ShootCommands.Aim;
-import frc.robot.commands.ShootCommands.Aim;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -35,9 +33,9 @@ public class SuperStructure extends SubsystemBase {
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
 
-    private final Command aimCommand;
-    private final Command shootCommand;
-    private final Command manualShootCommand;
+    private final ShootCommands.Aim aimCommand;
+    private final ShootCommands.Shoot shootCommand;
+    private final ShootCommands.ManualShoot manualShootCommand;
     private final Command intakeCommand;
     private final Command stowCommand;
 
@@ -81,8 +79,7 @@ public class SuperStructure extends SubsystemBase {
         this.intakeButton = intakeButton;
         this.manualButton = manualButton;
         
-        this.aimCommand = new Aim(
-            hood, 
+        this.aimCommand = new ShootCommands.Aim(
             flywheel, 
             turret, 
             shotCalculator, 
@@ -90,7 +87,7 @@ public class SuperStructure extends SubsystemBase {
             () -> !FieldUtil.inAllianceZone(poseEstimator.getEstimatedPose().getX())
         );
 
-        this.shootCommand = new ShootCommands.Shoot(this.feeder);
+        this.shootCommand = new ShootCommands.Shoot(this.feeder, this.hood, this.aimCommand::getShot);
 
         this.manualShootCommand = new ShootCommands.ManualShoot(
             this.flywheel,
@@ -155,6 +152,6 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
-        return true;//ShootCommands.Aim.anyAimed();
+        return true;
     }
 }
