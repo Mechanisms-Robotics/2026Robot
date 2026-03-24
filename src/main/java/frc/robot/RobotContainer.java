@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DepotScoringAuto;
 import frc.robot.commands.OutpostScoringAuto;
+import frc.robot.commands.ToyAuto;
 import frc.robot.commands.ChaosRightAuto;
 import frc.robot.commands.DepotAndOutpostScoringAuto;
 import frc.robot.commands.ManualAutos;
@@ -381,7 +382,9 @@ public class RobotContainer {
             "Neutral And Hub Back Outpost Side",
             "Neutral And Hub Back Depot Side",
             "Max Scoring Auto Outpost Side",
-            "Max Scoring Auto Depot Side"
+
+            "Max Scoring Auto Left Side",
+            "Toy Auto"
         };
 
 
@@ -434,7 +437,7 @@ public class RobotContainer {
             case "Max Scoring Auto Outpost Side":
                 autoCommand = new MaxScoringRightAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Max Scoring Auto Depot Side":
+            case "Max Scoring Auto Left Side":
                 autoCommand = new MaxScoringLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
             case "Chaos Auto Outpost Side":
@@ -497,6 +500,12 @@ public class RobotContainer {
                 );
                 autoCommand = new FollowPath(visionTesting2026.get(), this.drivetrain, true); // this path was written on red side
                 break;
+            case "Toy Auto":
+                autoCommand = new ToyAuto(this.drivetrain, this.hood, this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+             default:
+                 autoCommand = Commands.none();
+                 break;
         }
 
         autoCommand.setName(name);

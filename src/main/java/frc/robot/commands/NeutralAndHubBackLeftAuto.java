@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import java.util.Optional;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
@@ -17,7 +16,6 @@ import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class NeutralAndHubBackLeftAuto extends SequentialCommandGroup {
     public NeutralAndHubBackLeftAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
@@ -33,21 +31,20 @@ public class NeutralAndHubBackLeftAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
                     "NeutralToTrenchLeft"
                 );
-        final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
         addCommands(
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new WaitCommand(2.0),
-                    intakeCommand
-                ),
-                Commands.sequence(
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
+                    IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToHubBack.get(), drivetrain, false),
+                    IntakeCommands.feed(intake),
                     new FollowPath(hubBackToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )

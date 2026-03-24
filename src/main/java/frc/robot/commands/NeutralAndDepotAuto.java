@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import java.util.Optional;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
@@ -24,27 +23,27 @@ public class NeutralAndDepotAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
                     "TrenchToNeutralLeft"
                 );
-        Optional<Trajectory<SwerveSample>> trenchToDepot = Choreo.loadTrajectory(
-                    "TrenchToDepot"
+        Optional<Trajectory<SwerveSample>> hairpinDepot = Choreo.loadTrajectory(
+                    "HairpinDepot"
                 );
-        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchLeft"
+        Optional<Trajectory<SwerveSample>> neutralHairpin = Choreo.loadTrajectory(
+                    "NeutralHairpin"
                 );
-        final Command intakeCommand = IntakeCommands.intake(intake);
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
         addCommands(
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new WaitCommand(2.0),
-                    intakeCommand
-                ),
-                Commands.sequence(
+                    IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    IntakeCommands.feed(intake),
+                    new FollowPath(neutralHairpin.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
-                    new FollowPath(trenchToDepot.get(), drivetrain, false),
+                    IntakeCommands.deploy(intake),
+                    new FollowPath(hairpinDepot.get(), drivetrain, false),
+                    new WaitCommand(1.0),
+                    IntakeCommands.feed(intake),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )
