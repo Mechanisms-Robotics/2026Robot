@@ -379,11 +379,10 @@ public class RobotContainer {
             "Neutral And Outpost Auto",
             "Neutral And Depot Auto",
             "Neutral Depot And Outpost Auto",
-            "Neutral And Hub Back Outpost Side",
-            "Neutral And Hub Back Depot Side",
-            "Max Scoring Auto Outpost Side",
-
-            "Max Scoring Auto Left Side",
+            "Neutral And Hub Back Right",
+            "Neutral And Hub Back Left",
+            "Max Scoring Auto Right",
+            "Max Scoring Auto Left",
             "Toy Auto"
         };
 
@@ -428,28 +427,28 @@ public class RobotContainer {
             case "Neutral Depot And Outpost Auto":
                 autoCommand = new NeutralDepotAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Neutral And Hub Back Outpost Side":
+            case "Neutral And Hub Back Right":
                 autoCommand = new NeutralAndHubBackRightAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Neutral And Hub Back Depot Side":
+            case "Neutral And Hub Back Left":
                 autoCommand = new NeutralAndHubBackLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Max Scoring Auto Outpost Side":
+            case "Max Scoring Auto Right":
                 autoCommand = new MaxScoringRightAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Max Scoring Auto Left Side":
+            case "Max Scoring Auto Left":
                 autoCommand = new MaxScoringLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Chaos Auto Outpost Side":
+            case "Chaos Right Auto":
                 autoCommand = new ChaosRightAuto(this.drivetrain);
                 break;
-            case "Chaos Auto Depot Side":
+            case "Chaos Left Auto":
                 autoCommand = new ChaosLeftAuto(this.drivetrain);
                 break;
-            case "Beach Auto Outpost Side":
+            case "Beach Right Auto":
                 autoCommand = new BeachRightAuto(this.drivetrain);
                 break;
-            case "Beach Auto Depot Side":
+            case "Beach Left Auto":
                 autoCommand = new BeachLeftAuto(this.drivetrain);
                 break;
             case "Wheel Characterization":
