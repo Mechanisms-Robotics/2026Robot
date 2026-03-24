@@ -25,6 +25,7 @@ public class TurretIOSparkMax implements TurretIO {
     public void updateInputs(TurretIOInputs inputs) {
         inputs.positionDegrees = Units.rotationsToDegrees(this.encoder.getPosition());
         inputs.velocityDegreesPerSecond = Units.rotationsToDegrees(this.encoder.getVelocity());
+        inputs.setpointDegrees = this.motor.getClosedLoopController().getSetpoint() * 360.0;
         inputs.current = this.motor.getOutputCurrent();
         inputs.connected = this.motor.getLastError() == REVLibError.kOk;
     }
