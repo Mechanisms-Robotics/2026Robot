@@ -5,9 +5,9 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.PoseEstimator8736;
 import frc.robot.ShotCalculator;
+import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.ShotCalculator.ShotData;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -61,8 +61,8 @@ public class ShootCommands {
 
         @Override
         public void end(boolean interupted) {
-            this.turret.setAngle(Rotation2d.fromDegrees(90));
-            this.flywheel.setVelocity(FlywheelConstants.IDLE_RPM);
+            this.turret.setAngle(Rotation2d.fromDegrees(TurretConstants.START_DEGREES));
+            this.flywheel.setVoltage(0.0);
         }
     }
 

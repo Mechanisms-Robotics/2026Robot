@@ -13,6 +13,8 @@ public interface FlywheelIO {
 
     default void setVelocity(double rpm) {}
 
+    default void setVoltage(double voltage) {}
+
     default double getDesiredVelocity() {
         return 0.0;
     }

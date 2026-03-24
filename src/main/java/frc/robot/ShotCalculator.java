@@ -82,6 +82,9 @@ public class ShotCalculator {
 
         Logger.recordOutput("ShotCalculator/targetDistance", targetDistance);
         Logger.recordOutput("ShotCalculator/targetPose", target);
+        Logger.recordOutput("ShotCalculator/DesiredHoodDegrees", desiredHoodAngle.getDegrees());
+        Logger.recordOutput("ShotCalculator/DesiredRPM", desiredRPM);
+        Logger.recordOutput("ShotCalculator/DesiredYawDegrees", desiredYaw.getDegrees());
         
         return new ShotData(desiredYaw, desiredHoodAngle, desiredRPM);
     }
