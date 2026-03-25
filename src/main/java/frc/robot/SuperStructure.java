@@ -41,7 +41,7 @@ public class SuperStructure extends SubsystemBase {
     private final Trigger intakeButton;
     private final Trigger manualButton;
 
-    private boolean manualMode = true;  // for Dalton we start in manual mode
+    private boolean manualMode = false;  // for Albany we start in auto aim
 
     public SuperStructure(
         Flywheel flywheel,
@@ -134,10 +134,10 @@ public class SuperStructure extends SubsystemBase {
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/ManualMode", this.manualMode);
         Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/ManualToggle", this.manualButton.getAsBoolean());
-        Logger.recordOutput("SuperStructure/Buttons/ManualMode", this.manualMode);
     }
 
     public boolean isAimed() {

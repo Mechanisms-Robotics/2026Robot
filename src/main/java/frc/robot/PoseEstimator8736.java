@@ -32,7 +32,7 @@ public class PoseEstimator8736 {
             new SwerveModulePosition(),
         };
 
-    private boolean visionEnabled = false; // default to false for safety
+    private boolean visionEnabled = true; // default to true because we're goated cuh
 
     /**
      * Creates a new PoseEstimator.

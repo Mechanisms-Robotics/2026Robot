@@ -308,13 +308,6 @@ public class RobotContainer {
                     this.hood.changeAngle(Rotation2d.fromDegrees(-CONSTANTS.HOOD_DELTA_DEGREES));
                 })
             );
-        
-        this.controller
-        .triangle().onTrue(
-            new InstantCommand(() -> {
-                this.drivetrain.poseEstimator.setVisionEnabled(true);
-            })
-        );
 
         // Flywheel: R1 = decrease, R2 = increase
        /* this.controller
