@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.PoseEstimator8736;
 import frc.robot.ShotCalculator;
+import frc.robot.CONSTANTS.HoodConstants;
 import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.ShotCalculator.ShotData;
 import frc.robot.subsystems.feeder.Feeder;
@@ -23,7 +24,7 @@ public class ShootCommands {
         private final PoseEstimator8736 poseEstimator;
         private final ShotCalculator shotCalculator;
         private final Supplier<Boolean> isShuttling;
-        private ShotData shotData;
+        private ShotData shotData = new ShotData(Rotation2d.kZero, Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES), 0.0);
         private Pose2d robotPose;
 
         public Aim(Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
