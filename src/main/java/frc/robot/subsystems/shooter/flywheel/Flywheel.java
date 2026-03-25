@@ -23,6 +23,10 @@ public class Flywheel extends SubsystemBase {
         this.io.setVelocity(rpm);
     }
 
+    public void setVoltage(double voltage) {
+        this.io.setVoltage(voltage);
+    }
+
     /** @return current rpm */
     public double getRPM() {
         return this.inputs.rpm;

@@ -1,15 +1,14 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.CONSTANTS.FlywheelConstants;
 import frc.robot.PoseEstimator8736;
 import frc.robot.ShotCalculator;
+import frc.robot.CONSTANTS.HoodConstants;
+import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.ShotCalculator.ShotData;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -19,85 +18,66 @@ import frc.robot.util.FieldUtil;
 
 public class ShootCommands {
     public static class Aim extends Command {
-        private final Hood hood;
         private final Flywheel flywheel;
         private final Turret turret;
 
         private final PoseEstimator8736 poseEstimator;
         private final ShotCalculator shotCalculator;
-        private final Supplier<Pose2d> target;
-        private ShotData shotData;
+        private final Supplier<Boolean> isShuttling;
+        private ShotData shotData = new ShotData(Rotation2d.kZero, Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES), 0.0);
         private Pose2d robotPose;
 
-        private static final List<Aim> instances = new ArrayList<>();
-
-        public Aim(Hood hood, Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator, Supplier<Pose2d> target) {
-            this.hood = hood;
+        public Aim(Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
             this.flywheel = flywheel;
-
             this.turret = turret;
             this.shotCalculator = shotCalculator;
             this.poseEstimator = poseEstimator;
-            this.target = target;
+            this.isShuttling = () -> !FieldUtil.inAllianceZone(this.poseEstimator.getEstimatedPose().getX());
             
-            instances.add(this);
-            addRequirements(this.hood, this.flywheel);
+            addRequirements(this.flywheel, this.turret);
         }
 
-        public Aim(Hood hood, Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator, Pose2d target) {
-            this(hood, flywheel, turret, shotCalculator, poseEstimator, () -> target);
-        }
 
-        public boolean isAimed() {
-            return Math.abs(this.shotData.rpm() - this.flywheel.getRPM()) < 1000
-                && Math.abs(this.shotData.hoodAngle().minus(this.hood.getAngle()).getDegrees()) < 5.0
-                && Math.abs(this.shotData.shooterYaw().minus(this.turret.getAngle().plus(this.robotPose.getRotation())).getDegrees()) < 10.0;
-        }
-
-        public static boolean anyAimed() {
-            for (Aim instant : instances) {
-                if (instant.isScheduled() && instant.isAimed())
-                    return true;
-            }
-            return false;
+        public ShotData getShot() {
+            return this.shotData;
         }
 
         @Override
         public void execute() {
             this.robotPose = this.poseEstimator.getEstimatedPose();
-            this.shotData = this.shotCalculator.calculateShot(this.target.get());
+            Pose2d target;
 
-            this.hood.setAngle(shotData.hoodAngle());
+            if (this.isShuttling.get()) {
+                target = FieldUtil.getShuttlePose(poseEstimator.getEstimatedPose().getY());
+            }
+            else {
+                target = FieldUtil.getHub().toPose2d();
+            }
+            
+            this.shotData = this.shotCalculator.calculateShot(target, this.isShuttling.get());
+
             this.flywheel.setVelocity(shotData.rpm());
             this.turret.setAngle(shotData.shooterYaw().minus(robotPose.getRotation()));
         }
 
         @Override
         public void end(boolean interupted) {
-            this.hood.stow();
-            this.turret.setAngle(Rotation2d.fromDegrees(90));
-            this.flywheel.setVelocity(FlywheelConstants.IDLE_RPM);
+            this.turret.setAngle(Rotation2d.fromDegrees(TurretConstants.START_DEGREES));
+            this.flywheel.setVoltage(0.0);
         }
-    }
-
-    public static Command aimShuttleCommand(Hood hood, Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
-        Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, () -> FieldUtil.getShuttlePose(poseEstimator.getEstimatedPose().getY()));
-        aim.setName("Aim Shuttle");
-        return aim;
-    }
-
-    public static Command aimHubCommand(Hood hood, Flywheel flywheel, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
-        Aim aim = new Aim(hood, flywheel, turret, shotCalculator, poseEstimator, FieldUtil.getHub().toPose2d());
-        aim.setName("Aim Hub");
-        return aim;
     }
 
     public static class Shoot extends Command {
         private final Feeder feeder;
+        private final Hood hood;
+        private Supplier<ShotData> shotData;
 
-        public Shoot(Feeder feeder) {
+        public Shoot(Feeder feeder, Hood hood, Supplier<ShotData> shotData) {
             this.feeder = feeder;
-            addRequirements(this.feeder);
+            this.hood = hood;
+            this.shotData = shotData;
+
+            addRequirements(this.feeder, this.hood);
         }
 
         @Override
@@ -106,8 +86,14 @@ public class ShootCommands {
         }
 
         @Override
+        public void execute() {
+            this.hood.setAngle(this.shotData.get().hoodAngle());
+        }
+
+        @Override
         public void end(boolean interupted) {
             this.feeder.stopFeeding();
+            this.hood.stow();
         }
     }
 
@@ -126,6 +112,8 @@ public class ShootCommands {
             this.feeder = feeder;
 
             this.rpm = rpm;
+
+            addRequirements(this.flywheel, this.feeder);
         }
 
         @Override

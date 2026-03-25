@@ -31,6 +31,7 @@ public class TurretIOSim implements TurretIO {
 
         inputs.positionDegrees = this.motorSim.getAngularPosition().in(Degrees);
         inputs.velocityDegreesPerSecond = this.motorSim.getAngularVelocity().in(DegreesPerSecond);
+        inputs.setpointDegrees = this.desiredRadians / Math.PI * 180.0;
         inputs.current = this.motorSim.getCurrentDrawAmps();
         inputs.connected = true;
     }

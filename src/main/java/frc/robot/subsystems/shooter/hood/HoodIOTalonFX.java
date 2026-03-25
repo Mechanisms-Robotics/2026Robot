@@ -38,6 +38,13 @@ public class HoodIOTalonFX implements HoodIO {
     }
 
     /**
+     * Changes the angle of the hood by an amount, used for testing.
+     */
+    public void changeAngle(Rotation2d delta) {
+        setAngle(Rotation2d.fromRadians(this.desiredRadians).plus(delta));
+    }
+
+    /**
      * Returns the position of the hood, in radians.
      */
     private double getPosition() {

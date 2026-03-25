@@ -6,9 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,7 +23,6 @@ import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
 
 public class SuperStructure extends SubsystemBase {
-    private final Drivetrain drivetrain;
     private final Flywheel flywheel;
     private final Turret turret;
     private final Hood hood;
@@ -35,31 +32,31 @@ public class SuperStructure extends SubsystemBase {
     private final PoseEstimator8736 poseEstimator;
     private final ShotCalculator shotCalculator;
 
-    private final Command aimHubCommand;
-    private final Command aimShuttleCommand;
-    private final Command shootCommand;
-    private final Command manualShootCommand;
+    private final ShootCommands.Aim aimCommand;
+    private final ShootCommands.Shoot shootCommand;
+    private final ShootCommands.ManualShoot manualShootCommand;
     private final Command intakeCommand;
+    private final Command stowCommand;
 
     private final Trigger shootButton;
     private final Trigger intakeButton;
     private final Trigger manualButton;
 
-    private boolean manualMode = true;  // for Dalton we start in manual mode
+    private boolean manualMode = false;  // for Albany we start in auto aim
 
     public SuperStructure(
-        Drivetrain drivetrain,
         Flywheel flywheel,
         Turret turret,
         Hood hood,
         Feeder feeder,
         Intake intake,
         PoseEstimator8736 poseEstimator,
+        ShotCalculator shotCalculator,
         Trigger shootButton,
         Trigger intakeButton,
-        Trigger manualButton
+        Trigger manualButton,
+        Trigger stowButton
     ) {
-        this.drivetrain = drivetrain;
         this.flywheel = flywheel;
         this.turret = turret;
         this.hood = hood;
@@ -67,43 +64,20 @@ public class SuperStructure extends SubsystemBase {
         this.intake = intake;
 
         this.poseEstimator = poseEstimator;
-        this.shotCalculator = new ShotCalculator(
-            () -> new Pose3d(
-                this.poseEstimator.getEstimatedPose().transformBy(
-                    new Transform2d(
-                        TurretConstants.ROBOT_TO_TURRET.getTranslation().toTranslation2d(),
-                        TurretConstants.ROBOT_TO_TURRET.getRotation().toRotation2d()
-                    )
-                )
-            ),
-            () -> 
-                ChassisSpeeds.fromRobotRelativeSpeeds(
-                    this.drivetrain.getVelocity(),
-                    this.poseEstimator.getEstimatedPose().getRotation()
-                )
-        );
+        this.shotCalculator = shotCalculator;
 
         this.shootButton = shootButton;
         this.intakeButton = intakeButton;
         this.manualButton = manualButton;
         
-        this.aimHubCommand = ShootCommands.aimHubCommand(
-            this.hood,
-            this.flywheel,
-            this.turret,
-            this.shotCalculator,
+        this.aimCommand = new ShootCommands.Aim(
+            this.flywheel, 
+            this.turret, 
+            this.shotCalculator, 
             this.poseEstimator
         );
 
-        this.aimShuttleCommand = ShootCommands.aimShuttleCommand(
-            this.hood,
-            this.flywheel,
-            this.turret,
-            this.shotCalculator,
-            this.poseEstimator
-        );
-
-        this.shootCommand = new ShootCommands.Shoot(this.feeder);
+        this.shootCommand = new ShootCommands.Shoot(this.feeder, this.hood, this.aimCommand::getShot);
 
         this.manualShootCommand = new ShootCommands.ManualShoot(
             this.flywheel,
@@ -113,11 +87,13 @@ public class SuperStructure extends SubsystemBase {
 
         this.intakeCommand = IntakeCommands.intake(this.intake);
 
+        this.stowCommand = IntakeCommands.stow(this.intake);
+
         shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
 
-        // always aim turret at hub while in autoaim
+        // aimCommand handles switching between shooting and shuttling
         new Trigger(() -> !this.manualMode).whileTrue(
-            this.aimHubCommand
+            this.aimCommand
         );
 
         shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);
@@ -129,12 +105,13 @@ public class SuperStructure extends SubsystemBase {
 
             if (this.manualMode) {
                 this.hood.stow();
-                this.turret.setAngle(Rotation2d.fromDegrees(90));
+                this.turret.setAngle(Rotation2d.fromDegrees(TurretConstants.START_DEGREES));
             }
                 
         }, this.hood, this.turret));
 
         intakeButton.whileTrue(this.intakeCommand);
+        stowButton.onTrue(this.stowCommand);
     }
 
 
@@ -153,17 +130,18 @@ public class SuperStructure extends SubsystemBase {
             ).rotateBy(TurretConstants.ROBOT_TO_TURRET.getRotation())
         );
 
-        Logger.recordOutput("SuperStructure/AimingHub", this.aimHubCommand.isScheduled());
-        Logger.recordOutput("SuperStructure/AimingShuttle", this.aimShuttleCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Aiming", this.aimCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/ManualMode", this.manualMode);
         Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/ManualToggle", this.manualButton.getAsBoolean());
     }
 
     public boolean isAimed() {
-        return true;//ShootCommands.Aim.anyAimed();
+        return true;
     }
 }

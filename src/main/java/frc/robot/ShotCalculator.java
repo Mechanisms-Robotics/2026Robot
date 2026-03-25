@@ -17,10 +17,14 @@ public class ShotCalculator {
     private final Supplier<Pose3d> shooterPoseSupplier;
     private final Supplier<ChassisSpeeds> shooterVelocity;
 
-    private final InterpolatingTreeMap<Double, Rotation2d> hoodAngleMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
-    private final InterpolatingDoubleTreeMap rpmMap = new InterpolatingDoubleTreeMap();
     private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
 
+    private final InterpolatingTreeMap<Double, Rotation2d> scoreHoodAngleMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+    private final InterpolatingDoubleTreeMap scoreRPMMap = new InterpolatingDoubleTreeMap();
+
+    private final InterpolatingTreeMap<Double, Rotation2d> shuttleHoodAngleMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+    private final InterpolatingDoubleTreeMap shuttleRPMMap = new InterpolatingDoubleTreeMap();
+    
     /**
      * @param shooterPoseSupplier position of the shooter mechanism field relative, used for distance calculation.
      * @param shooterVelocity velocity of the robot field relative, used for shoot-on-the-move.
@@ -29,21 +33,44 @@ public class ShotCalculator {
         this.shooterPoseSupplier = shooterPoseSupplier;
         this.shooterVelocity = shooterVelocity;
 
-        this.hoodAngleMap.put(1.0, Rotation2d.fromDegrees(22.0));
-        this.hoodAngleMap.put(4.0, Rotation2d.fromDegrees(22.0));
+        this.scoreHoodAngleMap.put(1.898, Rotation2d.fromDegrees(24.29));
+        this.scoreHoodAngleMap.put(2.284, Rotation2d.fromDegrees(28.67));
+        this.scoreHoodAngleMap.put(2.713, Rotation2d.fromDegrees(29.82));
+        this.scoreHoodAngleMap.put(3.260, Rotation2d.fromDegrees(31.93));
+        this.scoreHoodAngleMap.put(3.618, Rotation2d.fromDegrees(33.96));
+        this.scoreHoodAngleMap.put(4.015, Rotation2d.fromDegrees(36.76));
+        this.scoreHoodAngleMap.put(4.451, Rotation2d.fromDegrees(34.74));
+        this.scoreHoodAngleMap.put(5.332, Rotation2d.fromDegrees(36.06));
 
-        this.rpmMap.put(1.47, 2700.0);
-        this.rpmMap.put(2.12, 2900.0);
-        this.rpmMap.put(2.99, 3300.0);
-        this.rpmMap.put(3.72, 3500.0);
-        this.rpmMap.put(4.49, 3700.0);
 
-        timeOfFlightMap.put(1.98, 0.86);
-        timeOfFlightMap.put(2.58, 0.86);
-        timeOfFlightMap.put(2.99, 1.0);
-        timeOfFlightMap.put(3.65, 0.85);
-        timeOfFlightMap.put(4.57, 1.09);
-        timeOfFlightMap.put(5.56, 1.03);
+
+        this.scoreRPMMap.put(1.898, 3300.0);
+        this.scoreRPMMap.put(2.284, 3400.0);
+        this.scoreRPMMap.put(2.713, 3500.0);
+        this.scoreRPMMap.put(3.260, 3700.0);
+        this.scoreRPMMap.put(3.618, 3900.0);
+        this.scoreRPMMap.put(4.015, 4100.0);
+        this.scoreRPMMap.put(4.451, 4200.0);
+        this.scoreRPMMap.put(5.332, 4500.0);
+
+        this.shuttleHoodAngleMap.put(1.05, Rotation2d.fromDegrees(35.9));
+        this.shuttleHoodAngleMap.put(2.22, Rotation2d.fromDegrees(41.0));
+        this.shuttleHoodAngleMap.put(3.79, Rotation2d.fromDegrees(48.54));
+        this.shuttleHoodAngleMap.put(5.75, Rotation2d.fromDegrees(47.75));
+        this.shuttleHoodAngleMap.put(10.11, Rotation2d.fromDegrees(45));
+
+        this.shuttleRPMMap.put(1.05, 3000.0);
+        this.shuttleRPMMap.put(2.22, 3200.0);
+        this.shuttleRPMMap.put(3.79, 3800.0);
+        this.shuttleRPMMap.put(5.75, 4600.0);
+        this.shuttleRPMMap.put(10.11, 7000.0);
+
+        this.timeOfFlightMap.put(1.98, 0.86);
+        this.timeOfFlightMap.put(2.58, 0.86);
+        this.timeOfFlightMap.put(2.99, 1.0);
+        this.timeOfFlightMap.put(3.65, 0.85);
+        this.timeOfFlightMap.put(4.57, 1.09);
+        this.timeOfFlightMap.put(5.56, 1.03);
     }
 
     public record ShotData(
@@ -52,7 +79,13 @@ public class ShotCalculator {
         double rpm
     ) {}
 
-    public ShotData calculateShot(Pose2d target) {
+    /**
+     * Calculates desired shooter values based on the target. 
+     * @param target target position
+     * @param shuttle whether or not this is shuttling. if true, then the shuttling interpolation maps will be used, otherwise the scoring maps will be used
+     * @return shot data
+     */
+    public ShotData calculateShot(Pose2d target, boolean shuttle) {
         Pose2d shooterPose = this.shooterPoseSupplier.get().toPose2d();
         ChassisSpeeds shooterVelocity = this.shooterVelocity.get();
         double targetDistance = target.relativeTo(shooterPose).getTranslation().getNorm();
@@ -80,13 +113,18 @@ public class ShotCalculator {
         }
 
         Translation2d shooterToTarget = lookAheadTarget.minus(shooterPose).getTranslation();
+
+        Rotation2d desiredHoodAngle = shuttle ? (this.shuttleHoodAngleMap.get(lookAheadTargetDistance)) : (this.scoreHoodAngleMap.get(lookAheadTargetDistance));
+        double desiredRPM = shuttle ? this.shuttleRPMMap.get(lookAheadTargetDistance) : this.scoreRPMMap.get(lookAheadTargetDistance);
+
         Rotation2d desiredYaw = shooterToTarget.getAngle();
         
-        Rotation2d desiredHoodAngle = this.hoodAngleMap.get(lookAheadTargetDistance);
-        double desiredRPM = this.rpmMap.get(lookAheadTargetDistance);
-
         Logger.recordOutput("ShotCalculator/targetDistance", targetDistance);
         Logger.recordOutput("ShotCalculator/lookAheadTargetDistance", lookAheadTargetDistance);
+        Logger.recordOutput("ShotCalculator/targetPose", target);
+        Logger.recordOutput("ShotCalculator/DesiredHoodDegrees", desiredHoodAngle.getDegrees());
+        Logger.recordOutput("ShotCalculator/DesiredRPM", desiredRPM);
+        Logger.recordOutput("ShotCalculator/DesiredYawDegrees", desiredYaw.getDegrees());
         
         return new ShotData(desiredYaw, desiredHoodAngle, desiredRPM);
     }
