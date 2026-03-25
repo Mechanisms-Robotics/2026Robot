@@ -112,7 +112,7 @@ public class ShotCalculator {
             lookAheadTargetDistance = target.getTranslation().getDistance(lookAheadTarget.getTranslation());   
         }
 
-        Translation2d shooterToTarget = lookAheadTarget.minus(shooterPose).getTranslation();
+        Translation2d shooterToTarget = lookAheadTarget.getTranslation().minus(shooterPose.getTranslation());
 
         Rotation2d desiredHoodAngle = shuttle ? (this.shuttleHoodAngleMap.get(lookAheadTargetDistance)) : (this.scoreHoodAngleMap.get(lookAheadTargetDistance));
         double desiredRPM = shuttle ? this.shuttleRPMMap.get(lookAheadTargetDistance) : this.scoreRPMMap.get(lookAheadTargetDistance);
@@ -120,8 +120,9 @@ public class ShotCalculator {
         Rotation2d desiredYaw = shooterToTarget.getAngle();
         
         Logger.recordOutput("ShotCalculator/targetDistance", targetDistance);
-        Logger.recordOutput("ShotCalculator/lookAheadTargetDistance", lookAheadTargetDistance);
         Logger.recordOutput("ShotCalculator/targetPose", target);
+        Logger.recordOutput("ShotCalculator/lookAheadTargetDistance", lookAheadTargetDistance);
+        Logger.recordOutput("ShotCalculator/lookAheadTarget", lookAheadTarget);
         Logger.recordOutput("ShotCalculator/DesiredHoodDegrees", desiredHoodAngle.getDegrees());
         Logger.recordOutput("ShotCalculator/DesiredRPM", desiredRPM);
         Logger.recordOutput("ShotCalculator/DesiredYawDegrees", desiredYaw.getDegrees());
