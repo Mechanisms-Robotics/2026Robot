@@ -19,6 +19,7 @@ import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -27,39 +28,79 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DepotScoringAuto;
+import frc.robot.commands.OutpostScoringAuto;
+import frc.robot.commands.ToyAuto;
+import frc.robot.commands.ChaosRightAuto;
+import frc.robot.commands.DepotAndOutpostScoringAuto;
+import frc.robot.commands.ManualAutos;
+import frc.robot.commands.MaxScoringLeftAuto;
+import frc.robot.commands.MaxScoringRightAuto;
+import frc.robot.commands.NeutralAndDepotAuto;
+import frc.robot.commands.NeutralAndHubBackLeftAuto;
+import frc.robot.commands.NeutralAndHubBackRightAuto;
+import frc.robot.commands.NeutralAndOutpostAuto;
+import frc.robot.commands.NeutralDepotAndOutpostAuto;
+import frc.robot.commands.BeachLeftAuto;
+import frc.robot.commands.BeachRightAuto;
+import frc.robot.commands.ChaosLeftAuto;
 import frc.robot.commands.DriveCommands;
-
+import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
 import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.GyroIORedux;
 import frc.robot.subsystems.drivetrain.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.ModuleIOTalonFXRedux;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.TurretIOSim;
-import frc.robot.subsystems.turret.TurretIOTalonFX;
+import frc.robot.subsystems.shooter.flywheel.Flywheel;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.shooter.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.shooter.hood.Hood;
+import frc.robot.subsystems.shooter.hood.HoodIOSim;
+import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
+import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.subsystems.shooter.turret.TurretIOSim;
+import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
+import frc.robot.subsystems.feeder.FeederIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.RollersIOSparkMax;
+import frc.robot.subsystems.intake.SlapIOSim;
+import frc.robot.subsystems.intake.SlapIOSparkMax;
+import frc.robot.subsystems.intake.RollersIO;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.PoseCameraIOPhoton;
 import frc.robot.subsystems.vision.PoseCameraIOSim;
 
 public class RobotContainer {
-
     public final Drivetrain drivetrain;
+    public final Turret turret;
+    private final Flywheel flywheel;
+    public final Hood hood;
+    public final Intake intake;
+    
+    public final SuperStructure superStructure;
+    public final ShotCalculator shotCalculator;
+    @SuppressWarnings("unused")
     private final Vision vision;
     private final DrivetrainController drivetrainController;
-    public final Turret turret;
+    
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
+
+    private final Feeder feeder; 
 
     private final CommandPS4Controller controller = new CommandPS4Controller(
         CONSTANTS.CONTROLLER_PORT
     );
 
     public RobotContainer() {
-        // TODO: Think about where to initialize all of this properly
         if (CONSTANTS.CURRENT_MODE == CONSTANTS.SIM_MODE) {
             this.drivetrain = new Drivetrain(
                 new GyroIO() {},
@@ -67,6 +108,10 @@ public class RobotContainer {
                 new ModuleIOSim(DriveConstants.FRONT_RIGHT),
                 new ModuleIOSim(DriveConstants.BACK_LEFT),
                 new ModuleIOSim(DriveConstants.BACK_RIGHT)
+            );
+            this.feeder = new Feeder(
+                new FeederIOSim(),
+                new FeederIOSim()
             );
 
             this.vision = new Vision(
@@ -77,11 +122,10 @@ public class RobotContainer {
                     drivetrain.poseEstimator
                 ));
 
-            this.turret = new Turret(
-                new TurretIOSim(), 
-                TurretConstants.ROBOT_TO_TURRET, 
-                this.drivetrain.poseEstimator);
-
+            this.flywheel = new Flywheel(new FlywheelIOSim());
+            this.turret = new Turret(new TurretIOSim());
+            this.hood = new Hood(new HoodIOSim());
+            this.intake = new Intake(new SlapIOSim(), new RollersIO() {});
         } else {
             this.drivetrain = new Drivetrain(
                 new GyroIORedux(),
@@ -89,7 +133,22 @@ public class RobotContainer {
                 new ModuleIOTalonFXRedux(DriveConstants.FRONT_RIGHT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_LEFT),
                 new ModuleIOTalonFXRedux(DriveConstants.BACK_RIGHT)
+        
             );
+
+            this.feeder = new Feeder(
+                // Instantiate TalonFX-based feeder IO with explicit CAN IDs for the motors.
+                // new FeederIO() {},
+                // new FeederIO() {}
+                new FeederIOTalonFX(
+                    CONSTANTS.KICKER_MOTOR_CAN_ID
+                ),
+                new FeederIOTalonFX(
+                    CONSTANTS.SPINDEXER_MOTOR_CAN_ID
+                )
+            );
+
+            this.intake = new Intake(new SlapIOSparkMax(), new RollersIOSparkMax());
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
@@ -97,16 +156,46 @@ public class RobotContainer {
                 new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
             );
 
-            this.turret = new Turret(
-                new TurretIOTalonFX(TurretConstants.CONFIG),
-                TurretConstants.ROBOT_TO_TURRET, 
-                this.drivetrain.poseEstimator);
+            this.flywheel = new Flywheel(new FlywheelIOTalonFX());
+            this.hood = new Hood(new HoodIOTalonFX());
+            this.turret = new Turret(new TurretIOSparkMax());
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
+        
+        this.shotCalculator = new ShotCalculator(
+            () -> new Pose3d(
+                this.drivetrain.poseEstimator.getEstimatedPose().transformBy(
+                    new Transform2d(
+                        TurretConstants.ROBOT_TO_TURRET.getTranslation().toTranslation2d(),
+                        TurretConstants.ROBOT_TO_TURRET.getRotation().toRotation2d()
+                    )
+                )
+            )
+        );
+        
+        this.superStructure = new SuperStructure(
+            this.flywheel,
+            this.turret,
+            this.hood,
+            this.feeder,
+            this.intake,
+            this.drivetrain.poseEstimator,
+            this.shotCalculator,
+            // shoot button
+            this.controller.R2(), // right trigger
+            // intake button
+            this.controller.L2(), // left trigger
+            // manual mode toggle
+            this.controller.R1(), // right bumper
+            // stow intake button
+            this.controller.L1() // left bumper
+        );
 
         configureBindings();
+        configureTestBindings(); // testing individual mechanisms 
         publishAutoNames();
+        SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
 
     private void configureBindings() {
@@ -117,7 +206,7 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
-
+        
         this.drivetrain.setDefaultCommand(
             new RunCommand(
                 () -> {
@@ -164,19 +253,137 @@ public class RobotContainer {
                 this.drivetrain
             )
         );
+
+    }
+
+    private void configureTestBindings() {
+         this.controller
+            .square()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.feeder.stopFeeding();
+                })
+            );
+
+        this.controller
+            .circle()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.feeder.startFeeding();
+                })
+            );
+
+        new Trigger(() -> this.controller.getHID().getPOV() == 0)
+            .onTrue(
+               /*  new InstantCommand(() -> {
+                    this.hood.setAngle(this.hood.getAngle().plus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+                })*/
+
+                new InstantCommand(() -> {
+                    double newRPM = this.flywheel.getDesiredRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(newRPM);
+                })
+            );
+
+        new Trigger(() -> this.controller.getHID().getPOV() == 180)
+            .onTrue(
+                new InstantCommand(() -> {
+                    //this.hood.setAngle(this.hood.getAngle().minus(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES)));
+
+                    double newRPM = this.flywheel.getDesiredRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(newRPM);
+                })
+            );
+
+        new Trigger(() -> this.controller.getHID().getPOV() == 90)
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.hood.changeAngle(Rotation2d.fromDegrees(CONSTANTS.HOOD_DELTA_DEGREES));
+                })
+            );
+
+        new Trigger(() -> this.controller.getHID().getPOV() == 270)
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.hood.changeAngle(Rotation2d.fromDegrees(-CONSTANTS.HOOD_DELTA_DEGREES));
+                })
+            );
+        
+        this.controller
+        .triangle().onTrue(
+            new InstantCommand(() -> {
+                this.drivetrain.poseEstimator.setVisionEnabled(true);
+            })
+        );
+
+        // Flywheel: R1 = decrease, R2 = increase
+       /* this.controller
+            .R1()
+            .onTrue(
+                new InstantCommand(() -> {
+                    double newRPM = this.flywheel.getRPM() - CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(4000);//newRPM);
+                })
+            );
+
+        this.controller
+            .R2()
+            .onTrue(
+                new InstantCommand(() -> {
+                    double newRPM = this.flywheel.getRPM() + CONSTANTS.FLYWHEEL_DELTA_RPM;
+                    this.flywheel.setVelocity(4000);
+                })
+            );*/
+
+        // Kicker: L1 = decrease, L2 = increase
+       /*  this.controller
+            .L1()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.feeder.adjustKickerVolts(CONSTANTS.KICKER_DELTA_VOLTS);
+
+                })
+            );
+
+        this.controller
+            .L2()
+            .onTrue(
+                new InstantCommand(() -> {
+                    this.feeder.adjustKickerVolts(-CONSTANTS.KICKER_DELTA_VOLTS);
+                })
+            );*/
     }
 
     private void publishAutoNames() {
         String[] autoNames = {
-            "Wheel Characterization",
-            "Drive Feedforward Characterization",
-            "RotationTuning",
-            "TranslationTuning",
-            "TestPath2026",
-            "BackUpCenter",
-            "BackUpLeft",
-            "OverBump",
-            "VisionTesting2026"
+            // "Wheel Characterization",
+            // "Drive Feedforward Characterization",
+            // "RotationTuning",
+            // "TranslationTuning",
+            // "TestPath2026",
+            // "BackUpCenter",
+            // "BackUpLeft",
+            // "OverBump",
+            // "VisionTesting2026",
+            // "Depot Auto",
+            // "Shoot Right Preload",
+            // "Shoot Center Preload",
+            // "Shoot Left Preload",
+            // "Chaos Right Auto",
+            // "Chaos Left Auto",
+            // "Beach Right Auto",
+            // "Beach Left Auto",
+            // "Depot Scoring Auto",
+            // "Outpost Scoring Auto",
+            // "Depot And Outpost Scoring Auto",
+            // "Neutral And Outpost Auto",
+            // "Neutral And Depot Auto",
+            // "Neutral Depot And Outpost Auto",
+            // "Neutral And Hub Back Right",
+            // "Neutral And Hub Back Left",
+            "Max Scoring Auto Right",
+            "Max Scoring Auto Left",
+            "Toy Auto"
         };
 
 
@@ -193,6 +400,57 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
+            case "Shoot Center Preload":
+                autoCommand = new ManualAutos.CenterHubBackup(this.drivetrain, this.flywheel, this.feeder);
+                break;
+            case "Shoot Right Preload":
+                autoCommand = new ManualAutos.OutpostBackup(this.drivetrain, this.flywheel, this.feeder);
+                break;
+            case "Shoot Left Preload":
+                autoCommand = new ManualAutos.DepotBackup(this.drivetrain, this.flywheel, this.feeder);
+                break;
+            case "Depot Scoring Auto":
+                autoCommand = new DepotScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Outpost Scoring Auto":
+                autoCommand = new OutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Depot And Outpost Scoring Auto":
+                autoCommand = new DepotAndOutpostScoringAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral And Outpost Auto":
+                autoCommand = new NeutralAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral And Depot Auto":
+                autoCommand = new NeutralAndDepotAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral Depot And Outpost Auto":
+                autoCommand = new NeutralDepotAndOutpostAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral And Hub Back Right":
+                autoCommand = new NeutralAndHubBackRightAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Neutral And Hub Back Left":
+                autoCommand = new NeutralAndHubBackLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Max Scoring Auto Right":
+                autoCommand = new MaxScoringRightAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Max Scoring Auto Left":
+                autoCommand = new MaxScoringLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Chaos Right Auto":
+                autoCommand = new ChaosRightAuto(this.drivetrain);
+                break;
+            case "Chaos Left Auto":
+                autoCommand = new ChaosLeftAuto(this.drivetrain);
+                break;
+            case "Beach Right Auto":
+                autoCommand = new BeachRightAuto(this.drivetrain);
+                break;
+            case "Beach Left Auto":
+                autoCommand = new BeachLeftAuto(this.drivetrain);
+                break;
             case "Wheel Characterization":
                 autoCommand = DriveCommands.wheelRadiusCharacterization(this.drivetrain);
                 break;
@@ -241,8 +499,13 @@ public class RobotContainer {
                 );
                 autoCommand = new FollowPath(visionTesting2026.get(), this.drivetrain, true); // this path was written on red side
                 break;
+            case "Toy Auto":
+                autoCommand = new ToyAuto(this.drivetrain, this.hood, this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+             default:
+                 autoCommand = Commands.none();
+                 break;
         }
-
 
         autoCommand.setName(name);
         return autoCommand;

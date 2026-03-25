@@ -73,8 +73,12 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
+  public void robotInit() {
+  }
+  
+  @Override
   public void disabledInit() {}
-
+  
   @Override
   public void disabledPeriodic() {
     String autoName = this.robotContainer.autoChooser.getSelected();

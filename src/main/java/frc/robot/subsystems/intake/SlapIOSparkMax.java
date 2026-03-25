@@ -1,0 +1,85 @@
+package frc.robot.subsystems.intake;
+
+import com.revrobotics.PersistMode;
+import com.revrobotics.REVLibError;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.CONSTANTS.IntakeConstants;
+
+public class SlapIOSparkMax implements SlapIO {
+    private final SparkMax armLeft = new SparkMax(IntakeConstants.ARM_CAN_ID_LEFT, MotorType.kBrushless);
+    private final SparkMax armRight = new SparkMax(IntakeConstants.ARM_CAN_ID_RIGHT, MotorType.kBrushless);
+    private final RelativeEncoder armLeftEncoder = this.armLeft.getEncoder();
+    private final RelativeEncoder armRightEncoder = this.armRight.getEncoder();
+
+    private final ProfiledPIDController controller = 
+        new ProfiledPIDController(
+            IntakeConstants.kP,
+            0,
+            IntakeConstants.kD,
+            new Constraints(IntakeConstants.MAX_VELOCITY_RADIANS_PER_SECOND, IntakeConstants.MAX_ACCELERATION_RADIANS_PER_SECOND)
+        );
+
+    public SlapIOSparkMax() {
+        var config_right = new SparkMaxConfig();
+        config_right.encoder
+            .positionConversionFactor(IntakeConstants.GEAR_RATIO_ARM)
+            .velocityConversionFactor(IntakeConstants.GEAR_RATIO_ARM);
+        config_right.follow(IntakeConstants.ARM_CAN_ID_LEFT, true);
+        config_right.idleMode(IdleMode.kBrake);
+
+        // Configure the leader first, then the follower. Some firmware versions
+        // apply follower settings better when the leader is configured first.
+        this.armLeft.configure(IntakeConstants.CONFIG_LEFT, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.armRight.configure(config_right, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        this.armLeftEncoder.setPosition(IntakeConstants.START_ANGLE.getRotations());
+        this.armRightEncoder.setPosition(IntakeConstants.START_ANGLE.getRotations());
+        SmartDashboard.putData("Intake/test/controller", this.controller);
+
+        this.controller.setGoal(IntakeConstants.START_ANGLE.getRadians());
+    }
+
+
+    @Override
+    public void updateInputs(SlapIOInputs inputs) {
+        inputs.velocityRadiansPerSecondLeft = this.armLeftEncoder.getVelocity() / 60.0 * 2 * Math.PI; // rpm -> rps -> radians/s
+        inputs.positionDegreesLeft = this.armLeftEncoder.getPosition() * 360.0;
+        inputs.velocityRadiansPerSecondRight= this.armRightEncoder.getVelocity() / 60.0 * 2 * Math.PI; // rpm -> rps -> radians/s
+        inputs.positionDegreesRight = this.armRightEncoder.getPosition() * 360.0;
+
+        inputs.currentAmps = this.armLeft.getOutputCurrent();
+        inputs.leftConnected = this.armLeft.getLastError() == REVLibError.kOk;
+        inputs.rightConnected = this.armRight.getLastError() == REVLibError.kOk;
+        inputs.setpointDegrees = this.controller.getGoal().position / Math.PI * 180.0;
+
+        double angleRadians = 
+            this.armLeftEncoder.getPosition() * Math.PI * 2.0;
+        if (this.controller.getGoal().position < IntakeConstants.MIN_ANGLE.getRadians()
+         || this.controller.getGoal().position > IntakeConstants.MAX_ANGLE.getRadians())
+        {
+            this.controller.setGoal(MathUtil.clamp(
+                IntakeConstants.MIN_ANGLE.getRadians(),
+                IntakeConstants.MAX_ANGLE.getRadians(),
+                this.controller.getGoal().position
+            ));
+
+        }
+        double volts = this.controller.calculate(angleRadians) + IntakeConstants.kCos * Math.cos(angleRadians);
+        this.armLeft.setVoltage(volts);
+    }
+
+    public void setAngle(Rotation2d angle) {
+        this.controller.setGoal(angle.getRadians());
+    }
+}

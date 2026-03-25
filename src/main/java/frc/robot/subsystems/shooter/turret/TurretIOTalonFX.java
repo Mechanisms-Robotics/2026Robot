@@ -1,4 +1,4 @@
-package frc.robot.subsystems.turret;
+package frc.robot.subsystems.shooter.turret;
 
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
@@ -17,6 +17,7 @@ public class TurretIOTalonFX implements TurretIO {
     private final double forwardLimit = 3.2;
     private final double reverseLimit = -3.2;
     private double currentMotorRotations = 0.0;
+    private double desiredRotations = 0.0;
     private double velocity = 0.0;
 
     public TurretIOTalonFX(TalonFXConfiguration config) {
@@ -29,17 +30,17 @@ public class TurretIOTalonFX implements TurretIO {
     
     @Override
     public void updateInputs(TurretIOInputs inputs) {
-        this.currentMotorRotations = motor.getPosition().getValueAsDouble();
-        this.velocity = motor.getVelocity().getValueAsDouble();
+        this.currentMotorRotations = this.motor.getPosition().getValueAsDouble();
+        this.velocity = this.motor.getVelocity().getValueAsDouble();
 
-        inputs.positionRadians = Units.rotationsToRadians(this.currentMotorRotations);
-        inputs.velocityRadiansPerSec = Units.rotationsToRadians(this.velocity);
-    }
-    
-    @Override
-    public void setPosition(Rotation2d position) {
+        inputs.positionDegrees = Units.rotationsToDegrees(this.currentMotorRotations);
+        inputs.setpointDegrees = Units.rotationsToDegrees(this.desiredRotations);
+        inputs.velocityDegreesPerSecond = Units.rotationsToDegrees(this.velocity);
+        inputs.current = this.motor.getTorqueCurrent().getValueAsDouble();
+        inputs.connected = this.motor.isConnected();
+
         // The shortest possible rotation for the turret to move, which if done may break the wire chain
-        Rotation2d relative = position.relativeTo(Rotation2d.fromRotations(this.currentMotorRotations));
+        Rotation2d relative = Rotation2d.fromRotations(desiredRotations).relativeTo(Rotation2d.fromRotations(this.currentMotorRotations));
         // Error in the PID sence
         double error = relative.getRotations();
         // The desired position including the number of times the turret has made a revolution
@@ -47,7 +48,7 @@ public class TurretIOTalonFX implements TurretIO {
 
         /* If the absolute desired position is past the limits of the wire chain,
            go a different direction to the desired position; flip around the other way. */
-        if (target > forwardLimit || target < reverseLimit) {
+        if (target > this.forwardLimit || target < this.reverseLimit) {
             /* Changes direction by reversing the magnitude.
                Derivation:
                The magnitude of the error is 1 rotation minus the absolute value of the error:
@@ -64,13 +65,18 @@ public class TurretIOTalonFX implements TurretIO {
             error -= Math.signum(error);
         }
         // Use PD controller with voltage controll
-        motor.setVoltage(MathUtil.clamp(
+        this.motor.setVoltage(MathUtil.clamp(
             error * kP - this.velocity * kD, -maxVoltage, maxVoltage
         ));
+    }
+    
+    @Override
+    public void setAngle(Rotation2d position) {
+        this.desiredRotations = position.getRotations();
     }
 
     @Override
     public void zero() {
-        motor.setPosition(0);
+        this.motor.setPosition(0);
     }
 }
