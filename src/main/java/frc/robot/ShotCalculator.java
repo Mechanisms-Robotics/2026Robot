@@ -93,7 +93,7 @@ public class ShotCalculator {
         
         // the new, lookahead target based on the robot's velocity and time of flight.
         double timeOfFlight = timeOfFlightMap.get(targetDistance);
-        Pose2d lookAheadTarget = shooterPose;
+        Pose2d lookAheadPose = shooterPose;
         double lookAheadTargetDistance = targetDistance;
         
         /* Account for the velocity of the robot by calculating a new target to point at */
@@ -105,14 +105,14 @@ public class ShotCalculator {
             // The x and y offsets based on the 
             double offsetX = shooterVelocity.vxMetersPerSecond * timeOfFlight;
             double offsetY = shooterVelocity.vyMetersPerSecond * timeOfFlight;
-            lookAheadTarget =
+            lookAheadPose =
                 new Pose2d(
                     shooterPose.getTranslation().plus(new Translation2d(offsetX, offsetY)),
                     shooterPose.getRotation());
-            lookAheadTargetDistance = target.getTranslation().getDistance(lookAheadTarget.getTranslation());   
+            lookAheadTargetDistance = target.getTranslation().getDistance(lookAheadPose.getTranslation());   
         }
 
-        Translation2d shooterToTarget = lookAheadTarget.getTranslation().minus(shooterPose.getTranslation());
+        Translation2d shooterToTarget = target.getTranslation().minus(lookAheadPose.getTranslation());
 
         Rotation2d desiredHoodAngle = shuttle ? (this.shuttleHoodAngleMap.get(lookAheadTargetDistance)) : (this.scoreHoodAngleMap.get(lookAheadTargetDistance));
         double desiredRPM = shuttle ? this.shuttleRPMMap.get(lookAheadTargetDistance) : this.scoreRPMMap.get(lookAheadTargetDistance);
@@ -122,7 +122,7 @@ public class ShotCalculator {
         Logger.recordOutput("ShotCalculator/targetDistance", targetDistance);
         Logger.recordOutput("ShotCalculator/targetPose", target);
         Logger.recordOutput("ShotCalculator/lookAheadTargetDistance", lookAheadTargetDistance);
-        Logger.recordOutput("ShotCalculator/lookAheadTarget", lookAheadTarget);
+        Logger.recordOutput("ShotCalculator/lookAheadTarget", lookAheadPose);
         Logger.recordOutput("ShotCalculator/DesiredHoodDegrees", desiredHoodAngle.getDegrees());
         Logger.recordOutput("ShotCalculator/DesiredRPM", desiredRPM);
         Logger.recordOutput("ShotCalculator/DesiredYawDegrees", desiredYaw.getDegrees());
