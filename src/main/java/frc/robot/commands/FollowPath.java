@@ -63,6 +63,9 @@ public class FollowPath extends Command {
     timer.reset();
     timer.start();
 
+    // disable vision updates while following a path
+    this.drivetrain.poseEstimator.setVisionEnabled(false);
+
     this.isRedAlliance = DriverStation.getAlliance().isPresent() &&
         DriverStation.getAlliance().get() == Alliance.Red;
 

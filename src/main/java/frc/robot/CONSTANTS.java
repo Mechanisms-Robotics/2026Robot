@@ -173,7 +173,7 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double ROLLERS_DUTY_CYCLE = -0.75;
+        public static final double ROLLERS_DUTY_CYCLE = -0.95;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
