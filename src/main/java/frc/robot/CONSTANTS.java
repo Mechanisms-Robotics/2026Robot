@@ -109,9 +109,9 @@ public class CONSTANTS {
     public static final double WIDTH_METERS = 0.695;
 
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        -LENGTH_METERS / 2.0 + 0.19, // forward distances from the center of the robot
+        -LENGTH_METERS / 2.0 - Units.inchesToMeters(12.5), // forward distances from the center of the robot
         WIDTH_METERS / 2.0, // leftward distance from the center of the robot
-        0.46, 
+        Units.inchesToMeters(19.0 + 3.0 / 8.0), 
         new Rotation3d(
             0, 
             0, 
@@ -121,9 +121,9 @@ public class CONSTANTS {
 
     public static final String CAMERA2_NAME = "PhotonCameraRight";
     public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
-        -LENGTH_METERS / 2.0 + 0.21,
+        -LENGTH_METERS / 2.0 - Units.inchesToMeters(15.0),
         -WIDTH_METERS / 2.0, 
-        0.1825, 
+        Units.inchesToMeters(19.0 + 3.0 / 8.0), 
         new Rotation3d(
             0,
             0,
