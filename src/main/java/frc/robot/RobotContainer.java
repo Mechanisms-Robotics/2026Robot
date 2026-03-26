@@ -172,7 +172,7 @@ public class RobotContainer {
                     )
                 )
             ),
-            () -> ChassisSpeeds.fromRobotRelativeSpeeds(this.drivetrain.getDesiredState(), this.drivetrain.getPose().getRotation())
+            () -> ChassisSpeeds.fromRobotRelativeSpeeds(this.drivetrain.getVelocity(), this.drivetrain.getPose().getRotation())
         );
         
         this.superStructure = new SuperStructure(

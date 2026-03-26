@@ -39,7 +39,7 @@ public class SwerveModule {
 
     public SwerveModuleState getModuleState() {
         return new SwerveModuleState(
-            inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS.magnitude(),
+            inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS.in(Meters),
             inputs.turnPosition
         );
     }
