@@ -132,6 +132,7 @@ public class Drivetrain extends SubsystemBase {
         };
     }
 
+    @AutoLogOutput(key = "Drivetrain/Velocity")
     public ChassisSpeeds getVelocity() {
         return this.kinematics.toChassisSpeeds(this.getStates());
     }
