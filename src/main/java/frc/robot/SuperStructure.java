@@ -153,6 +153,6 @@ public class SuperStructure extends SubsystemBase {
                 .plus(this.turret.getAngle());
         Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
 
-        return shooterYaw.relativeTo(desiredShooterYaw).getDegrees() < 10.0;
+        return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0;
     }
 }
