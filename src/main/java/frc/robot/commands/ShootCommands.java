@@ -70,24 +70,50 @@ public class ShootCommands {
     public static class Shoot extends Command {
         private final Feeder feeder;
         private final Hood hood;
-        private Supplier<ShotData> shotData;
+        private final Supplier<ShotData> shotData;
+        private final Supplier<Boolean> isAimed;
 
-        public Shoot(Feeder feeder, Hood hood, Supplier<ShotData> shotData) {
+        /**
+         * Shoot fuel by spinning spindexer.
+         * When the hood is up, the robot cannot go under the trench.
+         * Because of this the robot only actuates the hood while shooting.
+         * The spindexer only runs (applies open loop voltge) when isAimed is true.
+         * 
+         * @param feeder feed fuel to flywheel
+         * @param hood actuate the hood only while shooting.
+         * @param shotData used to get the hood position, get this from ShootCommands.Aim
+         * @param isAimed boolean supplier determining if the feeder runs, (hood always actuates)
+         */
+        public Shoot(Feeder feeder, Hood hood, Supplier<ShotData> shotData, Supplier<Boolean> isAimed) {
             this.feeder = feeder;
             this.hood = hood;
             this.shotData = shotData;
+            this.isAimed = isAimed;
 
             addRequirements(this.feeder, this.hood);
         }
 
-        @Override
-        public void initialize() {
-            this.feeder.startFeeding();
+        /**
+         * Shoot fuel by spinning spindexer.
+         * When the hood is up, the robot cannot go under the trench.
+         * Because of this the robot only actuates the hood while shooting.
+         * 
+         * @param feeder feed fuel to flywheel
+         * @param hood actuate the hood only while shooting.
+         * @param shotData used to get the hood position, get this from ShootCommands.Aim
+         */
+        public Shoot(Feeder feeder, Hood hood, Supplier<ShotData> shotData) {
+            this(feeder, hood, shotData, () -> true);
         }
 
         @Override
         public void execute() {
             this.hood.setAngle(this.shotData.get().hoodAngle());
+            if (this.isAimed.get()) {
+                this.feeder.startFeeding();
+            } else {
+                this.feeder.stopFeeding();
+            }
         }
 
         @Override

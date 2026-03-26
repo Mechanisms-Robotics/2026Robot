@@ -15,7 +15,6 @@ import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
-import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -77,7 +76,12 @@ public class SuperStructure extends SubsystemBase {
             this.poseEstimator
         );
 
-        this.shootCommand = new ShootCommands.Shoot(this.feeder, this.hood, this.aimCommand::getShot);
+        this.shootCommand = new ShootCommands.Shoot(
+            this.feeder,
+            this.hood,
+            this.aimCommand::getShot,
+            this::isAimed
+        );
 
         this.manualShootCommand = new ShootCommands.ManualShoot(
             this.flywheel,
@@ -89,7 +93,7 @@ public class SuperStructure extends SubsystemBase {
 
         this.stowCommand = IntakeCommands.stow(this.intake);
 
-        shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
+        shootButton.and(() -> !this.manualMode).whileTrue(this.shootCommand);
 
         // aimCommand handles switching between shooting and shuttling
         new Trigger(() -> !this.manualMode).whileTrue(
@@ -142,6 +146,13 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
-        return true;
+        Rotation2d shooterYaw =
+            this.poseEstimator
+                .getEstimatedPose()
+                .getRotation()
+                .plus(this.turret.getAngle());
+        Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
+
+        return shooterYaw.relativeTo(desiredShooterYaw).getDegrees() < 10.0;
     }
 }
