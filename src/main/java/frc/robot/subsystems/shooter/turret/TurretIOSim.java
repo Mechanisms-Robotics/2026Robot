@@ -1,5 +1,8 @@
 package frc.robot.subsystems.shooter.turret;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -26,8 +29,11 @@ public class TurretIOSim implements TurretIO {
             , -12, 12)
         );
 
-        inputs.positionRadians = this.motorSim.getAngularPositionRad();
-        inputs.velocityRadiansPerSec = this.motorSim.getAngularVelocityRadPerSec();
+        inputs.positionDegrees = this.motorSim.getAngularPosition().in(Degrees);
+        inputs.velocityDegreesPerSecond = this.motorSim.getAngularVelocity().in(DegreesPerSecond);
+        inputs.setpointDegrees = this.desiredRadians / Math.PI * 180.0;
+        inputs.current = this.motorSim.getCurrentDrawAmps();
+        inputs.connected = true;
     }
 
     @Override

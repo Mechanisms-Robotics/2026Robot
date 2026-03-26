@@ -18,7 +18,7 @@ public class RollersIOSparkMax implements RollersIO {
     @Override
     public void updateInputs(RollersIOInputs inputs) {
         inputs.currentAmps = this.motor.getOutputCurrent();
-        inputs.motorIsConnected = this.motor.getLastError() == REVLibError.kOk;
+        inputs.isConnected = this.motor.getLastError() == REVLibError.kOk;
     }
 
     @Override

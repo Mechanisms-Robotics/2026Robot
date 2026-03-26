@@ -37,6 +37,13 @@ public class SwerveModule {
         );
     }
 
+    public SwerveModuleState getModuleState() {
+        return new SwerveModuleState(
+            inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS.in(Meters),
+            inputs.turnPosition
+        );
+    }
+
     public void setModuleState(SwerveModuleState state) {
         // get the current position and optimize the state
         state.optimize(inputs.turnPosition);

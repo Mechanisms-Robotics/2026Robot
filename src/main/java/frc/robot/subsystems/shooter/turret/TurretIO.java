@@ -7,8 +7,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public interface TurretIO {
     @AutoLog
     public class TurretIOInputs {
-        public double positionRadians = 0.0;
-        public double velocityRadiansPerSec = 0.0;
+        public double positionDegrees = 0.0;
+        public double velocityDegreesPerSecond = 0.0;
+        public double setpointDegrees = 0.0;
+        public double current = 0.0;
+        public boolean connected = false;
     }
 
     public default void updateInputs(TurretIOInputs inputs) {}

@@ -38,8 +38,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -105,27 +105,29 @@ public class CONSTANTS {
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static final String CAMERA1_NAME = "PhotonCameraLeft";
+    public static final double LENGTH_METERS = 0.7;
+    public static final double WIDTH_METERS = 0.695;
 
     public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(0.5), // forward distances from the center of the robot
-        Units.inchesToMeters(-13.0), // leftward distance from the center of the robot
-        Units.inchesToMeters(25.375), 
+        LENGTH_METERS / 2.0 - Units.inchesToMeters(12.5), // forward distances from the center of the robot
+        WIDTH_METERS / 2.0, // leftward distance from the center of the robot
+        Units.inchesToMeters(19.0 + 3.0 / 8.0), 
         new Rotation3d(
             0, 
             0, 
-            Math.toRadians(-90)    // camera is mounted sideways
+            Math.toRadians(90)    // camera is mounted sideways
         )
     );
 
-    public static final String CAMERA2_NAME = "PhotonCamera2";
+    public static final String CAMERA2_NAME = "PhotonCameraRight";
     public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
-        Units.inchesToMeters(0.5), // figure out these
-        Units.inchesToMeters(13.0), 
-        Units.inchesToMeters(25.375), 
+        LENGTH_METERS / 2.0 - Units.inchesToMeters(15.0),
+        -WIDTH_METERS / 2.0, 
+        Units.inchesToMeters(19.0 + 3.0 / 8.0), 
         new Rotation3d(
             0,
             0,
-            Math.toRadians(90)
+            Math.toRadians(-90)
         )
     );
     //Localization
@@ -171,34 +173,36 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double DAMPENING = 1.5;
-        public static final double RETRACT_FEEDFORWARD_MAX_VOLTS = 2.0;
-        public static final double ROLLERS_DUTY_CYCLE = -0.7;
-
-        public static enum SlamState {
-            DEPLOY_VOLTS(-0.4),
-            RETRACT_VOLTS(0.8);
-
-            public double voltage;
-
-            private SlamState(double voltage) {
-                this.voltage = voltage;
-            }
-        }
+        public static final double ROLLERS_DUTY_CYCLE = -0.95;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
         public static final int ROLLERS_CAN_ID = 14;
 
-        public static final double GEAR_RATIO_ARM = 10.0 / 84.0;
-        public static final double DEPLOYED_ROTATIONS = 0.1; // determined emperically
+        public static final double GEAR_RATIO_ARM = 1.0 / 75.0;//84.0 / 5.0 / 5.0 / 28.0;
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
+        public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
+        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
+        public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(35.0);
+        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
+        public static final Rotation2d MIN_ANGLE = DEPLOY_ANGLE;
+        public static final Rotation2d MAX_ANGLE = START_ANGLE;
+
+        public static final double kP = 8.0;
+        public static final double kD = 0.0;
+        public static final double kCos = 0.0;
+        public static final double MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI;
+        public static final double MAX_ACCELERATION_RADIANS_PER_SECOND = Math.PI * 4.0;
+
         static {
             CONFIG_LEFT.encoder
                 .positionConversionFactor(GEAR_RATIO_ARM)
                 .velocityConversionFactor(GEAR_RATIO_ARM);
-            CONFIG_LEFT.idleMode(IdleMode.kBrake);
+
+            CONFIG_LEFT
+                .inverted(true)
+                .idleMode(IdleMode.kBrake);
         }
 
         public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
@@ -209,25 +213,20 @@ public class CONSTANTS {
 
     // MARK: Turret
     public static class TurretConstants {
-        // TODO: Find this by moving the turret to zero and recording the error.
-        public static final double TURRET_OFFSET = 0.0; 
+        public static final int MOTOR_ID = 20;
+        // The zero position of the turret in degrees
+        public static final double START_DEGREES = -90.0; 
 
-        // TODO: set these correctly
-        public static final double FORWARD_LIMIT = 3.2;
-        public static final double REVERSE_LIMIT = -3.2;
-        public static final double MIN_POSITION = -0.5;
-        public static final double MAX_POSITION = 0.5;
         public static final double TURRET_TEETH = 202.0;
-        public static final int GEER1_TEETH = 30;
-        public static final int GEER2_TEETH = 28;
-        public static final double RATIO1 = (double) TURRET_TEETH / GEER1_TEETH;
-        public static final double RATIO2 = (double) TURRET_TEETH / GEER2_TEETH;
-        public static final double MOTOR_GEAR_RATIO = (30.0 * 10.0) / TURRET_TEETH;
+        public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
+        // Clockwise and counter clockwise maximum rotation the turret should rotate
+        public static final double MIN_DEGREES = -180.0;
+        public static final double MAX_DEGREES = 61.0;
+        public static final double DUTYCYCLE_LIMIT = 0.3;
+        public static final double MAX_RPM = 30.0;
+        public static final double MAX_RPM_PER_SECOND = 30.0;
 
-        public static final double kP = 0.0;
-        public static final double kD = 0.0;
-
-        // Center of the robot to the center of turret
+        // Center of the robot with z at the ground to the center of turret
         public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
             0.0, 0.0, 0.372845, Rotation3d.kZero
         );
@@ -235,15 +234,28 @@ public class CONSTANTS {
         public static final SparkMaxConfig CONFIG = new SparkMaxConfig();
 
         static {
-            CONFIG.absoluteEncoder
-                .setSparkMaxDataPortConfig()
-                    .positionConversionFactor(1)
-                    .velocityConversionFactor(1)
-                    .inverted(false);
+            CONFIG.encoder
+                .positionConversionFactor(MOTOR_GEAR_RATIO)
+                .velocityConversionFactor(MOTOR_GEAR_RATIO);
+            CONFIG.closedLoop
+                .p(15.0)
+                .d(25.0)
+                .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
+                .positionWrappingEnabled(false)
+                .allowedClosedLoopError(Units.degreesToRotations(0.75),ClosedLoopSlot.kSlot0);
+            
+            CONFIG.closedLoop.maxMotion
+                .maxAcceleration(MAX_RPM_PER_SECOND)
+                .cruiseVelocity(MAX_RPM);
 
             CONFIG
-                .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(20); // amps
+                .idleMode(IdleMode.kBrake);
+
+            CONFIG.softLimit
+                .reverseSoftLimitEnabled(true)
+                .forwardSoftLimitEnabled(true)
+                .reverseSoftLimit(Units.degreesToRotations(MIN_DEGREES))
+                .forwardSoftLimit(Units.degreesToRotations(MAX_DEGREES));
         }
     }
 
@@ -251,18 +263,22 @@ public class CONSTANTS {
     public static class FlywheelConstants {
         public static final int LEADER_ID = 21;
         public static final int FOLLOWER_ID = 22;
-        public static final double IDLE_RPM = 0.0;
 
         public static final TalonFXConfiguration LEADER_CONFIG = new TalonFXConfiguration()
+            .withFeedback(
+                new FeedbackConfigs()
+                    .withSensorToMechanismRatio(16.0 / 18.0) 
+            )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
                     .withSupplyCurrentLimit(Amps.of(60.0))
             )
             .withSlot0(
                 new Slot0Configs()
-                    .withKP(0.1)
-                    .withKV(0.116)
+                    .withKP(0.35)
+                    .withKV(0.1)
                     .withKS(0.22)
+
             )
             .withMotorOutput(
                 new MotorOutputConfigs()
