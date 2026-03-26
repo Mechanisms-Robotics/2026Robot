@@ -88,11 +88,11 @@ public class ShotCalculator {
     public ShotData calculateShot(Pose2d target, boolean shuttle) {
         Pose2d shooterPose = this.shooterPoseSupplier.get().toPose2d();
         ChassisSpeeds shooterVelocity = this.shooterVelocity.get();
-        double targetDistance = target.getTranslation().getDistance(shooterPose.getTranslation());
+        double targetDistance = target.relativeTo(shooterPose).getTranslation().getNorm();
 
         
         // the new, lookahead target based on the robot's velocity and time of flight.
-        double timeOfFlight = this.timeOfFlightMap.get(targetDistance);
+        double timeOfFlight = timeOfFlightMap.get(targetDistance);
         Pose2d lookAheadPose = shooterPose;
         double lookAheadTargetDistance = targetDistance;
         
