@@ -9,6 +9,7 @@ public interface TurretIO {
     public class TurretIOInputs {
         public double positionDegrees = 0.0;
         public double velocityDegreesPerSecond = 0.0;
+        public double setpointDegrees = 0.0;
         public double current = 0.0;
         public boolean connected = false;
     }
