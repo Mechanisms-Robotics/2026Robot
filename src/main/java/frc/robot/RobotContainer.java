@@ -172,7 +172,7 @@ public class RobotContainer {
                     )
                 )
             ),
-            this.drivetrain::getDesiredState
+            () -> ChassisSpeeds.fromRobotRelativeSpeeds(this.drivetrain.getDesiredState(), this.drivetrain.getPose().getRotation())
         );
         
         this.superStructure = new SuperStructure(
@@ -184,11 +184,11 @@ public class RobotContainer {
             this.drivetrain.poseEstimator,
             this.shotCalculator,
             // shoot button
-            this.controller.button(1), // right trigger
+            this.controller.R2(), // right trigger
             // intake button
             this.controller.L2(), // left trigger
             // manual mode toggle
-            this.controller.button(3), // right bumper
+            this.controller.R1(), // right bumper
             // stow intake button
             this.controller.L1() // left bumper
         );
