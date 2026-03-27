@@ -26,8 +26,6 @@ public class Intake extends SubsystemBase {
         double rollerAngleThreshold = 30.0;
         if (this.slapInputs.positionDegreesLeft < rollerAngleThreshold && this.slapInputs.setpointDegrees < rollerAngleThreshold) {
             this.runRollers();
-        } else if (this.slapInputs.positionDegreesLeft < 40.0 && this.slapInputs.setpointDegrees < 40.0) {
-            this.idleRollers();
         } else {
             this.stopRollers();
         }
