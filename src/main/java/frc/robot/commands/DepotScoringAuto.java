@@ -31,8 +31,10 @@ public class DepotScoringAuto extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new FollowPath(hubBackup.get(), drivetrain, true),
-                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
+                    Commands.parallel(
+                        new FollowPath(hubBackup.get(), drivetrain, true),
+                        new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
+                    ),
                     IntakeCommands.deploy(intake),
                     new FollowPath(hubToDepot.get(), drivetrain, false),
                     IntakeCommands.feed(intake),

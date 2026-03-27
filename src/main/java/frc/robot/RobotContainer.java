@@ -367,7 +367,7 @@ public class RobotContainer {
             // "Chaos Left Auto",
             // "Beach Right Auto",
             // "Beach Left Auto",
-            // "Depot Scoring Auto",
+             "Depot Scoring Auto",
             // "Outpost Scoring Auto",
             // "Depot And Outpost Scoring Auto",
             // "Neutral And Outpost Auto",
