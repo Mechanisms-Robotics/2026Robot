@@ -364,14 +364,14 @@ public class CONSTANTS {
 
         // The stator current at which the wheels start to slip;
         // This needs to be tuned to your individual robot
-        private static final Current SLIP_CURRENT = Amps.of(120.0);
+        private static final Current SLIP_CURRENT = Amps.of(90.0);
 
         // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
         // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
         private static final TalonFXConfiguration DRIVE_INITIAL_CONFIGS =
             new TalonFXConfiguration().withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withSupplyCurrentLimit(Amps.of(80))
+                    .withSupplyCurrentLimit(Amps.of(70))
                     .withSupplyCurrentLimitEnable(true)
                     
             );
