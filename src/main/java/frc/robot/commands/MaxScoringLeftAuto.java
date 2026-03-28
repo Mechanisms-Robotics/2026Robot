@@ -28,9 +28,12 @@ public class MaxScoringLeftAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> neutralMaxCollect = Choreo.loadTrajectory(
                     "NeutralMaxCollectLeft"
                 );
-        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchLeft"
+        Optional<Trajectory<SwerveSample>> neutralToTrenchFirst = Choreo.loadTrajectory(
+                    "NeutralToTrenchLeftFirst"
                 );
+        Optional<Trajectory<SwerveSample>> neutralToTrenchSecond = Choreo.loadTrajectory(
+            "NeutralToTrenchLeftSecond"
+        );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
         addCommands(
@@ -40,14 +43,14 @@ public class MaxScoringLeftAuto extends SequentialCommandGroup {
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralToTrenchFirst.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, false),
                     new FollowPath(neutralMaxCollect.get(), drivetrain, false),
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralMaxBackup.get(), drivetrain, false),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralToTrenchSecond.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )

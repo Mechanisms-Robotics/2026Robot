@@ -41,6 +41,20 @@ public class ManualAutos {
         }
     }
 
+    public static class ManualLeftBackupAndCraziness extends SequentialCommandGroup {
+        public ManualLeftBackupAndCraziness(Drivetrain drivetrain, Flywheel flywheel, Feeder feeder) {
+            Optional<Trajectory<SwerveSample>> backupLeftToTower = Choreo.loadTrajectory(
+                        "OutpostBackupShoot"
+                    );
+    
+            addRequirements(drivetrain, flywheel, feeder);
+            addCommands(
+                new FollowPath(backupLeftToTower.get(), drivetrain, true),
+                new ShootCommands.ManualShoot(flywheel, feeder, ManualModeConstants.FLYWHEEL_RPM).withTimeout(4.0)
+            );
+        }
+    }
+
     public static class DepotBackup extends SequentialCommandGroup {
         public DepotBackup(Drivetrain drivetrain, Flywheel flywheel, Feeder feeder) {
             Optional<Trajectory<SwerveSample>> backupLeft = Choreo.loadTrajectory(
