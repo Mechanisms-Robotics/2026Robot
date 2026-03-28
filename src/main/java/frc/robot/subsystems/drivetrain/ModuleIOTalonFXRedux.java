@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -275,6 +276,7 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
         );
         inputs.driveAppliedVolts = this.driveAppliedVolts.getValueAsDouble();
         inputs.driveCurrentAmps = this.driveCurrent.getValueAsDouble();
+        inputs.driveTempFahrenheit = this.driveTalon.getDeviceTemp().getValue().in(Fahrenheit);
 
         // Update turn inputs
         inputs.turnConnected = this.turnConnectedDebounce.calculate(
@@ -296,6 +298,7 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
         );
         inputs.turnAppliedVolts = this.turnAppliedVolts.getValueAsDouble();
         inputs.turnCurrentAmps = this.turnCurrent.getValueAsDouble();
+        inputs.turnTempFahrenheit = this.turnTalon.getDeviceTemp().getValue().in(Fahrenheit);
 
         // Update odometry inputs
         inputs.odometryTimestamps = this.timestampQueue.stream()

@@ -6,6 +6,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.CONSTANTS.IntakeConstants;
 
 public class RollersIOSparkMax implements RollersIO {
@@ -19,6 +20,7 @@ public class RollersIOSparkMax implements RollersIO {
     public void updateInputs(RollersIOInputs inputs) {
         inputs.currentAmps = this.motor.getOutputCurrent();
         inputs.isConnected = this.motor.getLastError() == REVLibError.kOk;
+        inputs.tempFahrenheit = this.motor.getMotorTemperature() * 9/5 + 32;
     }
 
     @Override
