@@ -70,6 +70,7 @@ import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
+import frc.robot.subsystems.intake.SlapIO;
 import frc.robot.subsystems.intake.SlapIOSim;
 import frc.robot.subsystems.intake.SlapIOSparkMax;
 import frc.robot.subsystems.intake.RollersIO;
@@ -148,7 +149,7 @@ public class RobotContainer {
                 )
             );
 
-            this.intake = new Intake(new SlapIOSparkMax(), new RollersIOSparkMax());
+            this.intake = new Intake(new SlapIO(){}, new RollersIO(){});
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
@@ -365,8 +366,8 @@ public class RobotContainer {
             // "Shoot Left Preload",
             // "Chaos Right Auto",
             // "Chaos Left Auto",
-            // "Beach Right Auto",
-            // "Beach Left Auto",
+             "Beach Right Auto",
+             "Beach Left Auto",
              "Depot Scoring Auto",
             // "Outpost Scoring Auto",
             // "Depot And Outpost Scoring Auto",
@@ -377,7 +378,7 @@ public class RobotContainer {
             // "Neutral And Hub Back Left",
             "Max Scoring Auto Right",
             "Max Scoring Auto Left",
-            "Toy Auto",
+            //"Toy Auto",
             "FUC Left",
             "FUC Right"
         };
