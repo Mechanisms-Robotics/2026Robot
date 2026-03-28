@@ -197,7 +197,7 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
             );
         this.driveVelocity = this.driveTalon.getVelocity();
         this.driveAppliedVolts = this.driveTalon.getMotorVoltage();
-        this.driveCurrent = this.driveTalon.getStatorCurrent();
+        this.driveCurrent = this.driveTalon.getSupplyCurrent();
 
         // Create turn status signals
         this.turnAbsolutePosition = this.cancoder.getAbsPositionFrame();
@@ -208,7 +208,7 @@ public class ModuleIOTalonFXRedux implements ModuleIO {
             );
         this.turnVelocity = this.turnTalon.getVelocity();
         this.turnAppliedVolts = this.turnTalon.getMotorVoltage();
-        this.turnCurrent = this.turnTalon.getStatorCurrent();
+        this.turnCurrent = this.turnTalon.getSupplyCurrent();
 
         // Configure periodic frames
         BaseStatusSignal.setUpdateFrequencyForAll(
