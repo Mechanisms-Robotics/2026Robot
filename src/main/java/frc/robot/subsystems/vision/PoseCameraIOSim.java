@@ -53,14 +53,13 @@ public class PoseCameraIOSim implements PoseCameraIO {
         this.camera = new PhotonCamera(cameraName);
         this.cameraSim = new PhotonCameraSim(camera, cameraProp);
 
+        this.cameraSim.enableDrawWireframe(true);
+
         this.visionSim.addCamera(cameraSim, cameraToRobot);
 
         this.photonEstimator = new PhotonPoseEstimator(
             CONSTANTS.APRILTAG_FIELD_LAYOUT, 
-            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             this.cameraToRobot);
-
-        this.photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         this.poseEstimator = poseEstimator;
     }
@@ -76,7 +75,11 @@ public class PoseCameraIOSim implements PoseCameraIO {
         List<Pose2d> poseEstimatesArray = new ArrayList<>();
 
         for (PhotonPipelineResult result : results) {
-            visionEstimate = this.photonEstimator.update(result);    
+            visionEstimate = this.photonEstimator.estimateCoprocMultiTagPose(result);    
+
+            if (visionEstimate.isEmpty()) {
+                visionEstimate = this.photonEstimator.estimateLowestAmbiguityPose(result);
+            }
 
             if (visionEstimate.isPresent()) {
                 Pose3d poseEstimate = visionEstimate.get().estimatedPose;
