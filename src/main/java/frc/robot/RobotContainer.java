@@ -48,6 +48,8 @@ import frc.robot.commands.NeutralAndHubBackLeftAuto;
 import frc.robot.commands.NeutralAndHubBackRightAuto;
 import frc.robot.commands.NeutralAndOutpostAuto;
 import frc.robot.commands.NeutralDepotAndOutpostAuto;
+import frc.robot.commands.AlbanyLeft;
+import frc.robot.commands.AlbanyRight;
 import frc.robot.commands.BeachLeftAuto;
 import frc.robot.commands.BeachRightAuto;
 import frc.robot.commands.DriveCommands;
@@ -380,7 +382,9 @@ public class RobotContainer {
             "Max Scoring Auto Left",
             //"Toy Auto",
             "FUC Left",
-            "FUC Right"
+            "FUC Right",
+            "Albany Left",
+            "Albany Right"
         };
 
 
@@ -397,6 +401,12 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
+            case "Albany Left":
+                autoCommand = new AlbanyLeft(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
+                break;
+            case "Albany Right":
+                autoCommand = new AlbanyRight(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
+                break;
             case "Shoot Center Preload":
                 autoCommand = new ManualAutos.CenterHubBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;

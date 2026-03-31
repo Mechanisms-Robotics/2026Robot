@@ -21,13 +21,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class AlbanyRight extends SequentialCommandGroup {
     public AlbanyRight(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> albanyRight1 = Choreo.loadTrajectory(
-                    "albanyRight1"
+                    "AlbanyRight1"
                 );
         Optional<Trajectory<SwerveSample>> albanyRight2 = Choreo.loadTrajectory(
-            "albanyRight2"
+            "AlbanyRight2"
         );
         Optional<Trajectory<SwerveSample>> albanyRight3 = Choreo.loadTrajectory(
-            "albanyRight3"
+            "AlbanyRight3"
         );
 
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
