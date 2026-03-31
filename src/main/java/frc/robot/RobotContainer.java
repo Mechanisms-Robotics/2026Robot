@@ -37,7 +37,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DepotScoringAuto;
 import frc.robot.commands.OutpostScoringAuto;
 import frc.robot.commands.ToyAuto;
-import frc.robot.commands.ChaosRightAuto;
+import frc.robot.commands.UFCLeft;
+import frc.robot.commands.UFCRight;
 import frc.robot.commands.DepotAndOutpostScoringAuto;
 import frc.robot.commands.ManualAutos;
 import frc.robot.commands.MaxScoringLeftAuto;
@@ -47,9 +48,10 @@ import frc.robot.commands.NeutralAndHubBackLeftAuto;
 import frc.robot.commands.NeutralAndHubBackRightAuto;
 import frc.robot.commands.NeutralAndOutpostAuto;
 import frc.robot.commands.NeutralDepotAndOutpostAuto;
+import frc.robot.commands.AlbanyLeft;
+import frc.robot.commands.AlbanyRight;
 import frc.robot.commands.BeachLeftAuto;
 import frc.robot.commands.BeachRightAuto;
-import frc.robot.commands.ChaosLeftAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -70,6 +72,7 @@ import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
+import frc.robot.subsystems.intake.SlapIO;
 import frc.robot.subsystems.intake.SlapIOSim;
 import frc.robot.subsystems.intake.SlapIOSparkMax;
 import frc.robot.subsystems.intake.RollersIO;
@@ -148,7 +151,7 @@ public class RobotContainer {
                 )
             );
 
-            this.intake = new Intake(new SlapIOSparkMax(), new RollersIOSparkMax());
+            this.intake = new Intake(new SlapIO(){}, new RollersIO(){});
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
@@ -365,9 +368,9 @@ public class RobotContainer {
             // "Shoot Left Preload",
             // "Chaos Right Auto",
             // "Chaos Left Auto",
-            // "Beach Right Auto",
-            // "Beach Left Auto",
-            // "Depot Scoring Auto",
+             "Beach Right Auto",
+             "Beach Left Auto",
+             "Depot Scoring Auto",
             // "Outpost Scoring Auto",
             // "Depot And Outpost Scoring Auto",
             // "Neutral And Outpost Auto",
@@ -377,7 +380,11 @@ public class RobotContainer {
             // "Neutral And Hub Back Left",
             "Max Scoring Auto Right",
             "Max Scoring Auto Left",
-            "Toy Auto"
+            //"Toy Auto",
+            "FUC Left",
+            "FUC Right",
+            "Albany Left",
+            "Albany Right"
         };
 
 
@@ -394,6 +401,12 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
+            case "Albany Left":
+                autoCommand = new AlbanyLeft(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
+                break;
+            case "Albany Right":
+                autoCommand = new AlbanyRight(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
+                break;
             case "Shoot Center Preload":
                 autoCommand = new ManualAutos.CenterHubBackup(this.drivetrain, this.flywheel, this.feeder);
                 break;
@@ -433,11 +446,11 @@ public class RobotContainer {
             case "Max Scoring Auto Left":
                 autoCommand = new MaxScoringLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
                 break;
-            case "Chaos Right Auto":
-                autoCommand = new ChaosRightAuto(this.drivetrain);
+            case "FUC Left":
+                autoCommand = new UFCLeft(this.drivetrain, this.feeder, this.flywheel);
                 break;
-            case "Chaos Left Auto":
-                autoCommand = new ChaosLeftAuto(this.drivetrain);
+            case "FUC Right":
+                autoCommand = new UFCRight(this.drivetrain, this.feeder, this.flywheel);
                 break;
             case "Beach Right Auto":
                 autoCommand = new BeachRightAuto(this.drivetrain);

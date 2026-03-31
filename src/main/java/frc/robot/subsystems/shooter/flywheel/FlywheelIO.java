@@ -7,6 +7,8 @@ public interface FlywheelIO {
     public static class FlywheelIOInputs {
         public double rpm;
         public double desiredRpm;
+        public double leaderTempFahrenheit;
+        public double followerTempFahrenheit;
     }
     
     default void updateInputs(FlywheelIOInputs inputs) {}
