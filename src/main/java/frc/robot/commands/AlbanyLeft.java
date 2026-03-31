@@ -44,6 +44,6 @@ public class AlbanyLeft extends SequentialCommandGroup {
             )
         );
 
-        addRequirements(drivetrain, flywheel, feeder);
+        addRequirements(drivetrain, hood, flywheel, feeder, turret);
     }
 }
