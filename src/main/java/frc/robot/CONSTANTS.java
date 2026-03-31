@@ -174,6 +174,7 @@ public class CONSTANTS {
     // MARK: Intake
     public static class IntakeConstants {
         public static final double ROLLERS_DUTY_CYCLE = -0.95;
+        public static final double ROLLERS_IDLE_DUTY_CYCLE = -0.3;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
@@ -364,12 +365,17 @@ public class CONSTANTS {
 
         // The stator current at which the wheels start to slip;
         // This needs to be tuned to your individual robot
-        private static final Current SLIP_CURRENT = Amps.of(120.0);
+        private static final Current SLIP_CURRENT = Amps.of(90.0);
 
         // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
         // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
         private static final TalonFXConfiguration DRIVE_INITIAL_CONFIGS =
-            new TalonFXConfiguration();
+            new TalonFXConfiguration().withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withSupplyCurrentLimit(Amps.of(70))
+                    .withSupplyCurrentLimitEnable(true)
+                    
+            );
         private static final TalonFXConfiguration STEER_INITIAL_CONFIGS =
             new TalonFXConfiguration().withCurrentLimits(
                 new CurrentLimitsConfigs()

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter.flywheel;
 
+import static edu.wpi.first.units.Units.Fahrenheit;
+
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -24,6 +26,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     public void updateInputs(FlywheelIOInputs inputs) {
         inputs.rpm = this.leader.getVelocity().getValueAsDouble() * 60.0;
         inputs.desiredRpm = this.desiredRPM;
+        inputs.leaderTempFahrenheit = this.leader.getDeviceTemp().getValue().in(Fahrenheit);
+        inputs.followerTempFahrenheit = this.follower.getDeviceTemp().getValue().in(Fahrenheit);
     }
 
     @Override

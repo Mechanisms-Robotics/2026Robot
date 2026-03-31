@@ -39,6 +39,10 @@ public class Intake extends SubsystemBase {
         this.rollersIO.setDutyCycle(0.0);
     }
 
+    public void idleRollers() {
+        this.rollersIO.setDutyCycle(IntakeConstants.ROLLERS_IDLE_DUTY_CYCLE);
+    }
+
     /** Deploy the intake arms ans spin the rollers */
     public void deploy() {
         this.slapIO.setAngle(IntakeConstants.DEPLOY_ANGLE);

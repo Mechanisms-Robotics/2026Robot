@@ -22,15 +22,19 @@ public class MaxScoringRightAuto extends SequentialCommandGroup {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
                     "TrenchToNeutralRight"
                 );
+
         Optional<Trajectory<SwerveSample>> neutralMaxBackup = Choreo.loadTrajectory(
                     "NeutralMaxBackupRight"
                 );
         Optional<Trajectory<SwerveSample>> neutralMaxCollect = Choreo.loadTrajectory(
                     "NeutralMaxCollectRight"
                 );
-        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchRight"
+        Optional<Trajectory<SwerveSample>> neutralToTrenchFirst = Choreo.loadTrajectory(
+                    "NeutralToTrenchRightFirst"
                 );
+        Optional<Trajectory<SwerveSample>> neutralToTrenchSecond = Choreo.loadTrajectory(
+            "NeutralToTrenchRightSecond"
+        );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
         addCommands(
@@ -40,14 +44,14 @@ public class MaxScoringRightAuto extends SequentialCommandGroup {
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralToTrenchFirst.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, false),
                     new FollowPath(neutralMaxCollect.get(), drivetrain, false),
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralMaxBackup.get(), drivetrain, false),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralToTrenchSecond.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )

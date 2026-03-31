@@ -12,6 +12,7 @@ public interface TurretIO {
         public double setpointDegrees = 0.0;
         public double current = 0.0;
         public boolean connected = false;
+        public double tempFahrenheit = 0;
     }
 
     public default void updateInputs(TurretIOInputs inputs) {}
