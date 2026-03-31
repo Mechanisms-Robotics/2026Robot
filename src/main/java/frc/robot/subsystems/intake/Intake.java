@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void idleRollers() {
-        this.rollersIO.setDutyCycle(-0.3);
+        this.rollersIO.setDutyCycle(IntakeConstants.ROLLERS_IDLE_DUTY_CYCLE);
     }
 
     /** Deploy the intake arms ans spin the rollers */

@@ -174,6 +174,7 @@ public class CONSTANTS {
     // MARK: Intake
     public static class IntakeConstants {
         public static final double ROLLERS_DUTY_CYCLE = -0.95;
+        public static final double ROLLERS_IDLE_DUTY_CYCLE = -0.3;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
@@ -183,7 +184,7 @@ public class CONSTANTS {
 
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
         public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
-        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(75.0);
+        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
         public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(35.0);
         public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
         public static final Rotation2d MIN_ANGLE = DEPLOY_ANGLE;
