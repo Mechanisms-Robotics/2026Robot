@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -99,8 +100,8 @@ public class SuperStructure extends SubsystemBase {
         new Trigger(() -> !this.manualMode).whileTrue(
             this.aimCommand
         );
-
-        shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);
+        shootButton.and(() -> !this.manualMode).and(() -> !this.aimCommand.isScheduled()).onTrue(this.aimCommand);
+        shootButton.and(() -> this.manualMode).whileTrue(Commands.runOnce(this.aimCommand::cancel).andThen(this.manualShootCommand));
 
         manualButton.onTrue(new InstantCommand(() -> {
             this.manualMode = !this.manualMode;
