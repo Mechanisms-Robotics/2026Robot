@@ -73,6 +73,7 @@ import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RollersIOSparkMax;
 import frc.robot.subsystems.intake.SlapIOSim;
+import frc.robot.subsystems.intake.SlapIOSparkMax;
 import frc.robot.subsystems.intake.RollersIO;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.Feeder;
