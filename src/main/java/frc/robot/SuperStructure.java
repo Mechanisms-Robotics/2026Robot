@@ -128,7 +128,7 @@ public class SuperStructure extends SubsystemBase {
                 new Translation3d(robotPose.getTranslation()).plus(TurretConstants.ROBOT_TO_TURRET.getTranslation()),
                 new Rotation3d(
                     0.0,
-                    this.hood.getAngle().getRadians() - Math.PI/2.0,
+                    Math.toRadians(20),//this.hood.getAngle().getRadians() - Math.PI/2.0 - Math.toRadians(10),
                     this.turret.getAngle().getRadians() + robotPose.getRotation().getRadians()
                 )
             ).rotateBy(TurretConstants.ROBOT_TO_TURRET.getRotation())
@@ -136,6 +136,7 @@ public class SuperStructure extends SubsystemBase {
 
         Logger.recordOutput("SuperStructure/Aiming", this.aimCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
+        Logger.recordOutput("SuperStructure/WithinSoftLimits", this.isWithinSoftLimits());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
@@ -154,5 +155,18 @@ public class SuperStructure extends SubsystemBase {
         Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
 
         return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0;
+    }
+
+    /**
+     * Returns true if the turret is within the soft limits, aka the turret is in a good position.
+     */
+    public boolean isWithinSoftLimits() {
+        Rotation2d shooterYaw =
+            this.poseEstimator
+                .getEstimatedPose()
+                .getRotation()
+                .plus(this.turret.getAngle());
+
+        return (shooterYaw.getDegrees() >= TurretConstants.MIN_DEGREES) && shooterYaw.getDegrees() <= TurretConstants.MAX_DEGREES;
     }
 }
