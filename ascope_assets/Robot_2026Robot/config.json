@@ -1,0 +1,76 @@
+{
+  "name": "2026Robot",
+   "rotations": [
+       {
+           "axis": "x",
+           "degrees": 90
+       },
+       {
+           "axis": "z",
+           "degrees": -90
+       }
+    ],
+    "position": [0, 0, 0.0455],
+    "cameras": [],
+    "components": [
+        {
+            "zeroedRotations": [
+                {
+                "axis": "x",
+                "degrees": 90
+                },
+                {
+                "axis": "z",
+                "degrees": 0
+                }
+            ],
+            "zeroedPosition": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "zeroedRotations": [
+                {
+                "axis": "x",
+                "degrees": 90
+                },
+                {
+                "axis": "z",
+                "degrees": 90
+                },
+                {
+                "axis": "y",
+                "degrees": -48
+                }
+            ],
+            "zeroedPosition": [
+                0.23,
+                0.0,
+                -0.315
+            ]
+        },
+        {
+            "zeroedRotations": [
+                {
+                "axis": "x",
+                "degrees": 90
+                },
+                {
+                "axis": "z",
+                "degrees": 270
+                },
+                {
+                "axis": "y",
+                "degrees": 0
+                }
+            ],
+            "zeroedPosition": [
+                -0.285,
+                0.0,
+                -0.167
+            ]
+        }
+    ]
+}

@@ -1,7 +1,5 @@
 package frc.robot.subsystems.shooter.hood;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;

@@ -1,6 +1,8 @@
 package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS.IntakeConstants;
 
@@ -59,5 +61,9 @@ public class Intake extends SubsystemBase {
     public void feed() {
         this.slapIO.setAngle(IntakeConstants.FEED_ANGLE);
         //stopRollers();
+    }
+
+    public Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(this.slapInputs.positionDegreesLeft);
     }
 }

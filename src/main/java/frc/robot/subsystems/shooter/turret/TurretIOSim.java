@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.CONSTANTS.TurretConstants;
 
 public class TurretIOSim implements TurretIO {
     private final double MOTOR_KP = 5;
@@ -16,7 +17,11 @@ public class TurretIOSim implements TurretIO {
     private final DCMotorSim motorSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(GEARBOX, 0.001, 100),
         GEARBOX);
-    private double desiredRadians = 0.0;
+    private double desiredRadians = TurretConstants.START_DEGREES / 180.0 * Math.PI;
+
+    public TurretIOSim() {
+        this.motorSim.setAngle(TurretConstants.START_DEGREES / 180.0 * Math.PI);
+    }
 
     @Override
     public void updateInputs(TurretIOInputs inputs) {
