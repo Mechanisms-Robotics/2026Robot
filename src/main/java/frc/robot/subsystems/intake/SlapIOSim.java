@@ -1,7 +1,6 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -20,7 +19,7 @@ public class SlapIOSim implements SlapIO {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 armMotorModel,
-                10,
+                0.01,
                 IntakeConstants.GEAR_RATIO_ARM),
                 armMotorModel
             );
@@ -29,16 +28,21 @@ public class SlapIOSim implements SlapIO {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 armMotorModel,
-                2,
+                0.01,
                 IntakeConstants.GEAR_RATIO_ARM
                 ),
                 armMotorModel
             );
 
-    private ProfiledPIDController controller = new ProfiledPIDController(2.0, 0, 0.0, new Constraints(Math.PI, Math.PI * 4.0));
+    private ProfiledPIDController controller = new ProfiledPIDController(2.0, 0, 7.5, new Constraints(Math.PI, Math.PI * 4.0));
     
     public SlapIOSim() {
         SmartDashboard.putData("Intake/sim/controller", this.controller);
+        this.armLeftSim.setAngle(IntakeConstants.START_ANGLE.getRadians());
+        this.armRightSim.setAngle(IntakeConstants.START_ANGLE.getRadians());
+
+        this.controller.reset(IntakeConstants.START_ANGLE.getRadians());
+        this.controller.setGoal(IntakeConstants.START_ANGLE.getRadians());
     }
     
     @Override
@@ -49,7 +53,9 @@ public class SlapIOSim implements SlapIO {
         inputs.leftConnected = true;
         inputs.rightConnected = true;
         inputs.velocityRadiansPerSecondLeft = this.armLeftSim.getAngularVelocity().in(RadiansPerSecond);
+        inputs.velocityRadiansPerSecondRight = this.armRightSim.getAngularVelocity().in(RadiansPerSecond);
         inputs.positionDegreesLeft = this.armLeftSim.getAngularPosition().in(Degrees);
+        inputs.positionDegreesRight = this.armRightSim.getAngularPosition().in(Degrees);
         inputs.currentAmps = this.armLeftSim.getCurrentDrawAmps();
         inputs.setpointDegrees = this.controller.getGoal().position / Math.PI * 180.0;
 
