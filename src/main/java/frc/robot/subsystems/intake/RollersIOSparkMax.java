@@ -6,7 +6,6 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.math.util.Units;
 import frc.robot.CONSTANTS.IntakeConstants;
 
 public class RollersIOSparkMax implements RollersIO {

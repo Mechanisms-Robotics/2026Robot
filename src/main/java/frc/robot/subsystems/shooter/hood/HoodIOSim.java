@@ -5,6 +5,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.CONSTANTS.HoodConstants;
+import frc.robot.CONSTANTS.TurretConstants;
 
 public class HoodIOSim implements HoodIO {
     private final DCMotor motorModel = DCMotor.getKrakenX44(1);
@@ -22,9 +23,11 @@ public class HoodIOSim implements HoodIO {
     private final double kP = 0.2;
     private final double kD = 0.4;
     
-    private double desiredRadians = 22.0;
+    private double desiredRadians = TurretConstants.MIN_DEGREES / 180.0 * Math.PI;
     
-    public HoodIOSim() {}
+    public HoodIOSim() {
+        this.sim.setState(TurretConstants.MIN_DEGREES / 180.0 * Math.PI, 0.0);
+    }
 
     @Override
     public void updateInputs(HoodIOInputs inputs) {
