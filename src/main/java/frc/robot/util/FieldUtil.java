@@ -36,4 +36,8 @@ public class FieldUtil {
             ? FieldConstants.SHUTTLE_OUTPOST_RED_POSE
             : FieldConstants.SHUTTLE_DEPOT_RED_POSE;
     }
+
+    public static Pose2d flipPose(Pose2d pose) {
+        return new Pose2d(pose.getX(), FieldConstants.WIDTH - pose.getY(), pose.getRotation().unaryMinus());
+    }
 }

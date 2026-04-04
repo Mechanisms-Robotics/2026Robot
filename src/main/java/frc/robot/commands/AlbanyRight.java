@@ -21,13 +21,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class AlbanyRight extends SequentialCommandGroup {
     public AlbanyRight(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> albanyRight1 = Choreo.loadTrajectory(
-                    "AlbanyRight1"
+                    "AlbanyLeft1"
                 );
         Optional<Trajectory<SwerveSample>> albanyRight2 = Choreo.loadTrajectory(
-            "AlbanyRight2"
+            "AlbanyLeft2"
         );
         Optional<Trajectory<SwerveSample>> albanyRight3 = Choreo.loadTrajectory(
-            "AlbanyRight3"
+            "AlbanyLeft3"
         );
 
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
@@ -35,11 +35,11 @@ public class AlbanyRight extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new FollowPath(albanyRight1.get(), drivetrain, true),
+                    new FollowPath(albanyRight1.get(), drivetrain, true, true),
                     Commands.waitSeconds(3),
-                    new FollowPath(albanyRight2.get(), drivetrain, false),
+                    new FollowPath(albanyRight2.get().flipped(), drivetrain, false, true),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(1.5),
-                    new FollowPath(albanyRight3.get(), drivetrain, false)
+                    new FollowPath(albanyRight3.get().flipped(), drivetrain, false, true)
                 )
             )
         );
