@@ -161,12 +161,8 @@ public class SuperStructure extends SubsystemBase {
      * Returns true if the turret is within the soft limits, aka the turret is in a good position.
      */
     public boolean isWithinSoftLimits() {
-        Rotation2d shooterYaw =
-            this.poseEstimator
-                .getEstimatedPose()
-                .getRotation()
-                .plus(this.turret.getAngle());
+        Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
 
-        return (shooterYaw.getDegrees() >= TurretConstants.MIN_DEGREES) && shooterYaw.getDegrees() <= TurretConstants.MAX_DEGREES;
+        return (desiredShooterYaw.getDegrees() >= TurretConstants.MIN_DEGREES) && desiredShooterYaw.getDegrees() <= TurretConstants.MAX_DEGREES;
     }
 }
