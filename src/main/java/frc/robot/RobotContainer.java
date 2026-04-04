@@ -68,12 +68,10 @@ import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.HoodIOSim;
 import frc.robot.subsystems.shooter.hood.HoodIOTalonFX;
 import frc.robot.subsystems.shooter.turret.Turret;
-import frc.robot.subsystems.shooter.turret.TurretIO;
 import frc.robot.subsystems.shooter.turret.TurretIOSim;
 import frc.robot.subsystems.shooter.turret.TurretIOSparkMax;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.RollersIOSparkMax;
 import frc.robot.subsystems.intake.RollersIOTalonFX;
 import frc.robot.subsystems.intake.SlapIOSim;
 import frc.robot.subsystems.intake.SlapIOSparkMax;
@@ -163,7 +161,7 @@ public class RobotContainer {
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());
             this.hood = new Hood(new HoodIOTalonFX());
-            this.turret = new Turret(new TurretIO(){});//new TurretIOSparkMax());
+            this.turret = new Turret(new TurretIOSparkMax());
         }
 
         this.drivetrainController = new DrivetrainController(this.drivetrain);
@@ -213,52 +211,52 @@ public class RobotContainer {
                 })
             );
         
-        // this.drivetrain.setDefaultCommand(
-        //     new RunCommand(
-        //         () -> {
-        //             double forward = -this.controller.getLeftY(); // Negative to match FRC convention
-        //             double strafe = -this.controller.getLeftX();
-        //             Translation2d driveSpeeds = getDriveVelocity(
-        //                 forward,
-        //                 strafe
-        //             );
+        this.drivetrain.setDefaultCommand(
+            new RunCommand(
+                () -> {
+                    double forward = -this.controller.getLeftY(); // Negative to match FRC convention
+                    double strafe = -this.controller.getLeftX();
+                    Translation2d driveSpeeds = getDriveVelocity(
+                        forward,
+                        strafe
+                    );
                     
-        //             double rotation = -this.controller.getRightX();
+                    double rotation = -this.controller.getRightX();
 
-        //             // apply deadbands and scaling
-        //             rotation = MathUtil.applyDeadband(
-        //                 rotation,
-        //                 CONSTANTS.DriveConstants.DEADBAND
-        //             );
+                    // apply deadbands and scaling
+                    rotation = MathUtil.applyDeadband(
+                        rotation,
+                        CONSTANTS.DriveConstants.DEADBAND
+                    );
 
-        //             rotation = Math.copySign(rotation * rotation, rotation);
+                    rotation = Math.copySign(rotation * rotation, rotation);
 
-        //             ChassisSpeeds speeds = new ChassisSpeeds(
-        //                 driveSpeeds.getX() *
-        //                     CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS.in(
-        //                         MetersPerSecond
-        //                     ),
-        //                 driveSpeeds.getY() *
-        //                     CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS.in(
-        //                         MetersPerSecond
-        //                     ),
-        //                 (rotation *
-        //                         (CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS.in(
-        //                                 MetersPerSecond
-        //                             ))) /
-        //                     CONSTANTS.DriveConstants.DRIVE_BASE_RADIUS
-        //             );
+                    ChassisSpeeds speeds = new ChassisSpeeds(
+                        driveSpeeds.getX() *
+                            CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS.in(
+                                MetersPerSecond
+                            ),
+                        driveSpeeds.getY() *
+                            CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS.in(
+                                MetersPerSecond
+                            ),
+                        (rotation *
+                                (CONSTANTS.DriveConstants.SPEED_AT_12_VOLTS.in(
+                                        MetersPerSecond
+                                    ))) /
+                            CONSTANTS.DriveConstants.DRIVE_BASE_RADIUS
+                    );
 
-        //             // convert to robot-oriented coordinates and pass to swerve subsystem
-        //             ChassisSpeeds robotOriented =
-        //                 this.drivetrainController.fieldToRobotChassisSpeeds(
-        //                     speeds
-        //                 );
-        //             this.drivetrain.setDesiredState(robotOriented);
-        //         },
-        //         this.drivetrain
-        //     )
-        // );
+                    // convert to robot-oriented coordinates and pass to swerve subsystem
+                    ChassisSpeeds robotOriented =
+                        this.drivetrainController.fieldToRobotChassisSpeeds(
+                            speeds
+                        );
+                    this.drivetrain.setDesiredState(robotOriented);
+                },
+                this.drivetrain
+            )
+        );
 
         // you're welcome leif
         new Trigger(() -> !this.superStructure.isWithinSoftLimits())
