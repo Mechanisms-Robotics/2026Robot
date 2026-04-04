@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.autos;
 
 import java.util.Optional;
 
@@ -14,22 +14,26 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
+import frc.robot.commands.FollowPath;
+import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
+import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class NeutralAndHubBackRightAuto extends SequentialCommandGroup {
-    public NeutralAndHubBackRightAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class NeutralAndHubBackLeftAuto extends SequentialCommandGroup {
+    public NeutralAndHubBackLeftAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
-                    "TrenchToNeutralRight"
+                    "TrenchToNeutralLeft"
                 );
         Optional<Trajectory<SwerveSample>> trenchToHubBack = Choreo.loadTrajectory(
-                    "TrenchToHubBackRight"
+                    "TrenchToHubBackLeft"
                 );
         Optional<Trajectory<SwerveSample>> hubBackToTrench = Choreo.loadTrajectory(
-                    "HubBackToTrenchRight"
+                    "HubBackToTrenchLeft"
                 );
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchRight"
+                    "NeutralToTrenchLeft"
                 );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
