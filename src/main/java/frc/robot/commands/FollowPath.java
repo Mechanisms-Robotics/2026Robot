@@ -27,15 +27,19 @@ public class FollowPath extends Command {
 
   private final Timer timer = new Timer();
   private final HolonomicDriveController holonomicController;
+
+  private final boolean useVision;
   
   public FollowPath(
       Trajectory<SwerveSample> trajectory,
       Drivetrain drivetrain,
-      boolean resetPose) {
+      boolean resetPose,
+      boolean useVision) {
 
     this.trajectory = trajectory;
     this.drivetrain = drivetrain;
     this.resetPose = resetPose;
+    this.useVision = useVision;
 
     Constraints thetaProfile = new TrapezoidProfile.Constraints(
         CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION, CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION);
@@ -53,6 +57,13 @@ public class FollowPath extends Command {
     super.addRequirements(drivetrain);
   }
 
+  public FollowPath(
+    Trajectory<SwerveSample> trajectory,
+    Drivetrain drivetrain,
+    boolean resetPose) {
+    this(trajectory, drivetrain, resetPose, false);
+  }
+
   // ------------------------
   // COMMAND LIFECYCLE (2025)
   // ------------------------
@@ -64,7 +75,7 @@ public class FollowPath extends Command {
     timer.start();
 
     // disable vision updates while following a path
-    this.drivetrain.poseEstimator.setVisionEnabled(false);
+    this.drivetrain.poseEstimator.setVisionEnabled(this.useVision);
 
     this.isRedAlliance = DriverStation.getAlliance().isPresent() &&
         DriverStation.getAlliance().get() == Alliance.Red;
