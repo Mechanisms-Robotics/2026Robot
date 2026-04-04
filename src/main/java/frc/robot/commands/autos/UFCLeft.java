@@ -1,10 +1,12 @@
-package frc.robot.commands;
+package frc.robot.commands.autos;
 
 import java.util.Optional;
 
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
+import frc.robot.commands.FollowPath;
+import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.ManualShoot;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;

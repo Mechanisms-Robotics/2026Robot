@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.autos;
 
 import java.util.Optional;
 
@@ -14,20 +14,26 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
+import frc.robot.commands.FollowPath;
+import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
+import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class NeutralAndDepotAuto extends SequentialCommandGroup {
-    public NeutralAndDepotAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class NeutralAndHubBackRightAuto extends SequentialCommandGroup {
+    public NeutralAndHubBackRightAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
-                    "TrenchToNeutralLeft"
+                    "TrenchToNeutralRight"
                 );
-        Optional<Trajectory<SwerveSample>> hairpinDepot = Choreo.loadTrajectory(
-                    "HairpinDepot"
+        Optional<Trajectory<SwerveSample>> trenchToHubBack = Choreo.loadTrajectory(
+                    "TrenchToHubBackRight"
                 );
-        Optional<Trajectory<SwerveSample>> neutralHairpin = Choreo.loadTrajectory(
-                    "NeutralHairpin"
+        Optional<Trajectory<SwerveSample>> hubBackToTrench = Choreo.loadTrajectory(
+                    "HubBackToTrenchRight"
+                );
+        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
+                    "NeutralToTrenchRight"
                 );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
@@ -38,12 +44,12 @@ public class NeutralAndDepotAuto extends SequentialCommandGroup {
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralHairpin.get(), drivetrain, false),
+                    new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
                     IntakeCommands.deploy(intake),
-                    new FollowPath(hairpinDepot.get(), drivetrain, false),
-                    new WaitCommand(1.0),
+                    new FollowPath(trenchToHubBack.get(), drivetrain, false),
                     IntakeCommands.feed(intake),
+                    new FollowPath(hubBackToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )

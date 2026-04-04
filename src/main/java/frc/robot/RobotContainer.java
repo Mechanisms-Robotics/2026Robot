@@ -35,25 +35,27 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DepotScoringAuto;
-import frc.robot.commands.OutpostScoringAuto;
-import frc.robot.commands.ToyAuto;
-import frc.robot.commands.UFCLeft;
-import frc.robot.commands.UFCRight;
-import frc.robot.commands.DepotAndOutpostScoringAuto;
+import frc.robot.commands.autos.ShuttlingLeft;
+import frc.robot.commands.autos.ShuttlingRight;
+import frc.robot.commands.autos.BeachLeftAuto;
+import frc.robot.commands.autos.BeachRightAuto;
+import frc.robot.commands.autos.DepotAndOutpostScoringAuto;
+import frc.robot.commands.autos.DepotScoringAuto;
+import frc.robot.commands.autos.DriveCommands;
+import frc.robot.commands.autos.NeutralAndDepotAuto;
+import frc.robot.commands.autos.NeutralAndHubBackLeftAuto;
+import frc.robot.commands.autos.NeutralAndHubBackRightAuto;
+import frc.robot.commands.autos.NeutralAndOutpostAuto;
+import frc.robot.commands.autos.NeutralDepotAndOutpostAuto;
+import frc.robot.commands.autos.OutpostScoringAuto;
+import frc.robot.commands.autos.ToyAuto;
+import frc.robot.commands.autos.UFCLeft;
+import frc.robot.commands.autos.UFCRight;
+import frc.robot.commands.autos.states.MaxScoringLeftAuto;
+import frc.robot.commands.autos.states.MaxScoringRightAuto;
+import frc.robot.commands.autos.states.MinScoringLeftAuto;
+import frc.robot.commands.autos.states.MinScoringRightAuto;
 import frc.robot.commands.ManualAutos;
-import frc.robot.commands.MaxScoringLeftAuto;
-import frc.robot.commands.MaxScoringRightAuto;
-import frc.robot.commands.NeutralAndDepotAuto;
-import frc.robot.commands.NeutralAndHubBackLeftAuto;
-import frc.robot.commands.NeutralAndHubBackRightAuto;
-import frc.robot.commands.NeutralAndOutpostAuto;
-import frc.robot.commands.NeutralDepotAndOutpostAuto;
-import frc.robot.commands.AlbanyLeft;
-import frc.robot.commands.AlbanyRight;
-import frc.robot.commands.BeachLeftAuto;
-import frc.robot.commands.BeachRightAuto;
-import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.DrivetrainController;
@@ -392,9 +394,11 @@ public class RobotContainer {
             // "Neutral And Hub Back Left",
             "Max Scoring Auto Right",
             "Max Scoring Auto Left",
+            "Min Scoring Auto Right",
+            "Min Scoring Auto Left",
             //"Toy Auto",
-            "FUC Left",
-            "FUC Right",
+            // "FUC Left",
+            // "FUC Right",
             "Albany Left",
             "Albany Right"
         };
@@ -414,10 +418,10 @@ public class RobotContainer {
 
         switch (name) {
             case "Albany Left":
-                autoCommand = new AlbanyLeft(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
+                autoCommand = new ShuttlingLeft(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
                 break;
             case "Albany Right":
-                autoCommand = new AlbanyRight(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
+                autoCommand = new ShuttlingRight(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
                 break;
             case "Shoot Center Preload":
                 autoCommand = new ManualAutos.CenterHubBackup(this.drivetrain, this.flywheel, this.feeder);
@@ -457,6 +461,12 @@ public class RobotContainer {
                 break;
             case "Max Scoring Auto Left":
                 autoCommand = new MaxScoringLeftAuto(this.drivetrain, this.hood,this.flywheel, this.feeder, this.intake, this.turret, this.shotCalculator, this.drivetrain.poseEstimator);
+                break;
+            case "Min Scoring Auto Left":
+                autoCommand = new MinScoringLeftAuto(drivetrain, hood, flywheel, feeder, intake, turret, shotCalculator, drivetrain.poseEstimator);
+                break;
+            case "Min Scoring Auto Right":
+                autoCommand = new MinScoringRightAuto(drivetrain, hood, flywheel, feeder, intake, turret, shotCalculator, drivetrain.poseEstimator);
                 break;
             case "FUC Left":
                 autoCommand = new UFCLeft(this.drivetrain, this.feeder, this.flywheel);
