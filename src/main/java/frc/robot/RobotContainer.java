@@ -25,6 +25,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -258,6 +259,16 @@ public class RobotContainer {
             )
         );
 
+        // you're welcome leif
+        new Trigger(() -> !this.superStructure.isWithinSoftLimits())
+            .onTrue(
+                new InstantCommand(
+                    () -> this.controller.setRumble(RumbleType.kBothRumble, 0.5)
+                ))
+            .onFalse(
+                new InstantCommand(
+                    () -> this.controller.setRumble(RumbleType.kBothRumble, 0.0)
+                ));
     }
 
     private void configureTestBindings() {
