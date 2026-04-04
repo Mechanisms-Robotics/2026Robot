@@ -98,6 +98,14 @@ public class SuperStructure extends SubsystemBase {
             this.aimCommand
         );
 
+        /* Start aim command when the shoot button is pressed and in automatic mode
+           This is here because aimCommand doesn't start in teleop (and similar situations)
+           This should only be in affect once at the start of teleop */
+        shootButton.and(() -> !this.manualMode).and(() -> !this.aimCommand.isScheduled()).onTrue(this.aimCommand);
+        new Trigger(() -> this.manualMode).and(() -> this.aimCommand.isScheduled()).onTrue(
+            new InstantCommand(() -> this.aimCommand.cancel())
+        );
+
         shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);
 
         manualButton.onTrue(new InstantCommand(() -> {
