@@ -32,13 +32,10 @@ public class ShuttlingRight extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    new FollowPath(shuttlingRight.get(), drivetrain, true),
-                    Commands.parallel(
                         Commands.waitSeconds(0.8),
                         new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(15.0)
-                    )
-
-                )
+                ),
+                new FollowPath(shuttlingRight.get(), drivetrain, true)
             )
         );
 
