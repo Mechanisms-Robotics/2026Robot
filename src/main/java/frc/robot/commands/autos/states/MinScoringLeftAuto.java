@@ -2,6 +2,7 @@ package frc.robot.commands.autos.states;
 
 import java.util.Optional;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import choreo.Choreo;
@@ -13,13 +14,13 @@ import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.util.FieldUtil;
 import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
-import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class MinScoringLeftAuto extends SequentialCommandGroup {
@@ -37,13 +38,15 @@ public class MinScoringLeftAuto extends SequentialCommandGroup {
                     "NeutralToTrenchLeft"
                 );
 
-        poseEstimator.resetPose(null, null);
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
         addCommands(
             Commands.parallel(
                 aim,
                 Commands.sequence(
+                    new InstantCommand(() -> 
+                        drivetrain.resetPose(trenchToNeutral.get().getInitialPose(FieldUtil.getAlliance().equals(Alliance.Red)).get())
+                    ),
                     // shoot preload
                     IntakeCommands.deploy(intake),
                     Commands.waitSeconds(1.0),
