@@ -206,9 +206,17 @@ public class CONSTANTS {
                 .idleMode(IdleMode.kBrake);
         }
 
-        public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
+        public static final SparkMaxConfig CONFIG_ROLLERS_SPARK = new SparkMaxConfig();
+
+        public static final TalonFXConfiguration CONFIG_ROLLERS_TALON = new TalonFXConfiguration()
+        .withMotorOutput(
+            new MotorOutputConfigs()
+                .withNeutralMode(NeutralModeValue.Coast)
+        );
+
         static {
-            CONFIG_ROLLERS.idleMode(IdleMode.kCoast);
+            CONFIG_ROLLERS_SPARK
+                .idleMode(IdleMode.kCoast);
         }
     }
 
