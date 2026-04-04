@@ -187,6 +187,7 @@ public class CONSTANTS {
         public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
         public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(35.0);
         public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
+        public static final Rotation2d RUN_ROLLERS_ARMS_ANGLE = Rotation2d.fromDegrees(5.0);
         public static final Rotation2d MIN_ANGLE = DEPLOY_ANGLE;
         public static final Rotation2d MAX_ANGLE = START_ANGLE;
 
