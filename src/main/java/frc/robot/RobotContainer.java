@@ -35,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.autos.ShuttlingLeft;
 import frc.robot.commands.autos.ShuttlingRight;
 import frc.robot.commands.autos.BeachLeftAuto;
 import frc.robot.commands.autos.BeachRightAuto;
@@ -397,8 +396,9 @@ public class RobotContainer {
             //"Toy Auto",
             // "FUC Left",
             // "FUC Right",
-            "Albany Left",
-            "Albany Right"
+            "Shuttling Right"
+            // "Albany Left",
+            // "Albany Right"
         };
 
 
@@ -415,10 +415,7 @@ public class RobotContainer {
         Command autoCommand = Commands.none();
 
         switch (name) {
-            case "Albany Left":
-                autoCommand = new ShuttlingLeft(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
-                break;
-            case "Albany Right":
+            case "Shuttling Right":
                 autoCommand = new ShuttlingRight(drivetrain, hood, flywheel, feeder, turret, shotCalculator, drivetrain.poseEstimator);
                 break;
             case "Shoot Center Preload":
