@@ -32,6 +32,9 @@ public class Vision extends SubsystemBase {
 
             // Constantly feed vision measurements into the pose estimator
             for (int j = 0; j < inputs[i].timestampSeconds.length; j++) {
+                if (Math.abs(inputs[i].poseEstimates[j].getZ()) > VisionConstants.Z_THRESHOLD) {
+                    continue;
+                }
                 double totalDistance = 0;
                 for (double distance : inputs[i].aprilTagsDistancesMeters[j]) {
                     totalDistance += distance;
@@ -51,7 +54,7 @@ public class Vision extends SubsystemBase {
 
                 Logger.recordOutput("Vision/stddevs/" + i + "/" + j, xyStdDevs);
                 this.poseEstimator.addVisionMeasurement(
-                    inputs[i].poseEstimates[j],
+                    inputs[i].poseEstimates[j].toPose2d(),
                     inputs[i].timestampSeconds[j],
                     VecBuilder.fill(xyStdDevs, xyStdDevs, thetaStdDev)
                 );

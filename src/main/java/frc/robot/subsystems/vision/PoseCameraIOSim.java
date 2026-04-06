@@ -8,18 +8,15 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.CONSTANTS.FieldConstants;
-import frc.robot.CONSTANTS.VisionConstants;
 import frc.robot.PoseEstimator8736;
 
 public class PoseCameraIOSim implements PoseCameraIO {
@@ -73,7 +70,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         Optional<EstimatedRobotPose> visionEstimate = Optional.empty();
 
         List<Double> timestampSecondsArray = new ArrayList<>();
-        List<Pose2d> poseEstimatesArray = new ArrayList<>();
+        List<Pose3d> poseEstimatesArray = new ArrayList<>();
         List<List<Double>> aprilTagsDistancesArray = new ArrayList<>();
 
         for (int i = 0; i < results.size(); i++) {
@@ -91,7 +88,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
                 
                 // Push each unread input to the arrays
                 timestampSecondsArray.add(visionEstimate.get().timestampSeconds);
-                poseEstimatesArray.add(poseEstimate.toPose2d());
+                poseEstimatesArray.add(poseEstimate);
 
                 // Save all of the distances from the camera to all of the april tags in this result
                 aprilTagsDistancesArray.add(new ArrayList<>());
@@ -108,7 +105,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
 
         // Hand off data to Vision.java by saving to the inputs
         inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
-        inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose2d[]::new);
+        inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose3d[]::new);
         inputs.aprilTagsDistancesMeters = new double[aprilTagsDistancesArray.size()][32];
         for (int i = 0; i < aprilTagsDistancesArray.size(); i++) {
             inputs.aprilTagsDistancesMeters[i] = aprilTagsDistancesArray.get(i).stream().mapToDouble(Double::doubleValue).toArray();

@@ -130,9 +130,11 @@ public class CONSTANTS {
                 Math.toRadians(-90)
             )
         );
-        //Localization
-        public static final double STATE_TRANSLATION_STD_DEV_COEFFICIENT = 0.1;
-        public static final double ROTATION_STD_DEV_COEFFICIENT = 0.1;
+
+        public static final double TRANSLATION_STD_DEV_COEFFICIENT = 0.5;
+        public static final double ROTATION_STD_DEV_COEFFICIENT = 2.0;
+        // The maximum distance from the floor before a measurement is thrown out
+        public static final double Z_THRESHOLD = 0.5;
     }
     public static final int GYRO_CAN_ID = 9;
     

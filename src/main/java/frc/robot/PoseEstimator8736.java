@@ -56,8 +56,8 @@ public class PoseEstimator8736 {
             lastModulePositions,
             initialPose,
             VecBuilder.fill(
-                VisionConstants.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
-                VisionConstants.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
+                VisionConstants.TRANSLATION_STD_DEV_COEFFICIENT,
+                VisionConstants.TRANSLATION_STD_DEV_COEFFICIENT,
                 VisionConstants.ROTATION_STD_DEV_COEFFICIENT
             ),
             /* These vision std devs get overriden by Vision.java in periodic. 
