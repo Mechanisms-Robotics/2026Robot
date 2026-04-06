@@ -14,6 +14,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.CONSTANTS.FieldConstants;
 import frc.robot.CONSTANTS.VisionConstants;
 
 public class PoseCameraIOPhoton implements PoseCameraIO {
@@ -30,11 +31,8 @@ public class PoseCameraIOPhoton implements PoseCameraIO {
         this.cameraToRobot = cameraToRobot;
 
         this.photonEstimator = new PhotonPoseEstimator(
-            VisionConstants.APRILTAG_FIELD_LAYOUT, 
-            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+            FieldConstants.APRILTAG_FIELD_LAYOUT,
             this.cameraToRobot);
-
-        this.photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
     @Override
@@ -50,7 +48,12 @@ public class PoseCameraIOPhoton implements PoseCameraIO {
 
         for (int i = 0; i < results.size(); i++) {
             PhotonPipelineResult result = results.get(i);
-            visionEstimate = this.photonEstimator.update(result);    
+            visionEstimate = this.photonEstimator.estimateCoprocMultiTagPose(result); 
+
+            // if there's no multi-tag estimate, fall back to the lowest ambiguity single tag pose
+            if (visionEstimate.isEmpty()) {
+                visionEstimate = this.photonEstimator.estimateLowestAmbiguityPose(result);
+            }
 
             if (visionEstimate.isPresent()) {
                 Pose3d poseEstimate = visionEstimate.get().estimatedPose;

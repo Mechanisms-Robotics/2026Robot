@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.CONSTANTS.FieldConstants;
 import frc.robot.CONSTANTS.VisionConstants;
 import frc.robot.PoseEstimator8736;
 
@@ -38,7 +39,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         this.cameraToRobot = cameraToRobot;
 
         this.visionSim = new VisionSystemSim("visionSim");
-        this.visionSim.addAprilTags(VisionConstants.APRILTAG_FIELD_LAYOUT);
+        this.visionSim.addAprilTags(FieldConstants.APRILTAG_FIELD_LAYOUT);
 
         SimCameraProperties cameraProp = new SimCameraProperties();
         cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
@@ -53,14 +54,13 @@ public class PoseCameraIOSim implements PoseCameraIO {
         this.camera = new PhotonCamera(cameraName);
         this.cameraSim = new PhotonCameraSim(camera, cameraProp);
 
+        this.cameraSim.enableDrawWireframe(true);
+
         this.visionSim.addCamera(cameraSim, cameraToRobot);
 
         this.photonEstimator = new PhotonPoseEstimator(
-            VisionConstants.APRILTAG_FIELD_LAYOUT, 
-            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            FieldConstants.APRILTAG_FIELD_LAYOUT, 
             this.cameraToRobot);
-
-        this.photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         this.poseEstimator = poseEstimator;
     }
@@ -78,7 +78,11 @@ public class PoseCameraIOSim implements PoseCameraIO {
 
         for (int i = 0; i < results.size(); i++) {
             PhotonPipelineResult result = results.get(i);
-            visionEstimate = this.photonEstimator.update(result);    
+            visionEstimate = this.photonEstimator.estimateCoprocMultiTagPose(result);    
+
+            if (visionEstimate.isEmpty()) {
+                visionEstimate = this.photonEstimator.estimateLowestAmbiguityPose(result);
+            }
 
             if (visionEstimate.isPresent()) {
                 Pose3d poseEstimate = visionEstimate.get().estimatedPose;

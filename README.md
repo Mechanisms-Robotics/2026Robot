@@ -1,4 +1,38 @@
-# Team 8736 The Mechanisms - Modular Robot Architecture
+# Team 8736 The Mechanisms - 2026 Robot
+
+## 🤝 Contributing to this Repository
+
+**Key Points:**
+* **DO NOT** push directly to the `main` branch.
+* Create a new branch for your feature or bugfix (e.g., `feature/new-logging-util` or `fix/swerve-bug`) using `develop` as your source branch
+* Submit a **Pull Request (PR)** and request a review from a mentor and other programmers AFTER a succesful simulation to merge your code back into `develop`
+
+![branch strategy](./res/img/branch-strategy.png)
+
+### How to Read This Diagram
+This map shows how our code travels from your brain to the robot's "brain" on the field. Think of the Main and Develop lines as a permanent history of our team's progress.
+
+The Lab (Top): Individual student work happens in the pink boxes. This is where we break things and learn. Code here is "untrusted" until it is reviewed and merged into Develop.
+
+The Integration (Middle): The blue line is our "Team Truth." It’s what we use for shop nights and practice sessions (yellow boxes). Before any competition, we "freeze" the best version of this code and move it down to Main.
+
+The Field (Bottom): The green line is sacred. At an event, we create a specific COMP branch. Any changes made in the pits are committed here and immediately Tagged (the blue boxes).
+
+Why the Tags? These are "Save Points." If the robot stops working during Qual 2, we can instantly look back at the Qual 1 tag to see exactly what changed. This ensures we never lose a working version of the robot in the heat of competition.
+
+Pit Commands:
+
+- New Fix: ```git checkout -b fix/logic-error```
+
+- Apply Fix: ```git checkout COMP-03-05 -> git merge fix/logic-error```
+
+- Tag Match: ```git tag -a Qual-1 -m "Short description"```
+
+---
+
+## TODO: [Students] Update this README file for our competition bot
+
+<!--
 ### A reusable, modular, and extendable code framework for FRC robots.
 
 This repository contains the foundational code architecture for Team 8736. It is designed to be the **starting point** for each new competition season, allowing us to build reliable, maintainable, and sophisticated robot code faster.
@@ -98,13 +132,5 @@ Here is the standard workflow for adding a new part to the robot using this arch
         m_operatorController.a().onTrue(new RunIntake(m_intake, IntakeConstants.kDefaultIntakeSpeed));
         m_operatorController.a().onFalse(new StopIntake(m_intake));
     }
-    ```
+    ``` -->
 
-## 🤝 Contributing to this Architecture
-This is a foundational repository, so changes must be reviewed carefully.
-
-* **DO NOT** push directly to the `main` branch.
-* Create a new branch for your feature or bugfix (e.g., `feature/new-logging-util` or `fix/swerve-bug`).
-* **Follow the [Team 8736 Coding Standards]([https://docs.google.com/document/d/1i7vQb6MojpwAiYMbqEBVxQlvooK5sS3bgigXcNyty4E/edit?tab=t.0#heading=h.8b2xyd82witc])**.
-* Write clear comments for all new methods.
-* Submit a **Pull Request (PR)** and request a review from a mentor and other programmers.

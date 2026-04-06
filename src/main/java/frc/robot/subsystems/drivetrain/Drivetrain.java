@@ -7,6 +7,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.CONSTANTS;
@@ -121,6 +123,20 @@ public class Drivetrain extends SubsystemBase {
         return this.kinematics;
     }
 
+    public SwerveModuleState[] getStates() {
+        return new SwerveModuleState[] {
+            this.frontLeftModule.getModuleState(),
+            this.frontRightModule.getModuleState(),
+            this.backLeftModule.getModuleState(),
+            this.backRightModule.getModuleState(),
+        };
+    }
+
+    @AutoLogOutput(key = "Drivetrain/Velocity")
+    public ChassisSpeeds getVelocity() {
+        return this.kinematics.toChassisSpeeds(this.getStates());
+    }
+
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
             this.frontLeftModule.getModulePosition(),
@@ -203,13 +219,13 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public void zeroGyro() {
-        this.resetPose(
-            new Pose2d(
-                this.poseEstimator.getEstimatedPose().getTranslation(),
-                Rotation2d.kZero
-            )
-        );
+    public void resetHeading() {
+        resetPose(new Pose2d(
+            getPose().getTranslation(),
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get().equals(Alliance.Red) ?
+                    Rotation2d.k180deg : Rotation2d.kZero
+        ));
     }
 
     public void resetPose(Pose2d pose) {
