@@ -41,7 +41,7 @@ public class Vision extends SubsystemBase {
                 double averageDistance = totalDistance / (double) aprilTagCount;
     
                 double xyStdDevs =
-                    VisionConstants.TRANSLATION_STD_DEV_COEFFICIENT
+                    VisionConstants.ROTATION_STD_DEV_COEFFICIENT
                         * Math.pow(averageDistance, 1.2)
                         / Math.pow(aprilTagCount, 2.0);
                 double thetaStdDev =

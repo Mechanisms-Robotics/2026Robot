@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.robot.CONSTANTS.VisionConstants;
 
 /**
  * Utility class for managing swerve drive pose estimation. Encapsulates the SwerveDrivePoseEstimator
@@ -55,9 +56,9 @@ public class PoseEstimator8736 {
             lastModulePositions,
             initialPose,
             VecBuilder.fill(
-                CONSTANTS.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
-                CONSTANTS.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
-                CONSTANTS.STATE_ROTATION_STD_DEV_COEFFICIENT
+                VisionConstants.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
+                VisionConstants.STATE_TRANSLATION_STD_DEV_COEFFICIENT,
+                VisionConstants.ROTATION_STD_DEV_COEFFICIENT
             ),
             /* These vision std devs get overriden by Vision.java in periodic. 
              * If you need to tune the std devs, go to CONSTANTS.VisionConstants.
