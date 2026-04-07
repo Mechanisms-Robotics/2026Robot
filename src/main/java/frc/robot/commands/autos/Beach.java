@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class Beach extends SequentialCommandGroup {
     public Beach(Drivetrain drivetrain, boolean mirror) {
         Optional<Trajectory<SwerveSample>> beachDepot = Choreo.loadTrajectory(
-                    "BeachDepot"
+                    "BeachRight"
                 );
 
         addCommands(
