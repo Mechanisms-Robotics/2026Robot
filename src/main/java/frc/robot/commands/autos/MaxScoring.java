@@ -2,9 +2,8 @@ package frc.robot.commands.autos;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
@@ -57,6 +56,7 @@ public class MaxScoring extends SequentialCommandGroup {
                     new FollowPath(trenchToNeutral.get(), drivetrain, true, mirror),
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrenchFirst.get(), drivetrain, false, mirror),
+                    new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, false, mirror),
@@ -64,6 +64,7 @@ public class MaxScoring extends SequentialCommandGroup {
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralMaxBackup.get(), drivetrain, false, mirror),
                     new FollowPath(neutralToTrenchSecond.get(), drivetrain, false, mirror),
+                    new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )
