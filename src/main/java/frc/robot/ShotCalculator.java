@@ -59,7 +59,7 @@ public class ShotCalculator {
         this.shuttleRPMMap.put(3.0, 3200.0);
         this.shuttleRPMMap.put(5.0, 3800.0);
         this.shuttleRPMMap.put(7.0, 4600.0);
-        this.shuttleRPMMap.put(9.0, 7000.0);
+        this.shuttleRPMMap.put(12.0, 7000.0);
 
         this.timeOfFlightMap.put(1.98, 0.86);
         this.timeOfFlightMap.put(2.58, 0.86);
