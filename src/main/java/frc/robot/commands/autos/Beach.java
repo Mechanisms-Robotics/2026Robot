@@ -9,14 +9,14 @@ import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class BeachRightAuto extends SequentialCommandGroup {
-    public BeachRightAuto(Drivetrain drivetrain) {
-        Optional<Trajectory<SwerveSample>> beachOutpost = Choreo.loadTrajectory(
-                    "BeachOutpost"
+public class Beach extends SequentialCommandGroup {
+    public Beach(Drivetrain drivetrain, boolean mirror) {
+        Optional<Trajectory<SwerveSample>> beachDepot = Choreo.loadTrajectory(
+                    "BeachDepot"
                 );
 
         addCommands(
-            new FollowPath(beachOutpost.get(), drivetrain, true)
+            new FollowPath(beachDepot.get(), drivetrain, true, mirror)
         );
 
         addRequirements(drivetrain);

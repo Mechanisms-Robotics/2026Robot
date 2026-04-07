@@ -1,6 +1,8 @@
-package frc.robot.commands.autos.states;
+package frc.robot.commands.autos;
 
 import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import choreo.Choreo;
@@ -13,48 +15,55 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.ShotCalculator;
-import frc.robot.PoseEstimator8736;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class MaxScoringRightAuto extends SequentialCommandGroup {
-    public MaxScoringRightAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class MaxScoring extends SequentialCommandGroup {
+    public MaxScoring(
+        Drivetrain drivetrain,
+        Hood hood,
+        Flywheel flywheel,
+        Feeder feeder,
+        Turret turret,
+        Intake intake,
+        ShotCalculator shotCalculator,
+        boolean mirror
+    ) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
-                    "TrenchToNeutralRight"
+                    "TrenchToNeutralLeft"
                 );
-
         Optional<Trajectory<SwerveSample>> neutralMaxBackup = Choreo.loadTrajectory(
-                    "NeutralMaxBackupRight"
+                    "NeutralMaxBackupLeft"
                 );
         Optional<Trajectory<SwerveSample>> neutralMaxCollect = Choreo.loadTrajectory(
-                    "NeutralMaxCollectRight"
+                    "NeutralMaxCollectLeft"
                 );
-        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchRight"
+        Optional<Trajectory<SwerveSample>> neutralToTrenchFirst = Choreo.loadTrajectory(
+                    "NeutralToTrenchLeftFirst"
                 );
-        Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
+        Optional<Trajectory<SwerveSample>> neutralToTrenchSecond = Choreo.loadTrajectory(
+            "NeutralToTrenchLeftSecond"
+        );
+        Aim aim = new Aim(flywheel, turret, shotCalculator, drivetrain.poseEstimator);
 
         addCommands(
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    // score first round
                     IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToNeutral.get(), drivetrain, true),
+                    new FollowPath(trenchToNeutral.get(), drivetrain, true, mirror),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralToTrenchFirst.get(), drivetrain, false, mirror),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
-
-                    // score second round
                     IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToNeutral.get(), drivetrain, false),
-                    new FollowPath(neutralMaxCollect.get(), drivetrain, false),
+                    new FollowPath(trenchToNeutral.get(), drivetrain, false, mirror),
+                    new FollowPath(neutralMaxCollect.get(), drivetrain, false, mirror),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralMaxBackup.get(), drivetrain, false),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralMaxBackup.get(), drivetrain, false, mirror),
+                    new FollowPath(neutralToTrenchSecond.get(), drivetrain, false, mirror),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )

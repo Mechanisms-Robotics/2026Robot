@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.autos.archive;
 
 import java.util.Optional;
 
@@ -7,6 +7,9 @@ import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.CONSTANTS.ManualModeConstants;
+import frc.robot.commands.FollowPath;
+import frc.robot.commands.ShootCommands;
+import frc.robot.commands.ShootCommands.ManualShoot;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;

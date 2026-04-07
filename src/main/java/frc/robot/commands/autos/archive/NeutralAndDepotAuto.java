@@ -1,4 +1,4 @@
-package frc.robot.commands.autos.states;
+package frc.robot.commands.autos.archive;
 
 import java.util.Optional;
 
@@ -18,21 +18,29 @@ import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
+import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class MaxScoringLeftAuto extends SequentialCommandGroup {
-    public MaxScoringLeftAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class NeutralAndDepotAuto extends SequentialCommandGroup {
+    public NeutralAndDepotAuto(
+        Drivetrain drivetrain,
+        Hood hood,
+        Flywheel flywheel,
+        Feeder feeder,
+        Intake intake,
+        Turret turret,
+        ShotCalculator shotCalculator,
+        PoseEstimator8736 poseEstimator
+    ) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
                     "TrenchToNeutralLeft"
                 );
-        Optional<Trajectory<SwerveSample>> neutralMaxBackup = Choreo.loadTrajectory(
-                    "NeutralMaxBackupLeft"
+        Optional<Trajectory<SwerveSample>> hairpinDepot = Choreo.loadTrajectory(
+                    "HairpinDepot"
                 );
-        Optional<Trajectory<SwerveSample>> neutralMaxCollect = Choreo.loadTrajectory(
-                    "NeutralMaxCollectLeft"
-                );
-        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchLeft"
+        Optional<Trajectory<SwerveSample>> neutralHairpin = Choreo.loadTrajectory(
+                    "NeutralHairpin"
                 );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
@@ -40,20 +48,15 @@ public class MaxScoringLeftAuto extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                    // score first round
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new FollowPath(neutralHairpin.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
-
-                    // score second round
                     IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToNeutral.get(), drivetrain, false),
-                    new FollowPath(neutralMaxCollect.get(), drivetrain, false),
+                    new FollowPath(hairpinDepot.get(), drivetrain, false),
+                    new WaitCommand(1.0),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralMaxBackup.get(), drivetrain, false),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )

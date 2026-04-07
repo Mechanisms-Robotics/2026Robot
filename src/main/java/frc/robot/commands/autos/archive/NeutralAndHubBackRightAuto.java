@@ -1,4 +1,4 @@
-package frc.robot.commands.autos;
+package frc.robot.commands.autos.archive;
 
 import java.util.Optional;
 
@@ -20,20 +20,21 @@ import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
 import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class DepotScoringAuto extends SequentialCommandGroup {
-    public DepotScoringAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
-        Optional<Trajectory<SwerveSample>> hubBackup = Choreo.loadTrajectory(
-                    "HubBackup"
+public class NeutralAndHubBackRightAuto extends SequentialCommandGroup {
+    public NeutralAndHubBackRightAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+        Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
+                    "TrenchToNeutralRight"
                 );
-        Optional<Trajectory<SwerveSample>> hubToDepot = Choreo.loadTrajectory(
-                    "HubToDepot"
+        Optional<Trajectory<SwerveSample>> trenchToHubBack = Choreo.loadTrajectory(
+                    "TrenchToHubBackRight"
                 );
-
-            Optional<Trajectory<SwerveSample>> depotForward = Choreo.loadTrajectory(
-                "DepotForward"
-            );
+        Optional<Trajectory<SwerveSample>> hubBackToTrench = Choreo.loadTrajectory(
+                    "HubBackToTrenchRight"
+                );
+        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
+                    "NeutralToTrenchRight"
+                );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
         addCommands(
@@ -41,12 +42,14 @@ public class DepotScoringAuto extends SequentialCommandGroup {
                 aim,
                 Commands.sequence(
                     IntakeCommands.deploy(intake),
-                    new FollowPath(hubBackup.get(), drivetrain, true),
-                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
-                    new FollowPath(hubToDepot.get(), drivetrain, false),
-                    new WaitCommand(1),
+                    new FollowPath(trenchToNeutral.get(), drivetrain, true),
                     IntakeCommands.feed(intake),
-                    new FollowPath(depotForward.get(), drivetrain, false),
+                    new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
+                    IntakeCommands.deploy(intake),
+                    new FollowPath(trenchToHubBack.get(), drivetrain, false),
+                    IntakeCommands.feed(intake),
+                    new FollowPath(hubBackToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )

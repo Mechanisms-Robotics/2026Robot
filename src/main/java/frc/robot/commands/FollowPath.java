@@ -110,14 +110,14 @@ public class FollowPath extends Command {
       sample = new SwerveSample(
         swerveSample.get().t,
         swerveSample.get().x,
-        FieldConstants.CENTER.getY() - swerveSample.get().y,
+        FieldConstants.WIDTH - swerveSample.get().y,
         -swerveSample.get().heading,
         swerveSample.get().vx,
         -swerveSample.get().vy,
         -swerveSample.get().omega,
         swerveSample.get().ax,
         -swerveSample.get().ay,
-        -swerveSample.get().alpha,
+        swerveSample.get().alpha,
         swerveSample.get().moduleForcesX(),
         new double[]{
           -swerveSample.get().moduleForcesY()[0],
@@ -126,7 +126,6 @@ public class FollowPath extends Command {
           -swerveSample.get().moduleForcesY()[3]
         }
       );
-
     } else {
       sample = swerveSample.get();
     }

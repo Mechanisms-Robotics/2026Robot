@@ -1,4 +1,4 @@
-package frc.robot.commands.autos;
+package frc.robot.commands.autos.archive;
 
 import java.util.Optional;
 
@@ -14,21 +14,17 @@ import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class UFCLeft extends SequentialCommandGroup {
-    public UFCLeft(Drivetrain drivetrain, Feeder feeder, Flywheel flywheel) {
-        Optional<Trajectory<SwerveSample>> ufcLeft = Choreo.loadTrajectory(
-                    "UFCLeft"
+public class UFCRight extends SequentialCommandGroup {
+    public UFCRight(Drivetrain drivetrain, Feeder feeder, Flywheel flywheel) {
+        Optional<Trajectory<SwerveSample>> ufcRight = Choreo.loadTrajectory(
+                    "UFCRight"
                 );
 
         addCommands(
-            Commands.parallel(
-                new FollowPath(ufcLeft.get(), drivetrain, true),
-                Commands.sequence(
-                    Commands.waitSeconds(1.0),
-                    new ManualShoot(flywheel, feeder, 3000).withTimeout(4.0)
-                )
+            Commands.sequence(
+                new FollowPath(ufcRight.get(), drivetrain, true),
+                new ManualShoot(flywheel, feeder, 3300).withTimeout(3.0)
             )
-            
         );
 
         addRequirements(drivetrain, flywheel, feeder);

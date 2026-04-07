@@ -1,4 +1,4 @@
-package frc.robot.commands.autos;
+package frc.robot.commands.autos.archive;
 
 import java.util.Optional;
 
@@ -20,20 +20,21 @@ import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
 import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class NeutralAndHubBackRightAuto extends SequentialCommandGroup {
-    public NeutralAndHubBackRightAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class NeutralDepotAndOutpostAuto extends SequentialCommandGroup {
+    public NeutralDepotAndOutpostAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
-                    "TrenchToNeutralRight"
+                    "TrenchToNeutralLeft"
                 );
-        Optional<Trajectory<SwerveSample>> trenchToHubBack = Choreo.loadTrajectory(
-                    "TrenchToHubBackRight"
-                );
-        Optional<Trajectory<SwerveSample>> hubBackToTrench = Choreo.loadTrajectory(
-                    "HubBackToTrenchRight"
+        Optional<Trajectory<SwerveSample>> trenchToDepot = Choreo.loadTrajectory(
+                    "TrenchToDepot"
                 );
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchRight"
+                    "NeutralToTrenchLeft"
+                );
+        Optional<Trajectory<SwerveSample>> depotToOutpost = Choreo.loadTrajectory(
+                    "DepotToOutpost"
                 );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
@@ -47,14 +48,16 @@ public class NeutralAndHubBackRightAuto extends SequentialCommandGroup {
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
                     IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToHubBack.get(), drivetrain, false),
+                    new FollowPath(trenchToDepot.get(), drivetrain, false),
                     IntakeCommands.feed(intake),
-                    new FollowPath(hubBackToTrench.get(), drivetrain, false),
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
+                    new FollowPath(depotToOutpost.get(), drivetrain, false),
+                    new WaitCommand(2.0),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )
         );
 
-        addRequirements(drivetrain, flywheel, feeder, intake, turret);
+        addRequirements(drivetrain, hood, flywheel, feeder, intake, turret);
     }
 }
