@@ -11,6 +11,8 @@ import static frc.robot.CONSTANTS.CAMERA2_NAME;
 import static frc.robot.CONSTANTS.CAMERA2_TRANSFORM3D;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
+
 import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.TurretConstants;
 import edu.wpi.first.math.MathUtil;
@@ -83,7 +85,7 @@ public class RobotContainer {
         CONSTANTS.CONTROLLER_PORT
     );
     
-    private final HashMap<String, Command> autos = new HashMap<>();
+    private final HashMap<String, Supplier<Command>> autos = new HashMap<>();
 
     public RobotContainer() {
         if (CONSTANTS.CURRENT_MODE == CONSTANTS.SIM_MODE) {
@@ -344,14 +346,14 @@ public class RobotContainer {
     }
 
     private void publishAutoNames() {
-        this.autos.put("Max Scoring Left", new MaxScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
-        this.autos.put("Max Scoring Right", new MaxScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
-        this.autos.put("Min Scoring Left", new MinScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
-        this.autos.put("Min Scoring Right", new MinScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
-        this.autos.put("Beach Left", new Beach(this.drivetrain, false));
-        this.autos.put("Beach Right", new Beach(this.drivetrain, true));
-        this.autos.put("Shuttling Left", new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, false));
-        this.autos.put("Shuttling Right", new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, true));
+        this.autos.put("Max Scoring Left", () -> new MaxScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
+        this.autos.put("Max Scoring Right", () -> new MaxScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
+        this.autos.put("Min Scoring Left", () -> new MinScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
+        this.autos.put("Min Scoring Right", () -> new MinScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
+        this.autos.put("Beach Left", () -> new Beach(this.drivetrain, false));
+        this.autos.put("Beach Right", () -> new Beach(this.drivetrain, true));
+        this.autos.put("Shuttling Left", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, false));
+        this.autos.put("Shuttling Right", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, true));
 
         for (String name : autos.keySet()) {
             autoChooser.addOption(name, name);
@@ -363,7 +365,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand(String name) {
-        Command autoCommand = this.autos.getOrDefault(name, Commands.none());
+        Command autoCommand = this.autos.getOrDefault(name, () -> Commands.none()).get();
 
         autoCommand.setName(name);
         return autoCommand;
