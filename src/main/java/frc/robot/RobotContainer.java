@@ -5,16 +5,13 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static frc.robot.CONSTANTS.CAMERA1_NAME;
-import static frc.robot.CONSTANTS.CAMERA1_TRANSFORM3D;
-import static frc.robot.CONSTANTS.CAMERA2_NAME;
-import static frc.robot.CONSTANTS.CAMERA2_TRANSFORM3D;
 
 import java.util.HashMap;
 import java.util.function.Supplier;
 
 import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.TurretConstants;
+import frc.robot.CONSTANTS.VisionConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -139,8 +136,8 @@ public class RobotContainer {
            
             this.vision = new Vision(
                 this.drivetrain.poseEstimator,
-                new PoseCameraIOPhoton(CAMERA1_NAME, CAMERA1_TRANSFORM3D),
-                new PoseCameraIOPhoton(CAMERA2_NAME, CAMERA2_TRANSFORM3D)
+                new PoseCameraIOPhoton(VisionConstants.CAMERA1_NAME, VisionConstants.CAMERA1_TRANSFORM3D),
+                new PoseCameraIOPhoton(VisionConstants.CAMERA2_NAME, VisionConstants.CAMERA2_TRANSFORM3D)
             );
 
             this.flywheel = new Flywheel(new FlywheelIOTalonFX());

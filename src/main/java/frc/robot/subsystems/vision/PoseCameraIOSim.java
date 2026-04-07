@@ -8,18 +8,16 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.CONSTANTS;
 import frc.robot.PoseEstimator8736;
+import frc.robot.CONSTANTS.FieldConstants;
 
 public class PoseCameraIOSim implements PoseCameraIO {
     private final VisionSystemSim visionSim;
@@ -38,7 +36,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         this.cameraToRobot = cameraToRobot;
 
         this.visionSim = new VisionSystemSim("visionSim");
-        this.visionSim.addAprilTags(CONSTANTS.APRILTAG_FIELD_LAYOUT);
+        this.visionSim.addAprilTags(FieldConstants.APRILTAG_FIELD_LAYOUT);
 
         SimCameraProperties cameraProp = new SimCameraProperties();
         cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
@@ -58,7 +56,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         this.visionSim.addCamera(cameraSim, cameraToRobot);
 
         this.photonEstimator = new PhotonPoseEstimator(
-            CONSTANTS.APRILTAG_FIELD_LAYOUT, 
+            FieldConstants.APRILTAG_FIELD_LAYOUT, 
             this.cameraToRobot);
 
         this.poseEstimator = poseEstimator;
@@ -72,7 +70,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         Optional<EstimatedRobotPose> visionEstimate = Optional.empty();
 
         List<Double> timestampSecondsArray = new ArrayList<>();
-        List<Pose2d> poseEstimatesArray = new ArrayList<>();
+        List<Pose3d> poseEstimatesArray = new ArrayList<>();
 
         for (PhotonPipelineResult result : results) {
             visionEstimate = this.photonEstimator.estimateCoprocMultiTagPose(result);    
@@ -88,13 +86,13 @@ public class PoseCameraIOSim implements PoseCameraIO {
 
                 // Push each unread input to the arrays
                 timestampSecondsArray.add(visionEstimate.get().timestampSeconds);
-                poseEstimatesArray.add(poseEstimate.toPose2d());
+                poseEstimatesArray.add(poseEstimate);
             }
         }
 
         // Finally, push all estimates to the inputs
         inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
-        inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose2d[]::new);
+        inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose3d[]::new);
 
         visionSim.update(poseEstimator.getSimulatedPose());
     }

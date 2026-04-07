@@ -65,6 +65,8 @@ public class CONSTANTS {
 
     // MARK: Field
     public static class FieldConstants {
+        public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
+            AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
         public static double WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
         public static double LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
         public static Pose2d CENTER = new Pose2d(LENGTH/2.0, WIDTH/2.0, Rotation2d.kZero);
@@ -80,56 +82,56 @@ public class CONSTANTS {
         public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
         public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(LENGTH - SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
         public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(LENGTH - SHUTTLE_DEPOT_BLUE_POSE.getX(), WIDTH - SHUTTLE_DEPOT_BLUE_POSE.getY(), Rotation2d.kZero);
-    }
-    public static class Hub {
-        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
-        public static Pose3d CENTER_BLUE_POSE = new Pose3d(
-            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
-            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
-            Units.inchesToMeters(72.0),
-            Rotation3d.kZero
-        );
-
-        // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
-        public static Pose3d CENTER_RED_POSE = new Pose3d(
-            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
-            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
-            Units.inchesToMeters(72.0),
-            Rotation3d.kZero
-        );
+        public static class Hub {
+            // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
+            public static Pose3d CENTER_BLUE_POSE = new Pose3d(
+                (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
+                (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
+                Units.inchesToMeters(72.0),
+                Rotation3d.kZero
+            );
+    
+            // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
+            public static Pose3d CENTER_RED_POSE = new Pose3d(
+                (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
+                (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
+                Units.inchesToMeters(72.0),
+                Rotation3d.kZero
+            );
+        }
     }
 
     // MARK: Vision
-    public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    public static class VisionConstants {
+        public static final String CAMERA1_NAME = "PhotonCameraLeft";
+        public static final double LENGTH_METERS = 0.7;
+        public static final double WIDTH_METERS = 0.695;
+    
+        public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
+            -LENGTH_METERS / 2.0 + Units.inchesToMeters(10.0), // forward distances from the center of the robot
+            WIDTH_METERS / 2.0, // leftward distance from the center of the robot
+            Units.inchesToMeters(18.5), //tuned
+            new Rotation3d(
+                0, 
+                0, 
+                Math.toRadians(90)    // camera is mounted sideways
+            )
+        );
+    
+        public static final String CAMERA2_NAME = "PhotonCameraRight";
+        public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
+            -LENGTH_METERS / 2.0 + Units.inchesToMeters(9.5),
+            -WIDTH_METERS / 2.0, 
+            Units.inchesToMeters(18.5), 
+            new Rotation3d(
+                0,
+                0,
+                Math.toRadians(-90)
+            )
+        );
 
-    public static final String CAMERA1_NAME = "PhotonCameraLeft";
-    public static final double LENGTH_METERS = 0.7;
-    public static final double WIDTH_METERS = 0.695;
-
-    public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        -LENGTH_METERS / 2.0 + Units.inchesToMeters(10.0), // forward distances from the center of the robot
-        WIDTH_METERS / 2.0, // leftward distance from the center of the robot
-        Units.inchesToMeters(18.5), //tuned
-        new Rotation3d(
-            0, 
-            0, 
-            Math.toRadians(90)    // camera is mounted sideways
-        )
-    );
-
-    public static final String CAMERA2_NAME = "PhotonCameraRight";
-    public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
-        -LENGTH_METERS / 2.0 + Units.inchesToMeters(9.5),
-        -WIDTH_METERS / 2.0, 
-        Units.inchesToMeters(18.5), 
-        new Rotation3d(
-            0,
-            0,
-            Math.toRadians(-90)
-        )
-    );
-    //Localization
+        public static final double Z_THRESHOLD = 0.5;
+    }
     public static final int GYRO_CAN_ID = 9;
 
     // Path Following Constants

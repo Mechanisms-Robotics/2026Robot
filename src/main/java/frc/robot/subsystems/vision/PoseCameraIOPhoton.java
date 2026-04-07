@@ -8,13 +8,11 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.FieldConstants;
 
 public class PoseCameraIOPhoton implements PoseCameraIO {
     private final PhotonCamera camera;
@@ -30,7 +28,7 @@ public class PoseCameraIOPhoton implements PoseCameraIO {
         this.cameraToRobot = cameraToRobot;
 
         this.photonEstimator = new PhotonPoseEstimator(
-            CONSTANTS.APRILTAG_FIELD_LAYOUT,
+            FieldConstants.APRILTAG_FIELD_LAYOUT,
             this.cameraToRobot);
     }
 
@@ -42,7 +40,7 @@ public class PoseCameraIOPhoton implements PoseCameraIO {
         Optional<EstimatedRobotPose> visionEstimate = Optional.empty();
 
         List<Double> timestampSecondsArray = new ArrayList<>();
-        List<Pose2d> poseEstimatesArray = new ArrayList<>();
+        List<Pose3d> poseEstimatesArray = new ArrayList<>();
 
         for (PhotonPipelineResult result : results) {
             visionEstimate = this.photonEstimator.estimateCoprocMultiTagPose(result); 
@@ -59,12 +57,12 @@ public class PoseCameraIOPhoton implements PoseCameraIO {
 
                 // Push each unread input to the arrays
                 timestampSecondsArray.add(visionEstimate.get().timestampSeconds);
-                poseEstimatesArray.add(poseEstimate.toPose2d());
+                poseEstimatesArray.add(poseEstimate);
             }
         }
 
         // Finally, push all estimates to the inputs
         inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
-        inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose2d[]::new);
+        inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose3d[]::new);
     }
 }
