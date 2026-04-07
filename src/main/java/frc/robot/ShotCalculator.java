@@ -42,8 +42,6 @@ public class ShotCalculator {
         this.scoreHoodAngleMap.put(4.451, Rotation2d.fromDegrees(34.74));
         this.scoreHoodAngleMap.put(5.332, Rotation2d.fromDegrees(36.06));
 
-
-
         this.scoreRPMMap.put(1.898, 3300.0);
         this.scoreRPMMap.put(2.284, 3400.0);
         this.scoreRPMMap.put(2.713, 3500.0);
@@ -53,17 +51,15 @@ public class ShotCalculator {
         this.scoreRPMMap.put(4.451, 4200.0);
         this.scoreRPMMap.put(5.332, 4500.0);
 
-        this.shuttleHoodAngleMap.put(1.05, Rotation2d.fromDegrees(35.9));
-        this.shuttleHoodAngleMap.put(2.22, Rotation2d.fromDegrees(41.0));
-        this.shuttleHoodAngleMap.put(3.79, Rotation2d.fromDegrees(48.54));
-        this.shuttleHoodAngleMap.put(5.75, Rotation2d.fromDegrees(47.75));
-        this.shuttleHoodAngleMap.put(10.11, Rotation2d.fromDegrees(45));
+        this.shuttleHoodAngleMap.put(2.0, Rotation2d.fromDegrees(36.0));
+        this.shuttleHoodAngleMap.put(3.0, Rotation2d.fromDegrees(41.0));
+        this.shuttleHoodAngleMap.put(9.0, Rotation2d.fromDegrees(45.0));
 
-        this.shuttleRPMMap.put(1.05, 3000.0);
-        this.shuttleRPMMap.put(2.22, 3200.0);
-        this.shuttleRPMMap.put(3.79, 3800.0);
-        this.shuttleRPMMap.put(5.75, 4600.0);
-        this.shuttleRPMMap.put(10.11, 7000.0);
+        this.shuttleRPMMap.put(2.0, 3000.0);
+        this.shuttleRPMMap.put(3.0, 3200.0);
+        this.shuttleRPMMap.put(5.0, 3800.0);
+        this.shuttleRPMMap.put(7.0, 4600.0);
+        this.shuttleRPMMap.put(9.0, 7000.0);
 
         this.timeOfFlightMap.put(1.98, 0.86);
         this.timeOfFlightMap.put(2.58, 0.86);
