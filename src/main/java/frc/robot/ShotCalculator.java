@@ -33,8 +33,8 @@ public class ShotCalculator {
         this.shooterPoseSupplier = shooterPoseSupplier;
         this.shooterVelocity = shooterVelocity;
 
-        this.scoreHoodAngleMap.put(1.898, Rotation2d.fromDegrees(24.29));
-        this.scoreHoodAngleMap.put(2.284, Rotation2d.fromDegrees(28.67));
+        this.scoreHoodAngleMap.put(1.898, Rotation2d.fromDegrees(22.0));
+        this.scoreHoodAngleMap.put(2.284, Rotation2d.fromDegrees(26.0));
         this.scoreHoodAngleMap.put(2.713, Rotation2d.fromDegrees(29.82));
         this.scoreHoodAngleMap.put(3.260, Rotation2d.fromDegrees(31.93));
         this.scoreHoodAngleMap.put(3.618, Rotation2d.fromDegrees(33.96));
