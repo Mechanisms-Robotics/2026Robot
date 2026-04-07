@@ -76,11 +76,10 @@ public class CONSTANTS {
          *  Uses the side of the tape on the neutral zone. */
         public static double RED_ALLIANCE_ZONE = Units.inchesToMeters(492.61);
 
-        public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 6.5, Rotation2d.kZero);
-        public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 1.5, Rotation2d.kZero);
-        public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(Units.inchesToMeters(490), 1.5, Rotation2d.kZero);
-        public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(Units.inchesToMeters(490), 6.5, Rotation2d.kZero);
-
+        public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(1.1, 2.4, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
+        public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(LENGTH - SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
+        public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(LENGTH - SHUTTLE_DEPOT_BLUE_POSE.getX(), WIDTH - SHUTTLE_DEPOT_BLUE_POSE.getY(), Rotation2d.kZero);
     }
     public static class Hub {
         // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
@@ -173,7 +172,7 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double ROLLERS_DUTY_CYCLE = -0.5;
+        public static final double ROLLERS_DUTY_CYCLE = -1.0;
         public static final double ROLLERS_IDLE_DUTY_CYCLE = -0.1;
 
         public static final int ARM_CAN_ID_LEFT = 12;
@@ -185,8 +184,9 @@ public class CONSTANTS {
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
         public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
         public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
-        public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(35.0);
-        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
+        public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(65.0);
+        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-1.0);
+        public static final Rotation2d RUN_ROLLERS_ARMS_ANGLE = Rotation2d.fromDegrees(5.0);
         public static final Rotation2d MIN_ANGLE = DEPLOY_ANGLE;
         public static final Rotation2d MAX_ANGLE = START_ANGLE;
 
@@ -229,8 +229,8 @@ public class CONSTANTS {
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
         // Clockwise and counter clockwise maximum rotation the turret should rotate
-        public static final double MIN_DEGREES = -180.0;
-        public static final double MAX_DEGREES = 61.0;
+        public static final double MIN_DEGREES = -360.0;
+        public static final double MAX_DEGREES = 170.0;
         public static final double DUTYCYCLE_LIMIT = 0.3;
         public static final double MAX_RPM = 30.0;
         public static final double MAX_RPM_PER_SECOND = 30.0;
