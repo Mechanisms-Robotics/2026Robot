@@ -7,15 +7,20 @@ import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import frc.robot.ShotCalculator;
 import frc.robot.commands.FollowPath;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.util.FieldUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class Shuttling extends SequentialCommandGroup {
     public Shuttling(
@@ -24,11 +29,12 @@ public class Shuttling extends SequentialCommandGroup {
         Flywheel flywheel,
         Feeder feeder,
         Turret turret,
+        Intake intake,
         ShotCalculator shotCalculator,
         boolean mirror
     ) {
-        Optional<Trajectory<SwerveSample>> shuttlingRight = Choreo.loadTrajectory(
-                    "ShuttlingRight"
+        Optional<Trajectory<SwerveSample>> shuttlingLeft = Choreo.loadTrajectory(
+                    "ShuttlingLeft"
                 );
 
         Aim aim = new Aim(flywheel, turret, shotCalculator, drivetrain.poseEstimator);
@@ -36,13 +42,15 @@ public class Shuttling extends SequentialCommandGroup {
             Commands.parallel(
                 aim,
                 Commands.sequence(
-                        Commands.waitSeconds(0.8),
-                        new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(15.0)
+                    new WaitCommand(1.0),
+                    new WaitUntilCommand(() -> FieldUtil.inNuetralZone(drivetrain.poseEstimator.getEstimatedPose().getX())),
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot),
+                    IntakeCommands.deploy(intake)
                 ),
-                new FollowPath(shuttlingRight.get(), drivetrain, true, mirror)
+                new FollowPath(shuttlingLeft.get(), drivetrain, true, mirror)
             )
         );
 
-        addRequirements(drivetrain, hood, flywheel, feeder, turret);
+        addRequirements(drivetrain, hood, flywheel, feeder, turret, intake);
     }
 }

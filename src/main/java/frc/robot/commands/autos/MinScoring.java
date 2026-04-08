@@ -64,6 +64,7 @@ public class MinScoring extends SequentialCommandGroup {
                     new FollowPath(trenchToNeutral.get(), drivetrain, true, mirror),
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
+                    new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
 
                     // score second round
@@ -73,7 +74,8 @@ public class MinScoring extends SequentialCommandGroup {
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralMaxBackup.get(), drivetrain, false, mirror),
                     new FollowPath(neutralToTrench.get(), drivetrain, false, mirror),
-                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
+                    new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot)
                 )
             )
         );

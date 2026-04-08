@@ -65,7 +65,7 @@ public class MaxScoring extends SequentialCommandGroup {
                     new FollowPath(neutralMaxBackup.get(), drivetrain, false, mirror),
                     new FollowPath(neutralToTrenchSecond.get(), drivetrain, false, mirror),
                     new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
-                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot)
                 )
             )
         );

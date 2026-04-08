@@ -21,6 +21,10 @@ public class FieldUtil {
             : robotX > FieldConstants.RED_ALLIANCE_ZONE;
     }
 
+    public static boolean inNuetralZone(double robotX) {
+        return robotX > FieldConstants.NEUTRAL_ZONE && robotX < FieldConstants.LENGTH - FieldConstants.NEUTRAL_ZONE;
+    }
+
     public static Pose3d getHub() {
         return getAlliance().equals(Alliance.Blue)
             ? FieldConstants.Hub.CENTER_BLUE_POSE : FieldConstants.Hub.CENTER_RED_POSE;

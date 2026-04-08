@@ -168,13 +168,13 @@ public class RobotContainer {
             this.drivetrain.poseEstimator,
             this.shotCalculator,
             // shoot button
-            this.controller.R2(), // right trigger
+            this.controller.button(1), // right trigger
             // intake button
-            this.controller.L2(), // left trigger
+            this.controller.button(2), // left trigger
             // manual mode toggle
-            this.controller.R1(), // right bumper
+            this.controller.button(3), // right bumper
             // stow intake button
-            this.controller.L1() // left bumper
+            this.controller.button(4) // left bumper
         );
 
         configureBindings();
@@ -349,8 +349,8 @@ public class RobotContainer {
         this.autos.put("Min Scoring Right", () -> new MinScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
         this.autos.put("Beach Left", () -> new Beach(this.drivetrain, true));
         this.autos.put("Beach Right", () -> new Beach(this.drivetrain, false));
-        this.autos.put("Shuttling Left", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, false));
-        this.autos.put("Shuttling Right", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, true));
+        this.autos.put("Shuttling Left", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
+        this.autos.put("Shuttling Right", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
 
         for (String name : autos.keySet()) {
             autoChooser.addOption(name, name);
