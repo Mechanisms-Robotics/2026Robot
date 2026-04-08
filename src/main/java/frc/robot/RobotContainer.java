@@ -32,6 +32,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autos.Shuttling;
 import frc.robot.commands.autos.Beach;
+import frc.robot.commands.autos.CenterScore;
+import frc.robot.commands.autos.LaSiesta;
 import frc.robot.commands.autos.MaxScoring;
 import frc.robot.commands.autos.MinScoring;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -168,13 +170,13 @@ public class RobotContainer {
             this.drivetrain.poseEstimator,
             this.shotCalculator,
             // shoot button
-            this.controller.button(1), // right trigger
+            this.controller.R2(), // right trigger
             // intake button
-            this.controller.button(2), // left trigger
+            this.controller.L2(), // left trigger
             // manual mode toggle
-            this.controller.button(3), // right bumper
+            this.controller.R1(), // right bumper
             // stow intake button
-            this.controller.button(4) // left bumper
+            this.controller.L1() // left bumper
         );
 
         configureBindings();
@@ -351,6 +353,9 @@ public class RobotContainer {
         this.autos.put("Beach Right", () -> new Beach(this.drivetrain, false));
         this.autos.put("Shuttling Left", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
         this.autos.put("Shuttling Right", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
+        this.autos.put("LaSiesta Left", () -> new LaSiesta(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
+        this.autos.put("LaSiesta Right", () -> new LaSiesta(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
+        this.autos.put("Center Score", () -> new CenterScore(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator));
 
         for (String name : autos.keySet()) {
             autoChooser.addOption(name, name);

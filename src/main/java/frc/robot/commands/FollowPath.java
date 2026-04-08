@@ -27,6 +27,7 @@ public class FollowPath extends Command {
   private final boolean resetPose;
   private boolean isRedAlliance;
   private final boolean isMirrored;
+  private final boolean useVision;
 
   private final Timer timer = new Timer();
   private final HolonomicDriveController holonomicController;
@@ -35,12 +36,14 @@ public class FollowPath extends Command {
       Trajectory<SwerveSample> trajectory,
       Drivetrain drivetrain,
       boolean resetPose,
-      boolean isMirrored) {
+      boolean isMirrored,
+      boolean useVision) {
 
     this.trajectory = trajectory;
     this.drivetrain = drivetrain;
     this.resetPose = resetPose;
     this.isMirrored = isMirrored;
+    this.useVision = useVision;
 
     Constraints thetaProfile = new TrapezoidProfile.Constraints(
         CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION, CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION);
@@ -61,8 +64,16 @@ public class FollowPath extends Command {
   public FollowPath(
     Trajectory<SwerveSample> trajectory,
     Drivetrain drivetrain,
+    boolean resetPose,
+    boolean isMirrored) {
+    this(trajectory, drivetrain, resetPose, isMirrored, false);
+  }
+
+  public FollowPath(
+    Trajectory<SwerveSample> trajectory,
+    Drivetrain drivetrain,
     boolean resetPose) {
-    this(trajectory, drivetrain, resetPose, false);
+    this(trajectory, drivetrain, resetPose, false, false);
   }
 
 
@@ -77,7 +88,7 @@ public class FollowPath extends Command {
     timer.start();
 
     // disable vision updates while following a path
-    this.drivetrain.poseEstimator.setVisionEnabled(false);
+    this.drivetrain.poseEstimator.setVisionEnabled(this.useVision);
 
     this.isRedAlliance = DriverStation.getAlliance().isPresent() &&
         DriverStation.getAlliance().get() == Alliance.Red;

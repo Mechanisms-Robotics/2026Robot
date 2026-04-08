@@ -40,6 +40,11 @@ public class FieldUtil {
             : FieldConstants.SHUTTLE_DEPOT_RED_POSE;
     }
 
+    /**
+     * Flip a from left to right (y axis)
+     * @param pose unflipped pose
+     * @return flipped pose
+     */
     public static Pose2d flipPose(Pose2d pose) {
         return new Pose2d(pose.getX(), FieldConstants.WIDTH - pose.getY(), pose.getRotation().unaryMinus());
     }
