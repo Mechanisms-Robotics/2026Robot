@@ -32,6 +32,7 @@ public class SuperStructure extends SubsystemBase {
     private final ShootCommands.Aim aimCommand;
     private final ShootCommands.Shoot shootCommand;
     private final ShootCommands.ManualShoot manualShootCommand;
+    private final ShootCommands.WobbleSpindexer wobbleSpindexerCommand;
     private final Command intakeCommand;
     private final Command stowCommand;
 
@@ -87,6 +88,10 @@ public class SuperStructure extends SubsystemBase {
             ManualModeConstants.FLYWHEEL_RPM
         );
 
+        this.wobbleSpindexerCommand = new ShootCommands.WobbleSpindexer(
+            this.feeder
+        );
+
         this.intakeCommand = IntakeCommands.intake(this.intake);
 
         this.stowCommand = IntakeCommands.stow(this.intake);
@@ -120,7 +125,8 @@ public class SuperStructure extends SubsystemBase {
                 
         }, this.hood, this.turret));
 
-        intakeButton.whileTrue(this.intakeCommand);
+        intakeButton.whileTrue(this.intakeCommand.alongWith(this.wobbleSpindexerCommand));
+        shootButton.onTrue(new InstantCommand(() -> this.wobbleSpindexerCommand.cancel()));
         stowButton.onTrue(this.stowCommand);
     }
 
@@ -162,6 +168,7 @@ public class SuperStructure extends SubsystemBase {
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
+        Logger.recordOutput("SuperStructure/WobbleSpindexer", this.wobbleSpindexerCommand.isScheduled());
         Logger.recordOutput("SuperStructure/ManualMode", this.manualMode);
         Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
