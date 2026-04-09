@@ -21,6 +21,10 @@ public class FieldUtil {
             : robotX > FieldConstants.RED_ALLIANCE_ZONE;
     }
 
+    public static boolean inNuetralZone(double robotX) {
+        return robotX > FieldConstants.NEUTRAL_ZONE && robotX < FieldConstants.LENGTH - FieldConstants.NEUTRAL_ZONE;
+    }
+
     public static Pose3d getHub() {
         return getAlliance().equals(Alliance.Blue)
             ? FieldConstants.Hub.CENTER_BLUE_POSE : FieldConstants.Hub.CENTER_RED_POSE;
@@ -36,6 +40,11 @@ public class FieldUtil {
             : FieldConstants.SHUTTLE_DEPOT_RED_POSE;
     }
 
+    /**
+     * Flip a from left to right (y axis)
+     * @param pose unflipped pose
+     * @return flipped pose
+     */
     public static Pose2d flipPose(Pose2d pose) {
         return new Pose2d(pose.getX(), FieldConstants.WIDTH - pose.getY(), pose.getRotation().unaryMinus());
     }
