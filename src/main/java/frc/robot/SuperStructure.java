@@ -2,11 +2,9 @@ package frc.robot;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,7 +13,6 @@ import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
-import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -77,7 +74,12 @@ public class SuperStructure extends SubsystemBase {
             this.poseEstimator
         );
 
-        this.shootCommand = new ShootCommands.Shoot(this.feeder, this.hood, this.aimCommand::getShot);
+        this.shootCommand = new ShootCommands.Shoot(
+            this.feeder,
+            this.hood,
+            this.aimCommand::getShot,
+            this::isAimed
+        );
 
         this.manualShootCommand = new ShootCommands.ManualShoot(
             this.flywheel,
@@ -89,11 +91,19 @@ public class SuperStructure extends SubsystemBase {
 
         this.stowCommand = IntakeCommands.stow(this.intake);
 
-        shootButton.and(() -> !this.manualMode).and(this::isAimed).whileTrue(this.shootCommand);
+        shootButton.and(() -> !this.manualMode).whileTrue(this.shootCommand);
 
         // aimCommand handles switching between shooting and shuttling
         new Trigger(() -> !this.manualMode).whileTrue(
             this.aimCommand
+        );
+
+        /* Start aim command when the shoot button is pressed and in automatic mode
+           This is here because aimCommand doesn't start in teleop (and similar situations)
+           This should only be in affect once at the start of teleop */
+        shootButton.and(() -> !this.manualMode).and(() -> !this.aimCommand.isScheduled()).onTrue(this.aimCommand);
+        new Trigger(() -> this.manualMode).and(() -> this.aimCommand.isScheduled()).onTrue(
+            new InstantCommand(() -> this.aimCommand.cancel())
         );
 
         shootButton.and(() -> this.manualMode).whileTrue(this.manualShootCommand);
@@ -117,21 +127,38 @@ public class SuperStructure extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Pose2d robotPose = this.poseEstimator.getEstimatedPose();
-
-        Logger.recordOutput("SuperStructure/ShooterPose3d", 
-            new Pose3d(
-                new Translation3d(robotPose.getTranslation()).plus(TurretConstants.ROBOT_TO_TURRET.getTranslation()),
-                new Rotation3d(
+        // Used to animate mechanisms
+        // In advantage scope, drag this array onto the robot pose to animate mechanisms
+        Logger.recordOutput("SuperStructure/Components", 
+            new Pose3d[] {
+                // Turret
+                new Pose3d(0, 0, 0, new Rotation3d(
                     0.0,
-                    this.hood.getAngle().getRadians() - Math.PI/2.0,
-                    this.turret.getAngle().getRadians() + robotPose.getRotation().getRadians()
-                )
-            ).rotateBy(TurretConstants.ROBOT_TO_TURRET.getRotation())
+                    0.0,
+                    this.turret.getAngle().getRadians()
+                )),
+                // Hood
+                new Pose3d(
+                    this.turret.getAngle().getCos() * TurretConstants.CENTER_TO_HOOD_PIVOT_METERS,
+                    this.turret.getAngle().getSin() * TurretConstants.CENTER_TO_HOOD_PIVOT_METERS,
+                    0.386123,
+                    new Rotation3d(
+                        0.0,
+                        this.hood.getAngle().getRadians(),
+                        this.turret.getAngle().getRadians()
+                )),
+                // Intake
+                new Pose3d(0.298, 0, 0.16, new Rotation3d(
+                    0.0,
+                    -this.intake.getAngle().getRadians(),
+                    0.0
+                ))
+            }
         );
 
         Logger.recordOutput("SuperStructure/Aiming", this.aimCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Aimed", this.isAimed());
+        Logger.recordOutput("SuperStructure/WithinSoftLimits", this.isWithinSoftLimits());
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
@@ -142,6 +169,22 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
-        return true;
+        Rotation2d shooterYaw =
+            this.poseEstimator
+                .getEstimatedPose()
+                .getRotation()
+                .plus(this.turret.getAngle());
+        Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
+
+        return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0;
+    }
+
+    /**
+     * Returns true if the turret is within the soft limits, aka the turret is in a good position.
+     */
+    public boolean isWithinSoftLimits() {
+        Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
+
+        return (desiredShooterYaw.getDegrees() >= TurretConstants.MIN_DEGREES) && desiredShooterYaw.getDegrees() <= TurretConstants.MAX_DEGREES;
     }
 }

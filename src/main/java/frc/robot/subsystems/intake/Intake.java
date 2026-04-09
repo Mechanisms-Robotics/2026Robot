@@ -1,6 +1,8 @@
 package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CONSTANTS.IntakeConstants;
 
@@ -23,8 +25,8 @@ public class Intake extends SubsystemBase {
         this.rollersIO.updateInputs(this.rollersInputs);
         Logger.processInputs("Intake/Rollers", this.rollersInputs);
 
-        double rollerAngleThreshold = 30.0;
-        if (this.slapInputs.positionDegreesLeft < rollerAngleThreshold && this.slapInputs.setpointDegrees < rollerAngleThreshold) {
+        if (this.slapInputs.positionDegreesLeft < IntakeConstants.RUN_ROLLERS_ARMS_ANGLE.getDegrees()
+         && this.slapInputs.setpointDegrees < IntakeConstants.RUN_ROLLERS_ARMS_ANGLE.getDegrees()) {
             this.runRollers();
         } else {
             this.stopRollers();
@@ -37,6 +39,10 @@ public class Intake extends SubsystemBase {
 
     public void stopRollers() {
         this.rollersIO.setDutyCycle(0.0);
+    }
+
+    public void idleRollers() {
+        this.rollersIO.setDutyCycle(IntakeConstants.ROLLERS_IDLE_DUTY_CYCLE);
     }
 
     /** Deploy the intake arms ans spin the rollers */
@@ -55,5 +61,9 @@ public class Intake extends SubsystemBase {
     public void feed() {
         this.slapIO.setAngle(IntakeConstants.FEED_ANGLE);
         //stopRollers();
+    }
+
+    public Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(this.slapInputs.positionDegreesLeft);
     }
 }

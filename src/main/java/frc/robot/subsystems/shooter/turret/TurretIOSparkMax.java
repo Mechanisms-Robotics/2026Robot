@@ -28,6 +28,7 @@ public class TurretIOSparkMax implements TurretIO {
         inputs.setpointDegrees = this.motor.getClosedLoopController().getSetpoint() * 360.0;
         inputs.current = this.motor.getOutputCurrent();
         inputs.connected = this.motor.getLastError() == REVLibError.kOk;
+        inputs.tempFahrenheit = this.motor.getMotorTemperature() * 9/5 + 32;
     }
 
     @Override

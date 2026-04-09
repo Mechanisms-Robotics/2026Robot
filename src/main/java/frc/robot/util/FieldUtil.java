@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.CONSTANTS.FieldConstants;
-import frc.robot.CONSTANTS.Hub;
 
 public class FieldUtil {
     public static Alliance getAlliance() {
@@ -24,7 +23,7 @@ public class FieldUtil {
 
     public static Pose3d getHub() {
         return getAlliance().equals(Alliance.Blue)
-            ? Hub.CENTER_BLUE_POSE : Hub.CENTER_RED_POSE;
+            ? FieldConstants.Hub.CENTER_BLUE_POSE : FieldConstants.Hub.CENTER_RED_POSE;
     }
 
     public static Pose2d getShuttlePose(double robotY) {
@@ -35,5 +34,9 @@ public class FieldUtil {
         return robotY > FieldConstants.CENTER.getY()
             ? FieldConstants.SHUTTLE_OUTPOST_RED_POSE
             : FieldConstants.SHUTTLE_DEPOT_RED_POSE;
+    }
+
+    public static Pose2d flipPose(Pose2d pose) {
+        return new Pose2d(pose.getX(), FieldConstants.WIDTH - pose.getY(), pose.getRotation().unaryMinus());
     }
 }
