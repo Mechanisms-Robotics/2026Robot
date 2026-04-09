@@ -233,8 +233,8 @@ public class CONSTANTS {
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
         // Clockwise and counter clockwise maximum rotation the turret should rotate
-        public static final double MIN_DEGREES = -360.0;
-        public static final double MAX_DEGREES = 170.0;
+        public static final double MIN_DEGREES = -340.0;
+        public static final double MAX_DEGREES = 30.0;
         public static final double DUTYCYCLE_LIMIT = 0.3;
         public static final double MAX_RPM = 30.0;
         public static final double MAX_RPM_PER_SECOND = 30.0;
