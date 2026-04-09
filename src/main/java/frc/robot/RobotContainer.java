@@ -105,9 +105,15 @@ public class RobotContainer {
                 this.drivetrain.poseEstimator,
                 new PoseCameraIOSim(
                     "Photon_Camera_Sim1", 
-                    Transform3d.kZero, 
+                    VisionConstants.CAMERA1_TRANSFORM3D, 
                     drivetrain.poseEstimator
-                ));
+                ),
+                new PoseCameraIOSim(
+                    "Photon_Camera_Sim2", 
+                    VisionConstants.CAMERA2_TRANSFORM3D, 
+                    drivetrain.poseEstimator
+                )
+                );
 
             this.flywheel = new Flywheel(new FlywheelIOSim());
             this.turret = new Turret(new TurretIOSim());
