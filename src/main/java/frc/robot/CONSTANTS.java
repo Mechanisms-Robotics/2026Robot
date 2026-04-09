@@ -253,7 +253,8 @@ public class CONSTANTS {
                 .p(15.0)
                 .d(25.0)
                 .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
-                .positionWrappingEnabled(false)
+                .positionWrappingEnabled(true)
+                .positionWrappingInputRange(-0.5, 0.5)
                 .allowedClosedLoopError(Units.degreesToRotations(0.75),ClosedLoopSlot.kSlot0);
             
             CONFIG.closedLoop.maxMotion
