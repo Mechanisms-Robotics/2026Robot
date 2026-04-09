@@ -65,6 +65,8 @@ public class CONSTANTS {
 
     // MARK: Field
     public static class FieldConstants {
+        public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
+            AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
         public static double WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
         public static double LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
         public static Pose2d CENTER = new Pose2d(LENGTH/2.0, WIDTH/2.0, Rotation2d.kZero);
@@ -76,61 +78,60 @@ public class CONSTANTS {
          *  Uses the side of the tape on the neutral zone. */
         public static double RED_ALLIANCE_ZONE = Units.inchesToMeters(492.61);
 
-        public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 6.5, Rotation2d.kZero);
-        public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(Units.inchesToMeters(160), 1.5, Rotation2d.kZero);
-        public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(Units.inchesToMeters(490), 1.5, Rotation2d.kZero);
-        public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(Units.inchesToMeters(490), 6.5, Rotation2d.kZero);
-
-    }
-    public static class Hub {
-        // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
-        public static Pose3d CENTER_BLUE_POSE = new Pose3d(
-            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
-            (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
-            Units.inchesToMeters(72.0),
-            Rotation3d.kZero
-        );
-
-        // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
-        public static Pose3d CENTER_RED_POSE = new Pose3d(
-            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
-            (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
-            Units.inchesToMeters(72.0),
-            Rotation3d.kZero
-        );
+        public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(1.1, 2.4, Rotation2d.kZero);
+        public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
+        public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(LENGTH - SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
+        public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(LENGTH - SHUTTLE_DEPOT_BLUE_POSE.getX(), WIDTH - SHUTTLE_DEPOT_BLUE_POSE.getY(), Rotation2d.kZero);
+        public static class Hub {
+            // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
+            public static Pose3d CENTER_BLUE_POSE = new Pose3d(
+                (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
+                (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
+                Units.inchesToMeters(72.0),
+                Rotation3d.kZero
+            );
+    
+            // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
+            public static Pose3d CENTER_RED_POSE = new Pose3d(
+                (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
+                (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
+                Units.inchesToMeters(72.0),
+                Rotation3d.kZero
+            );
+        }
     }
 
     // MARK: Vision
-    public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    public static class VisionConstants {
+        public static final String CAMERA1_NAME = "PhotonCameraLeft";
+        public static final double LENGTH_METERS = 0.7;
+        public static final double WIDTH_METERS = 0.695;
+    
+        public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
+            -LENGTH_METERS / 2.0 + Units.inchesToMeters(10.0), // forward distances from the center of the robot
+            WIDTH_METERS / 2.0, // leftward distance from the center of the robot
+            Units.inchesToMeters(18.5), //tuned
+            new Rotation3d(
+                0, 
+                0, 
+                Math.toRadians(90)    // camera is mounted sideways
+            )
+        );
+    
+        public static final String CAMERA2_NAME = "PhotonCameraRight";
+        public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
+            -LENGTH_METERS / 2.0 + Units.inchesToMeters(9.5),
+            -WIDTH_METERS / 2.0, 
+            Units.inchesToMeters(18.5), 
+            new Rotation3d(
+                0,
+                0,
+                Math.toRadians(-90)
+            )
+        );
 
-    public static final String CAMERA1_NAME = "PhotonCameraLeft";
-    public static final double LENGTH_METERS = 0.7;
-    public static final double WIDTH_METERS = 0.695;
-
-    public static final Transform3d CAMERA1_TRANSFORM3D = new Transform3d(
-        LENGTH_METERS / 2.0 - Units.inchesToMeters(12.5), // forward distances from the center of the robot
-        WIDTH_METERS / 2.0, // leftward distance from the center of the robot
-        Units.inchesToMeters(19.0 + 3.0 / 8.0), 
-        new Rotation3d(
-            0, 
-            0, 
-            Math.toRadians(90)    // camera is mounted sideways
-        )
-    );
-
-    public static final String CAMERA2_NAME = "PhotonCameraRight";
-    public static final Transform3d CAMERA2_TRANSFORM3D = new Transform3d(
-        LENGTH_METERS / 2.0 - Units.inchesToMeters(15.0),
-        -WIDTH_METERS / 2.0, 
-        Units.inchesToMeters(19.0 + 3.0 / 8.0), 
-        new Rotation3d(
-            0,
-            0,
-            Math.toRadians(-90)
-        )
-    );
-    //Localization
+        public static final double Z_THRESHOLD = 0.5;
+    }
     public static final int GYRO_CAN_ID = 9;
 
     // Path Following Constants
@@ -173,8 +174,8 @@ public class CONSTANTS {
 
     // MARK: Intake
     public static class IntakeConstants {
-        public static final double ROLLERS_DUTY_CYCLE = -0.95;
-        public static final double ROLLERS_IDLE_DUTY_CYCLE = -0.3;
+        public static final double ROLLERS_DUTY_CYCLE = -1.0;
+        public static final double ROLLERS_IDLE_DUTY_CYCLE = -0.1;
 
         public static final int ARM_CAN_ID_LEFT = 12;
         public static final int ARM_CAN_ID_RIGHT = 13;
@@ -185,8 +186,9 @@ public class CONSTANTS {
         public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
         public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
         public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
-        public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(35.0);
-        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-5.0);
+        public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(65.0);
+        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-1.0);
+        public static final Rotation2d RUN_ROLLERS_ARMS_ANGLE = Rotation2d.fromDegrees(5.0);
         public static final Rotation2d MIN_ANGLE = DEPLOY_ANGLE;
         public static final Rotation2d MAX_ANGLE = START_ANGLE;
 
@@ -206,9 +208,17 @@ public class CONSTANTS {
                 .idleMode(IdleMode.kBrake);
         }
 
-        public static final SparkMaxConfig CONFIG_ROLLERS = new SparkMaxConfig();
+        public static final SparkMaxConfig CONFIG_ROLLERS_SPARK = new SparkMaxConfig();
+
+        public static final TalonFXConfiguration CONFIG_ROLLERS_TALON = new TalonFXConfiguration()
+        .withMotorOutput(
+            new MotorOutputConfigs()
+                .withNeutralMode(NeutralModeValue.Coast)
+        );
+
         static {
-            CONFIG_ROLLERS.idleMode(IdleMode.kCoast);
+            CONFIG_ROLLERS_SPARK
+                .idleMode(IdleMode.kCoast);
         }
     }
 
@@ -221,8 +231,8 @@ public class CONSTANTS {
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
         // Clockwise and counter clockwise maximum rotation the turret should rotate
-        public static final double MIN_DEGREES = -180.0;
-        public static final double MAX_DEGREES = 61.0;
+        public static final double MIN_DEGREES = -360.0;
+        public static final double MAX_DEGREES = 170.0;
         public static final double DUTYCYCLE_LIMIT = 0.3;
         public static final double MAX_RPM = 30.0;
         public static final double MAX_RPM_PER_SECOND = 30.0;

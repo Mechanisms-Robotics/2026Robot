@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PoseEstimator8736;
+import frc.robot.CONSTANTS.VisionConstants;
 
 public class Vision extends SubsystemBase {
     private final PoseCameraIO[] ios;
@@ -31,8 +32,12 @@ public class Vision extends SubsystemBase {
 
             // Constantly feed vision measurements into the pose estimator
             for (int j = 0; j < inputs[i].timestampSeconds.length; j++) {
+                if (inputs[i].poseEstimates[j].getZ() > VisionConstants.Z_THRESHOLD) {
+                    continue;
+                }
+                
                 this.poseEstimator.addVisionMeasurement(
-                    inputs[i].poseEstimates[j],
+                    inputs[i].poseEstimates[j].toPose2d(),
                     inputs[i].timestampSeconds[j],
                     VecBuilder.fill(0.9, 0.9, 0.9)
                 );

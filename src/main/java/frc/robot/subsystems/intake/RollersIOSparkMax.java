@@ -12,7 +12,7 @@ public class RollersIOSparkMax implements RollersIO {
     private final SparkMax motor = new SparkMax(IntakeConstants.ROLLERS_CAN_ID, MotorType.kBrushless);
 
     public RollersIOSparkMax() {
-        this.motor.configure(IntakeConstants.CONFIG_ROLLERS, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.motor.configure(IntakeConstants.CONFIG_ROLLERS_SPARK, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

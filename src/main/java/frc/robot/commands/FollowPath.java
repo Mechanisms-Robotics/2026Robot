@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CONSTANTS;
+import frc.robot.CONSTANTS.FieldConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.util.FieldUtil;
 
 public class FollowPath extends Command {
 
@@ -24,6 +26,7 @@ public class FollowPath extends Command {
   private final Drivetrain drivetrain;
   private final boolean resetPose;
   private boolean isRedAlliance;
+  private final boolean isMirrored;
 
   private final Timer timer = new Timer();
   private final HolonomicDriveController holonomicController;
@@ -31,11 +34,13 @@ public class FollowPath extends Command {
   public FollowPath(
       Trajectory<SwerveSample> trajectory,
       Drivetrain drivetrain,
-      boolean resetPose) {
+      boolean resetPose,
+      boolean isMirrored) {
 
     this.trajectory = trajectory;
     this.drivetrain = drivetrain;
     this.resetPose = resetPose;
+    this.isMirrored = isMirrored;
 
     Constraints thetaProfile = new TrapezoidProfile.Constraints(
         CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION, CONSTANTS.DriveConstants.ANGLE_MAX_ACCELERATION);
@@ -52,6 +57,14 @@ public class FollowPath extends Command {
 
     super.addRequirements(drivetrain);
   }
+
+  public FollowPath(
+    Trajectory<SwerveSample> trajectory,
+    Drivetrain drivetrain,
+    boolean resetPose) {
+    this(trajectory, drivetrain, resetPose, false);
+  }
+
 
   // ------------------------
   // COMMAND LIFECYCLE (2025)
@@ -77,7 +90,8 @@ public class FollowPath extends Command {
         // TODO: Why would this ever happen? Should we handle it differently?
         throw new IllegalStateException("Trajectory has no initial pose!");
       }
-      this.drivetrain.resetPose(initialPose.get());
+      this.drivetrain.resetPose(
+        this.isMirrored ? FieldUtil.flipPose(initialPose.get()) : initialPose.get());
     }
   }
 
@@ -90,12 +104,37 @@ public class FollowPath extends Command {
     if (swerveSample.isEmpty()) {
       return; // TODO: Why would this ever happen? Should we handle it differently?
     }
+    SwerveSample sample;
+
+    if (this.isMirrored) {
+      sample = new SwerveSample(
+        swerveSample.get().t,
+        swerveSample.get().x,
+        FieldConstants.WIDTH - swerveSample.get().y,
+        -swerveSample.get().heading,
+        swerveSample.get().vx,
+        -swerveSample.get().vy,
+        -swerveSample.get().omega,
+        swerveSample.get().ax,
+        -swerveSample.get().ay,
+        swerveSample.get().alpha,
+        swerveSample.get().moduleForcesX(),
+        new double[]{
+          -swerveSample.get().moduleForcesY()[0],
+          -swerveSample.get().moduleForcesY()[1],
+          -swerveSample.get().moduleForcesY()[2],
+          -swerveSample.get().moduleForcesY()[3]
+        }
+      );
+    } else {
+      sample = swerveSample.get();
+    }
 
     // TODO: This loses the capability of Choreo to control the wheels optimally. See the choreo docs.
 
     // See https://docs.wpilib.org/en/stable/docs/software/advanced-controls/trajectories/holonomic.html
 
-    ChassisSpeeds sampleSpeeds = swerveSample.get().getChassisSpeeds();
+    ChassisSpeeds sampleSpeeds = sample.getChassisSpeeds();
 
     double desiredLinearVelocity = Math.sqrt(
         sampleSpeeds.vxMetersPerSecond * sampleSpeeds.vxMetersPerSecond +
@@ -104,9 +143,9 @@ public class FollowPath extends Command {
     ChassisSpeeds commandedSpeeds =
         this.holonomicController.calculate(
             this.drivetrain.getPose(),
-            swerveSample.get().getPose(),
+            sample.getPose(),
             desiredLinearVelocity,
-            swerveSample.get().getPose().getRotation()
+            sample.getPose().getRotation()
         );
 
     this.drivetrain.setDesiredState(commandedSpeeds);  

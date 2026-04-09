@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.autos.archive;
 
 import java.util.Optional;
 
@@ -14,22 +14,24 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.ShotCalculator;
 import frc.robot.PoseEstimator8736;
+import frc.robot.commands.FollowPath;
+import frc.robot.commands.IntakeCommands;
+import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
+import frc.robot.commands.ShootCommands.Shoot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class NeutralAndHubBackLeftAuto extends SequentialCommandGroup {
-    public NeutralAndHubBackLeftAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
+public class NeutralAndOutpostAuto extends SequentialCommandGroup {
+    public NeutralAndOutpostAuto(Drivetrain drivetrain, Hood hood, Flywheel flywheel, Feeder feeder, Intake intake, Turret turret, ShotCalculator shotCalculator, PoseEstimator8736 poseEstimator) {
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
-                    "TrenchToNeutralLeft"
+                    "TrenchToNeutralRight"
                 );
-        Optional<Trajectory<SwerveSample>> trenchToHubBack = Choreo.loadTrajectory(
-                    "TrenchToHubBackLeft"
-                );
-        Optional<Trajectory<SwerveSample>> hubBackToTrench = Choreo.loadTrajectory(
-                    "HubBackToTrenchLeft"
+        Optional<Trajectory<SwerveSample>> trenchToOutpost = Choreo.loadTrajectory(
+                    "TrenchToOutpost"
                 );
         Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchLeft"
+                    "NeutralToTrenchRight"
                 );
         Aim aim = new Aim(flywheel, turret, shotCalculator, poseEstimator);
 
@@ -42,10 +44,8 @@ public class NeutralAndHubBackLeftAuto extends SequentialCommandGroup {
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrench.get(), drivetrain, false),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
-                    IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToHubBack.get(), drivetrain, false),
-                    IntakeCommands.feed(intake),
-                    new FollowPath(hubBackToTrench.get(), drivetrain, false),
+                    new FollowPath(trenchToOutpost.get(), drivetrain, false),
+                    new WaitCommand(2.0),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
                 )
             )
