@@ -110,6 +110,8 @@ public class Robot extends LoggedRobot {
     if (this.autonomousCommand != null) {
       this.autonomousCommand.cancel();
     }
+
+    this.robotContainer.drivetrain.poseEstimator.setVisionEnabled(true);
   }
 
   @Override
