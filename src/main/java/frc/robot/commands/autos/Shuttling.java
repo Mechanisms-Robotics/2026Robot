@@ -5,6 +5,7 @@ import java.util.Optional;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
+import frc.robot.CONSTANTS.IntakeConstants;
 import frc.robot.ShotCalculator;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeCommands;
@@ -40,7 +41,8 @@ public class Shuttling extends SequentialCommandGroup {
         Aim aim = new Aim(flywheel, turret, shotCalculator, drivetrain.poseEstimator);
         addCommands(
             Commands.parallel(
-                aim,
+                new WaitUntilCommand(() -> intake.getAngle().getDegrees() < IntakeConstants.STOW_ANGLE.getDegrees() + 2.0)
+                    .andThen(aim),
                 Commands.sequence(
                     new WaitCommand(1.0),
                     new WaitUntilCommand(() -> FieldUtil.inNuetralZone(drivetrain.poseEstimator.getEstimatedPose().getX())),
