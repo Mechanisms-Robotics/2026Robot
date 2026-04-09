@@ -61,7 +61,6 @@ public class LaSiesta extends ParallelCommandGroup {
                 ),
 
                 new WaitCommand(3),
-                new InstantCommand(() -> drivetrain.setDesiredState(new ChassisSpeeds(-1.0, 0.0, 0.0)), drivetrain),
                 new FollowPath(laSiesta2.get(), drivetrain, false, mirror),
                 IntakeCommands.feed(intake),
                 new FollowPath(laSiesta3.get(), drivetrain, false, mirror),

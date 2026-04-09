@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autos.Shuttling;
 import frc.robot.commands.autos.Beach;
 import frc.robot.commands.autos.CenterScore;
+import frc.robot.commands.autos.DriveScore;
 import frc.robot.commands.autos.LaSiesta;
 import frc.robot.commands.autos.MaxScoring;
 import frc.robot.commands.autos.MinScoring;
@@ -355,7 +356,8 @@ public class RobotContainer {
         this.autos.put("Shuttling Right", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
         this.autos.put("LaSiesta Left", () -> new LaSiesta(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
         this.autos.put("LaSiesta Right", () -> new LaSiesta(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
-        this.autos.put("Center Score", () -> new CenterScore(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator));
+        this.autos.put("Center Score", () -> new CenterScore(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator));
+        this.autos.put("Drive Left Score", () -> new DriveScore(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, new ChassisSpeeds(0.0, 1.0, 0.0), 2.0));
 
         for (String name : autos.keySet()) {
             autoChooser.addOption(name, name);
