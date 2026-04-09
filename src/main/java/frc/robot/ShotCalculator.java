@@ -65,7 +65,7 @@ public class ShotCalculator {
         this.shuttleHoodAngleMap.put(3.0, Rotation2d.fromDegrees(41.0));
         this.shuttleHoodAngleMap.put(9.0, Rotation2d.fromDegrees(45.0));
 
-+
+
         this.shuttleRPMMap.put(2.0, 3000.0);
         this.shuttleRPMMap.put(3.0, 3200.0);
         this.shuttleRPMMap.put(5.0, 3800.0);
