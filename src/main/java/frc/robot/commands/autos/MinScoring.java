@@ -17,11 +17,13 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.util.FieldUtil;
 import frc.robot.ShotCalculator;
+import frc.robot.CONSTANTS.IntakeConstants;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class MinScoring extends SequentialCommandGroup {
     public MinScoring(
@@ -61,7 +63,8 @@ public class MinScoring extends SequentialCommandGroup {
 
         addCommands(
             Commands.parallel(
-                aim,
+                new WaitUntilCommand(() -> intake.getAngle().getDegrees() < IntakeConstants.STOW_ANGLE.getDegrees() + 2.0)
+                    .andThen(aim),
                 Commands.sequence(
                     new InstantCommand(() -> drivetrain.resetPose(startPose)),
                     new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
