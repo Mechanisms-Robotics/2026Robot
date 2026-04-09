@@ -94,6 +94,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     if (this.autonomousCommand != null) {
+      this.robotContainer.intake.stow();
       this.autonomousCommand.schedule();
     }
   }
