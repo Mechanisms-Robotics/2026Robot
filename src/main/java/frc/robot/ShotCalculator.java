@@ -65,18 +65,30 @@ public class ShotCalculator {
         this.shuttleHoodAngleMap.put(3.0, Rotation2d.fromDegrees(41.0));
         this.shuttleHoodAngleMap.put(9.0, Rotation2d.fromDegrees(45.0));
 
++
         this.shuttleRPMMap.put(2.0, 3000.0);
         this.shuttleRPMMap.put(3.0, 3200.0);
         this.shuttleRPMMap.put(5.0, 3800.0);
         this.shuttleRPMMap.put(7.0, 4600.0);
         this.shuttleRPMMap.put(12.0, 7000.0);
 
-        this.timeOfFlightMap.put(1.98, 0.86);
-        this.timeOfFlightMap.put(2.58, 0.86);
-        this.timeOfFlightMap.put(2.99, 1.0);
-        this.timeOfFlightMap.put(3.65, 0.85);
-        this.timeOfFlightMap.put(4.57, 1.09);
-        this.timeOfFlightMap.put(5.56, 1.03);
+        this.timeOfFlightMap.put(1.5, 1.5);
+        this.timeOfFlightMap.put(2.284, 1.22);
+        this.timeOfFlightMap.put(2.9, 1.32);
+        this.timeOfFlightMap.put(4.67, 1.23);
+        this.timeOfFlightMap.put(5.31, 1.2);
+        
+        
+
+
+
+
+        // this.timeOfFlightMap.put(1.98, 0.86);
+        // this.timeOfFlightMap.put(2.58, 0.86);
+        // this.timeOfFlightMap.put(2.99, 1.0);
+        // this.timeOfFlightMap.put(3.65, 0.85);
+        // this.timeOfFlightMap.put(4.57, 1.09);
+        // this.timeOfFlightMap.put(5.56, 1.03);
     }
 
     public record ShotData(
