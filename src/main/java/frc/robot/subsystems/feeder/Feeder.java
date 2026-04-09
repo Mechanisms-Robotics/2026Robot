@@ -63,6 +63,14 @@ public class Feeder extends SubsystemBase {
         this.setMotorOpenLoop(this.desiredVoltsSpindexer, this.spindexerFeederIO);
     }
 
+    public void setSpindexerVoltage(double volts) {
+        this.spindexerFeederIO.setMotorOpenLoop(volts);
+    }
+
+    public void setKickerVoltage(double volts) {
+        this.kickFeederIO.setMotorOpenLoop(volts);
+    }
+
     /** Adjust the spindexer desired voltage by delta (no clamping) and apply it. */
     public void adjustSpindexerVolts(double delta) {
         // Simple and explicit: just add the delta. Caller controls limits.

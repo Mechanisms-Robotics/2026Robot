@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.PoseEstimator8736;
 import frc.robot.ShotCalculator;
@@ -120,6 +121,37 @@ public class ShootCommands {
         public void end(boolean interupted) {
             this.feeder.stopFeeding();
             this.hood.stow();
+        }
+    }
+
+    /**
+     * Spinning spindexer back and forth should help balls settle
+     * Kicker runs in reverse
+     */
+    public static class WobbleSpindexer extends Command {
+        private final Feeder feeder;
+        private final Timer timer;
+        private final double switchTime = 1.0;
+        private final double spindexVoltage = 1.0;
+        private final double kickerVoltage = 5.0;
+
+        public WobbleSpindexer(Feeder feeder) {
+            this.feeder = feeder;
+            this.timer = new Timer();
+        }
+
+        @Override
+        public void initialize() {
+            this.feeder.setKickerVoltage(this.kickerVoltage);
+        }
+
+        @Override
+        public void execute() {
+            if (this.timer.hasElapsed(this.switchTime)) {
+                this.feeder.setSpindexerVoltage(this.spindexVoltage);
+            } else {
+                this.feeder.setSpindexerVoltage(-this.spindexVoltage);
+            }
         }
     }
 
