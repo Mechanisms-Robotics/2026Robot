@@ -41,9 +41,9 @@ public class TurretIOSparkMax implements TurretIO {
 
         /* If the primary setpoint is past soft limits or the alternate setpoint is a shorter distance
            and within soft limits, use the alternate setpoint. */
-        if (!this.withinSoftlimits(setpoint)
-         || (Math.abs(alternateSetpoint - currentPosition) < Math.abs(setpoint -  currentPosition))
-          && this.withinSoftlimits(alternateSetpoint)) {
+        if (!this.withinSoftlimits(setpoint * 360.0)
+         || (Math.abs(alternateSetpoint - currentPosition) < Math.abs(setpoint -  currentPosition)
+          && this.withinSoftlimits(alternateSetpoint * 360.0))) {
             setpoint = alternateSetpoint;
         }
 
