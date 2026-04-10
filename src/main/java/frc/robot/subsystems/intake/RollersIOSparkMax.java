@@ -20,6 +20,7 @@ public class RollersIOSparkMax implements RollersIO {
         inputs.currentAmps = this.motor.getOutputCurrent();
         inputs.isConnected = this.motor.getLastError() == REVLibError.kOk;
         inputs.tempFahrenheit = this.motor.getMotorTemperature() * 9/5 + 32;
+        inputs.rpm = this.motor.getEncoder().getVelocity() * 60.0;
     }
 
     @Override

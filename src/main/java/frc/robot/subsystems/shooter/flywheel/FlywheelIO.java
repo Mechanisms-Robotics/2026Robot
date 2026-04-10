@@ -9,6 +9,10 @@ public interface FlywheelIO {
         public double desiredRpm;
         public double leaderTempFahrenheit;
         public double followerTempFahrenheit;
+        public double leaderCurrentAmps;
+        public double followerCurrentAmps;
+        public boolean leaderConnected = false;
+        public boolean followerConnected = false;
     }
     
     default void updateInputs(FlywheelIOInputs inputs) {}

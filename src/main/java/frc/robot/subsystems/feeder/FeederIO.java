@@ -12,6 +12,7 @@ public interface FeederIO {
         // Motor outputs / commands (three motors)
         public double feederAppliedVolts = 0.0;
         public double feederCurrentAmps = 0.0;
+        public double velocityRPM = 0.0;
 
 
         // Simple health / status
