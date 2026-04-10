@@ -235,8 +235,8 @@ public class CONSTANTS {
         // Clockwise and counter clockwise maximum rotation the turret should rotate
         public static final double MIN_DEGREES = -340.0;
         public static final double MAX_DEGREES = 30.0;
-        public static final double DUTYCYCLE_LIMIT = 0.3;
-        public static final double MAX_RPM = 30.0;
+        public static final double DUTYCYCLE_LIMIT = 0.45;
+        public static final double MAX_RPM = 120.0;
         public static final double MAX_RPM_PER_SECOND = 30.0;
         public static final double CENTER_TO_HOOD_PIVOT_METERS = 0.071;
 
