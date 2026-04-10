@@ -263,6 +263,7 @@ public class CONSTANTS {
                 .cruiseVelocity(MAX_RPM);
 
             CONFIG
+                .smartCurrentLimit(20, 30, 10)
                 .idleMode(IdleMode.kBrake);
 
             CONFIG.softLimit
