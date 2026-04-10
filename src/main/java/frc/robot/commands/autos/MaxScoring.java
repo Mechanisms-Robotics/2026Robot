@@ -33,6 +33,9 @@ public class MaxScoring extends SequentialCommandGroup {
         ShotCalculator shotCalculator,
         boolean mirror
     ) {
+        Optional<Trajectory<SwerveSample>> trenchToNeutralBeach = Choreo.loadTrajectory(
+                    "TrenchToNeutralLeftBeach"
+                );
         Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
                     "TrenchToNeutralLeft"
                 );
@@ -56,7 +59,7 @@ public class MaxScoring extends SequentialCommandGroup {
                     .andThen(aim),
                 Commands.sequence(
                     IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToNeutral.get(), drivetrain, true, mirror),
+                    new FollowPath(trenchToNeutralBeach.get(), drivetrain, true, mirror),
                     IntakeCommands.feed(intake),
                     new FollowPath(neutralToTrenchFirst.get(), drivetrain, false, mirror),
                     new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
