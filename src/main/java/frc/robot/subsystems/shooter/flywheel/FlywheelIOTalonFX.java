@@ -28,6 +28,10 @@ public class FlywheelIOTalonFX implements FlywheelIO {
         inputs.desiredRpm = this.desiredRPM;
         inputs.leaderTempFahrenheit = this.leader.getDeviceTemp().getValue().in(Fahrenheit);
         inputs.followerTempFahrenheit = this.follower.getDeviceTemp().getValue().in(Fahrenheit);
+        inputs.leaderCurrentAmps = this.leader.getSupplyCurrent().getValueAsDouble();
+        inputs.followerCurrentAmps = this.follower.getSupplyCurrent().getValueAsDouble();
+        inputs.leaderConnected = this.leader.isConnected();
+        inputs.followerConnected = this.follower.isConnected();
     }
 
     @Override

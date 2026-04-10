@@ -154,7 +154,7 @@ public class CONSTANTS {
 
     // minimum (tuned)
     public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -12.0;
-    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -3.0;
+    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -5.0;
     public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
     //TEST Constants
