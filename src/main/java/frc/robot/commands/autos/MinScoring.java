@@ -23,6 +23,7 @@ import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class MinScoring extends SequentialCommandGroup {
@@ -70,6 +71,7 @@ public class MinScoring extends SequentialCommandGroup {
                     new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
                     // shoot preload
                     IntakeCommands.deploy(intake),
+                    new WaitCommand(2),
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
 
                     // score first round
