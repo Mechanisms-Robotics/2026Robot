@@ -13,11 +13,11 @@ import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.VisionConstants;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -200,6 +200,11 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
+
+        double maxAcceleration = 3.0;
+        double maxVelocity = 2.5;
+        SlewRateLimiter vxLimiter = new SlewRateLimiter(maxAcceleration);
+        SlewRateLimiter vyLimiter = new SlewRateLimiter(maxAcceleration);
         
         this.drivetrain.setDefaultCommand(
             new RunCommand(
@@ -210,7 +215,7 @@ public class RobotContainer {
                         forward,
                         strafe
                     );
-                    
+
                     double rotation = -this.controller.getRightX();
 
                     // apply deadbands and scaling
@@ -242,6 +247,25 @@ public class RobotContainer {
                         this.drivetrainController.fieldToRobotChassisSpeeds(
                             speeds
                         );
+
+                    ChassisSpeeds limitedSpeeds = new ChassisSpeeds(
+                        vxLimiter.calculate(robotOriented.vxMetersPerSecond),
+                        vyLimiter.calculate(robotOriented.vyMetersPerSecond),
+                        robotOriented.omegaRadiansPerSecond
+                    );
+
+                    if (this.controller.R2().getAsBoolean()) {
+                        double velocity = Math.hypot(limitedSpeeds.vxMetersPerSecond, limitedSpeeds.vyMetersPerSecond);
+                        double slowVelocity = MathUtil.clamp(velocity, -maxVelocity, maxVelocity);
+                        double scale = velocity == 0.0 ? 1.0 : slowVelocity / velocity;
+
+                        robotOriented = new ChassisSpeeds(
+                            limitedSpeeds.vxMetersPerSecond * scale,
+                            limitedSpeeds.vyMetersPerSecond * scale,
+                            robotOriented.omegaRadiansPerSecond
+                        );
+                    }
+
                     this.drivetrain.setDesiredState(robotOriented);
                 },
                 this.drivetrain
