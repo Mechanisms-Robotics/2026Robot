@@ -78,6 +78,7 @@ public class RobotContainer {
     private final DrivetrainController drivetrainController;
     
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
+    public final SendableChooser<Boolean> enableLimiter = new SendableChooser<>();
 
     private final Feeder feeder; 
 
@@ -186,10 +187,14 @@ public class RobotContainer {
             this.controller.L1() // left bumper
         );
 
+        
         configureBindings();
         configureTestBindings(); // testing individual mechanisms 
         publishAutoNames();
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
+        this.enableLimiter.addOption("Disable", false);
+        this.enableLimiter.setDefaultOption("Enable", true);
+        SmartDashboard.putData("EnableLimiter", this.enableLimiter);
     }
 
     private void configureBindings() {
@@ -201,7 +206,7 @@ public class RobotContainer {
                 })
             );
 
-        double maxAcceleration = 3.0;
+        double maxAcceleration = 2.0;
         double maxVelocity = 2.5;
         SlewRateLimiter vxLimiter = new SlewRateLimiter(maxAcceleration);
         SlewRateLimiter vyLimiter = new SlewRateLimiter(maxAcceleration);
@@ -254,7 +259,7 @@ public class RobotContainer {
                         robotOriented.omegaRadiansPerSecond
                     );
 
-                    if (this.controller.R2().getAsBoolean()) {
+                    if (this.controller.R2().getAsBoolean() && this.enableLimiter.getSelected().booleanValue()) {
                         double velocity = Math.hypot(limitedSpeeds.vxMetersPerSecond, limitedSpeeds.vyMetersPerSecond);
                         double slowVelocity = MathUtil.clamp(velocity, -maxVelocity, maxVelocity);
                         double scale = velocity == 0.0 ? 1.0 : slowVelocity / velocity;
