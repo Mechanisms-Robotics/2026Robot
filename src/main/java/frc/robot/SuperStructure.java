@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CONSTANTS.TurretConstants;
+import frc.robot.ShotCalculator.ShotData;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
@@ -176,14 +177,16 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
+        ShotData shotData = this.aimCommand.getShot();
         Rotation2d shooterYaw =
             this.poseEstimator
                 .getEstimatedPose()
                 .getRotation()
                 .plus(this.turret.getAngle());
-        Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
+        Rotation2d desiredShooterYaw = shotData.shooterYaw();
 
-        return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0;
+        return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0
+            && Math.abs(this.flywheel.getRPM() - shotData.rpm()) < 1000.0;
     }
 
     /**
