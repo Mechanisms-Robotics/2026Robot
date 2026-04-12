@@ -186,7 +186,7 @@ public class SuperStructure extends SubsystemBase {
         Rotation2d desiredShooterYaw = shotData.shooterYaw();
 
         return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0
-            && Math.abs(this.flywheel.getRPM() - shotData.rpm()) < 500.0;
+            && (Math.abs(this.flywheel.getRPM() - shotData.rpm()) < 500.0 || shotData.rpm() > 6000.0);
     }
 
     /**
