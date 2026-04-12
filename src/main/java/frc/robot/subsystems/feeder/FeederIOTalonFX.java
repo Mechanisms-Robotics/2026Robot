@@ -1,5 +1,7 @@
 package frc.robot.subsystems.feeder;
 
+import static edu.wpi.first.units.Units.RPM;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -57,6 +59,7 @@ public class FeederIOTalonFX implements FeederIO {
             // Motor 1
             inputs.feederAppliedVolts = this.motorVolts.getValueAsDouble();
             inputs.feederCurrentAmps = this.motorCurrent.getValueAsDouble();
+            inputs.velocityRPM = this.motor.getVelocity().getValue().in(RPM);
            
            
             // Simple jam detection if any current is very high

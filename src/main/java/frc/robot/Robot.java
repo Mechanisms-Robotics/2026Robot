@@ -94,6 +94,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     if (this.autonomousCommand != null) {
+      this.robotContainer.intake.stow();
       this.autonomousCommand.schedule();
     }
   }
@@ -109,6 +110,8 @@ public class Robot extends LoggedRobot {
     if (this.autonomousCommand != null) {
       this.autonomousCommand.cancel();
     }
+
+    this.robotContainer.drivetrain.poseEstimator.setVisionEnabled(true);
   }
 
   @Override
