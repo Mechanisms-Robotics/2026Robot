@@ -78,6 +78,8 @@ public class CONSTANTS {
          *  Uses the side of the tape on the neutral zone. */
         public static double RED_ALLIANCE_ZONE = Units.inchesToMeters(492.61);
 
+        public static double NEUTRAL_ZONE = 5.5;
+
         public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(1.1, 2.4, Rotation2d.kZero);
         public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
         public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(LENGTH - SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
@@ -152,7 +154,7 @@ public class CONSTANTS {
 
     // minimum (tuned)
     public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -12.0;
-    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -3.0;
+    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -5.0;
     public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
 
     //TEST Constants
@@ -231,10 +233,10 @@ public class CONSTANTS {
         public static final double TURRET_TEETH = 202.0;
         public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
         // Clockwise and counter clockwise maximum rotation the turret should rotate
-        public static final double MIN_DEGREES = -360.0;
-        public static final double MAX_DEGREES = 170.0;
-        public static final double DUTYCYCLE_LIMIT = 0.3;
-        public static final double MAX_RPM = 30.0;
+        public static final double MIN_DEGREES = -340.0;
+        public static final double MAX_DEGREES = 30.0;
+        public static final double DUTYCYCLE_LIMIT = 0.45;
+        public static final double MAX_RPM = 120.0;
         public static final double MAX_RPM_PER_SECOND = 30.0;
         public static final double CENTER_TO_HOOD_PIVOT_METERS = 0.071;
 
@@ -261,6 +263,7 @@ public class CONSTANTS {
                 .cruiseVelocity(MAX_RPM);
 
             CONFIG
+                .smartCurrentLimit(20, 30, 10)
                 .idleMode(IdleMode.kBrake);
 
             CONFIG.softLimit

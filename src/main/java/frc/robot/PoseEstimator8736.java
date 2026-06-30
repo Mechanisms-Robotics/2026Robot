@@ -167,6 +167,7 @@ public class PoseEstimator8736 {
      */
     public void resetPose(Pose2d pose, SwerveModulePosition[] modulePositions) {
         poseEstimator.resetPosition(rawGyroRotation, modulePositions, pose);
+        this.simulatedPoseEstimator.resetPosition(rawGyroRotation, modulePositions, pose);
     }
 
     /**

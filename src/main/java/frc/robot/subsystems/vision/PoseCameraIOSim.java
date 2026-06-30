@@ -71,6 +71,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
 
         List<Double> timestampSecondsArray = new ArrayList<>();
         List<Pose3d> poseEstimatesArray = new ArrayList<>();
+        List<Pose3d[]> aprilTagsArray = new ArrayList<>();
 
         for (PhotonPipelineResult result : results) {
             visionEstimate = this.photonEstimator.estimateCoprocMultiTagPose(result);    
@@ -78,6 +79,10 @@ public class PoseCameraIOSim implements PoseCameraIO {
             if (visionEstimate.isEmpty()) {
                 visionEstimate = this.photonEstimator.estimateLowestAmbiguityPose(result);
             }
+
+            aprilTagsArray.add(result.getTargets().stream().map(
+                tag -> FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tag.getFiducialId()).get()
+            ).toArray(Pose3d[]::new));
 
             if (visionEstimate.isPresent()) {
                 Pose3d poseEstimate = visionEstimate.get().estimatedPose;
@@ -93,6 +98,7 @@ public class PoseCameraIOSim implements PoseCameraIO {
         // Finally, push all estimates to the inputs
         inputs.timestampSeconds = timestampSecondsArray.stream().mapToDouble(Double::doubleValue).toArray();
         inputs.poseEstimates = poseEstimatesArray.stream().toArray(Pose3d[]::new);
+        inputs.aprilTagPoses = aprilTagsArray.stream().toArray(Pose3d[][]::new);
 
         visionSim.update(poseEstimator.getSimulatedPose());
     }

@@ -13,12 +13,14 @@ import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
+import frc.robot.CONSTANTS.IntakeConstants;
 import frc.robot.ShotCalculator;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.commands.ShootCommands.Aim;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class MaxScoring extends SequentialCommandGroup {
     public MaxScoring(
@@ -50,7 +52,8 @@ public class MaxScoring extends SequentialCommandGroup {
 
         addCommands(
             Commands.parallel(
-                aim,
+                new WaitUntilCommand(() -> intake.getAngle().getDegrees() < IntakeConstants.STOW_ANGLE.getDegrees() + 2.0)
+                    .andThen(aim),
                 Commands.sequence(
                     IntakeCommands.deploy(intake),
                     new FollowPath(trenchToNeutral.get(), drivetrain, true, mirror),
@@ -65,7 +68,7 @@ public class MaxScoring extends SequentialCommandGroup {
                     new FollowPath(neutralMaxBackup.get(), drivetrain, false, mirror),
                     new FollowPath(neutralToTrenchSecond.get(), drivetrain, false, mirror),
                     new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
-                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0)
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot)
                 )
             )
         );

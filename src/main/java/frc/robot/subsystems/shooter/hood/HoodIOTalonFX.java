@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter.hood;
 
+import static edu.wpi.first.units.Units.Fahrenheit;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -22,12 +24,16 @@ public class HoodIOTalonFX implements HoodIO {
     @Override
     public void updateInputs(HoodIOInputs inputs) {
         double position = this.getPosition();
+        double appliedVolts = (this.desiredRadians - position) * HoodConstants.kP;
 
-        inputs.positionDegrees = Units.radiansToDegrees(position);
-        
-        this.motor.setVoltage(
-            (this.desiredRadians - position) * HoodConstants.kP
-        );
+        inputs.positionDegrees = position / Math.PI * 180.0;
+        inputs.setpointDegrees = this.desiredRadians / Math.PI * 180.0;
+        inputs.appliedVolts = appliedVolts;
+        inputs.currentAmps = this.motor.getSupplyCurrent().getValueAsDouble();
+        inputs.tempFahrenheit = this.motor.getDeviceTemp().getValue().in(Fahrenheit);
+        inputs.connected = this.motor.isConnected();
+
+        this.motor.setVoltage(appliedVolts);
     }
 
     @Override
