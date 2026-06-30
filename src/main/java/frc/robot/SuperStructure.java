@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.CONSTANTS.TurretConstants;
+import frc.robot.ShotCalculator.ShotData;
 import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShootCommands;
@@ -32,6 +33,7 @@ public class SuperStructure extends SubsystemBase {
     private final ShootCommands.Aim aimCommand;
     private final ShootCommands.Shoot shootCommand;
     private final ShootCommands.ManualShoot manualShootCommand;
+    //private final ShootCommands.WobbleSpindexer wobbleSpindexerCommand;
     private final Command intakeCommand;
     private final Command stowCommand;
 
@@ -87,6 +89,10 @@ public class SuperStructure extends SubsystemBase {
             ManualModeConstants.FLYWHEEL_RPM
         );
 
+        // this.wobbleSpindexerCommand = new ShootCommands.WobbleSpindexer(
+        //     this.feeder
+        // );
+
         this.intakeCommand = IntakeCommands.intake(this.intake);
 
         this.stowCommand = IntakeCommands.stow(this.intake);
@@ -120,7 +126,8 @@ public class SuperStructure extends SubsystemBase {
                 
         }, this.hood, this.turret));
 
-        intakeButton.whileTrue(this.intakeCommand);
+        intakeButton.whileTrue(this.intakeCommand);//.alongWith(this.wobbleSpindexerCommand));
+        //shootButton.onTrue(new InstantCommand(() -> this.wobbleSpindexerCommand.cancel()));
         stowButton.onTrue(this.stowCommand);
     }
 
@@ -162,6 +169,7 @@ public class SuperStructure extends SubsystemBase {
         Logger.recordOutput("SuperStructure/Shooting", this.shootCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Intaking", this.intakeCommand.isScheduled());
         Logger.recordOutput("SuperStructure/Stowing", this.stowCommand.isScheduled());
+        //Logger.recordOutput("SuperStructure/WobbleSpindexer", this.wobbleSpindexerCommand.isScheduled());
         Logger.recordOutput("SuperStructure/ManualMode", this.manualMode);
         Logger.recordOutput("SuperStructure/Buttons/Shoot", this.shootButton.getAsBoolean());
         Logger.recordOutput("SuperStructure/Buttons/Intake", this.intakeButton.getAsBoolean());
@@ -169,14 +177,16 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isAimed() {
+        ShotData shotData = this.aimCommand.getShot();
         Rotation2d shooterYaw =
             this.poseEstimator
                 .getEstimatedPose()
                 .getRotation()
                 .plus(this.turret.getAngle());
-        Rotation2d desiredShooterYaw = this.aimCommand.getShot().shooterYaw();
+        Rotation2d desiredShooterYaw = shotData.shooterYaw();
 
-        return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0;
+        return Math.abs(shooterYaw.relativeTo(desiredShooterYaw).getDegrees()) < 10.0
+            && (Math.abs(this.flywheel.getRPM() - shotData.rpm()) < 500.0 || shotData.rpm() > 6000.0);
     }
 
     /**

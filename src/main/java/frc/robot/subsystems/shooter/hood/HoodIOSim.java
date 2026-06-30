@@ -31,13 +31,19 @@ public class HoodIOSim implements HoodIO {
 
     @Override
     public void updateInputs(HoodIOInputs inputs) {
+        double appliedVolts = (this.desiredRadians - this.sim.getAngleRads()) * this.kP
+            -this.sim.getVelocityRadPerSec() * kD;
         this.sim.setInputVoltage(
             (this.desiredRadians - this.sim.getAngleRads()) * this.kP
             -this.sim.getVelocityRadPerSec() * kD
         );
         this.sim.update(0.2);
 
-        inputs.positionDegrees = Units.radiansToDegrees(this.sim.getAngleRads());
+        inputs.positionDegrees = this.sim.getAngleRads() / Math.PI * 180.0;
+        inputs.setpointDegrees = this.desiredRadians / Math.PI * 180.0;
+        inputs.appliedVolts = appliedVolts;
+        inputs.currentAmps = this.sim.getCurrentDrawAmps();
+        inputs.connected = true;
     }
 
     @Override

@@ -1,7 +1,9 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Fahrenheit;
+import static edu.wpi.first.units.Units.RPM;
 
+// -340 30
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.CONSTANTS.IntakeConstants;
 import frc.robot.util.PhoenixUtil;
@@ -18,6 +20,7 @@ public class RollersIOTalonFX implements RollersIO {
         inputs.currentAmps = this.motor.getSupplyCurrent().getValueAsDouble();
         inputs.isConnected = this.motor.isConnected();
         inputs.tempFahrenheit = this.motor.getDeviceTemp().getValue().in(Fahrenheit);
+        inputs.rpm = this.motor.getVelocity().getValue().in(RPM) / 2.0;
     }
 
     @Override

@@ -5,6 +5,9 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.CONSTANTS;
+
+import static edu.wpi.first.units.Units.RPM;
+
 import edu.wpi.first.math.MathUtil;
 
 /**
@@ -38,22 +41,24 @@ public class FeederIOSim implements FeederIO {
 
     @Override
     public void updateInputs(FeederIOInputs inputs) {
-    // Step the physics sims forward one robot loop using their per-motor applied volts
-    appliedVolts = MathUtil.clamp(appliedVolts, -12.0, 12.0);
+        // Step the physics sims forward one robot loop using their per-motor applied volts
+        appliedVolts = MathUtil.clamp(appliedVolts, -12.0, 12.0);
 
-    motorSim.setInputVoltage(appliedVolts);
-    motorSim.update(CONSTANTS.ROBOT_LOOP_PERIOD);
+        motorSim.setInputVoltage(appliedVolts);
+        motorSim.update(CONSTANTS.ROBOT_LOOP_PERIOD);
 
 
         // Fill inputs for logging/Shuffleboard/Advantage scope
         inputs.feederConnected = true;
-    // Motor 1 values
-    inputs.feederAppliedVolts = appliedVolts;
-    inputs.feederCurrentAmps = Math.abs(motorSim.getCurrentDrawAmps());
+        // Motor 1 values
+        inputs.feederAppliedVolts = appliedVolts;
+        inputs.feederCurrentAmps = Math.abs(motorSim.getCurrentDrawAmps());
 
-        // Simple jam detection: if current spikes very high, mark jam (tunable)
-    // Simple jam detection: if any motor current spikes very high, mark jam (tunable)
-    inputs.jamDetected = inputs.feederCurrentAmps > 30.0;
+        inputs.velocityRPM = this.motorSim.getAngularVelocity().in(RPM);
+
+            // Simple jam detection: if current spikes very high, mark jam (tunable)
+        // Simple jam detection: if any motor current spikes very high, mark jam (tunable)
+        inputs.jamDetected = inputs.feederCurrentAmps > 30.0;
         // Publish a few convenience entries to NetworkTables / Shuffleboard so they appear
         // live in Shuffleboard and therefore in Advantage Scope if you're monitoring NT.
         try {

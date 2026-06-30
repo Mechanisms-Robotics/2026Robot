@@ -26,8 +26,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-public class MinScoring extends SequentialCommandGroup {
-    public MinScoring(
+public class Depot extends SequentialCommandGroup {
+    public Depot(
         Drivetrain drivetrain, 
         Hood hood,
         Flywheel flywheel,
@@ -37,23 +37,17 @@ public class MinScoring extends SequentialCommandGroup {
         ShotCalculator shotCalculator,
         boolean mirror
     ) {
-        Optional<Trajectory<SwerveSample>> trenchToNeutral = Choreo.loadTrajectory(
-                    "TrenchToNeutralLeft"
+        Optional<Trajectory<SwerveSample>> trenchToDepot = Choreo.loadTrajectory(
+                    "TrenchToDepotLeft"
                 );
-        Optional<Trajectory<SwerveSample>> neutralMaxBackup = Choreo.loadTrajectory(
-                    "NeutralMaxBackupLeft"
-                );
-        Optional<Trajectory<SwerveSample>> neutralMaxCollect = Choreo.loadTrajectory(
-                    "NeutralMaxCollectLeft"
-                );
-        Optional<Trajectory<SwerveSample>> neutralToTrench = Choreo.loadTrajectory(
-                    "NeutralToTrenchLeft"
+        Optional<Trajectory<SwerveSample>> depotOutwards = Choreo.loadTrajectory(
+                    "DepotOutwards"
                 );
 
         Aim aim = new Aim(flywheel, turret, shotCalculator, drivetrain.poseEstimator);
 
         // Since we shoot preload before a path, we manually reset the pose
-        Pose2d startPose = trenchToNeutral
+        Pose2d startPose = trenchToDepot
             .get()
             .getInitialPose(FieldUtil.getAlliance().equals(Alliance.Red))
             .get();
@@ -75,21 +69,12 @@ public class MinScoring extends SequentialCommandGroup {
                     new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
 
                     // score first round
-                    new FollowPath(trenchToNeutral.get(), drivetrain, false, mirror),
+                    new FollowPath(trenchToDepot.get(), drivetrain, false, mirror),
+                    Commands.waitSeconds(1.0),
                     IntakeCommands.feed(intake),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false, mirror),
+                    new FollowPath(depotOutwards.get(), drivetrain, false, mirror),
                     new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
-                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(3.0),
-
-                    // score second round
-                    IntakeCommands.deploy(intake),
-                    new FollowPath(trenchToNeutral.get(), drivetrain, false, mirror),
-                    new FollowPath(neutralMaxCollect.get(), drivetrain, false, mirror),
-                    IntakeCommands.feed(intake),
-                    new FollowPath(neutralMaxBackup.get(), drivetrain, false, mirror),
-                    new FollowPath(neutralToTrench.get(), drivetrain, false, mirror),
-                    new InstantCommand(() -> drivetrain.poseEstimator.setVisionEnabled(true)),
-                    new ShootCommands.Shoot(feeder, hood, aim::getShot)
+                    new ShootCommands.Shoot(feeder, hood, aim::getShot).withTimeout(5.0)
                 )
             )
         );

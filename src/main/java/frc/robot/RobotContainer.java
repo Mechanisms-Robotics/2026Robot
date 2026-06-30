@@ -13,11 +13,11 @@ import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.TurretConstants;
 import frc.robot.CONSTANTS.VisionConstants;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -32,6 +32,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autos.Shuttling;
 import frc.robot.commands.autos.Beach;
+import frc.robot.commands.autos.CenterScore;
+import frc.robot.commands.autos.Depot;
+import frc.robot.commands.autos.DriveScore;
+import frc.robot.commands.autos.LaSiesta;
 import frc.robot.commands.autos.MaxScoring;
 import frc.robot.commands.autos.MinScoring;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -75,6 +79,7 @@ public class RobotContainer {
     private final DrivetrainController drivetrainController;
     
     public final SendableChooser<String> autoChooser = new SendableChooser<>();
+    public final SendableChooser<Boolean> enableLimiter = new SendableChooser<>();
 
     private final Feeder feeder; 
 
@@ -102,9 +107,15 @@ public class RobotContainer {
                 this.drivetrain.poseEstimator,
                 new PoseCameraIOSim(
                     "Photon_Camera_Sim1", 
-                    Transform3d.kZero, 
+                    VisionConstants.CAMERA1_TRANSFORM3D, 
                     drivetrain.poseEstimator
-                ));
+                ),
+                new PoseCameraIOSim(
+                    "Photon_Camera_Sim2", 
+                    VisionConstants.CAMERA2_TRANSFORM3D, 
+                    drivetrain.poseEstimator
+                )
+                );
 
             this.flywheel = new Flywheel(new FlywheelIOSim());
             this.turret = new Turret(new TurretIOSim());
@@ -177,10 +188,14 @@ public class RobotContainer {
             this.controller.L1() // left bumper
         );
 
+        
         configureBindings();
         configureTestBindings(); // testing individual mechanisms 
         publishAutoNames();
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
+        this.enableLimiter.addOption("Disable", false);
+        this.enableLimiter.setDefaultOption("Enable", true);
+        SmartDashboard.putData("EnableLimiter", this.enableLimiter);
     }
 
     private void configureBindings() {
@@ -191,6 +206,11 @@ public class RobotContainer {
                     this.drivetrain.resetHeading();
                 })
             );
+
+        double maxAcceleration = 2.0;
+        double maxVelocity = 2.5;
+        SlewRateLimiter vxLimiter = new SlewRateLimiter(maxAcceleration);
+        SlewRateLimiter vyLimiter = new SlewRateLimiter(maxAcceleration);
         
         this.drivetrain.setDefaultCommand(
             new RunCommand(
@@ -201,7 +221,7 @@ public class RobotContainer {
                         forward,
                         strafe
                     );
-                    
+
                     double rotation = -this.controller.getRightX();
 
                     // apply deadbands and scaling
@@ -233,6 +253,25 @@ public class RobotContainer {
                         this.drivetrainController.fieldToRobotChassisSpeeds(
                             speeds
                         );
+
+                    ChassisSpeeds limitedSpeeds = new ChassisSpeeds(
+                        vxLimiter.calculate(robotOriented.vxMetersPerSecond),
+                        vyLimiter.calculate(robotOriented.vyMetersPerSecond),
+                        robotOriented.omegaRadiansPerSecond
+                    );
+
+                    if (this.controller.R2().getAsBoolean() && this.enableLimiter.getSelected().booleanValue()) {
+                        double velocity = Math.hypot(limitedSpeeds.vxMetersPerSecond, limitedSpeeds.vyMetersPerSecond);
+                        double slowVelocity = MathUtil.clamp(velocity, -maxVelocity, maxVelocity);
+                        double scale = velocity == 0.0 ? 1.0 : slowVelocity / velocity;
+
+                        robotOriented = new ChassisSpeeds(
+                            limitedSpeeds.vxMetersPerSecond * scale,
+                            limitedSpeeds.vyMetersPerSecond * scale,
+                            robotOriented.omegaRadiansPerSecond
+                        );
+                    }
+
                     this.drivetrain.setDesiredState(robotOriented);
                 },
                 this.drivetrain
@@ -349,8 +388,13 @@ public class RobotContainer {
         this.autos.put("Min Scoring Right", () -> new MinScoring(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
         this.autos.put("Beach Left", () -> new Beach(this.drivetrain, true));
         this.autos.put("Beach Right", () -> new Beach(this.drivetrain, false));
-        this.autos.put("Shuttling Left", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, false));
-        this.autos.put("Shuttling Right", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.shotCalculator, true));
+        this.autos.put("Shuttling Left", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
+        this.autos.put("Shuttling Right", () -> new Shuttling(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
+        this.autos.put("LaSiesta Left", () -> new LaSiesta(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, false));
+        this.autos.put("LaSiesta Right", () -> new LaSiesta(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, true));
+        this.autos.put("Center Score", () -> new CenterScore(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator));
+        this.autos.put("Drive Left Score", () -> new DriveScore(this.drivetrain, this.hood, this.flywheel, this.feeder, this.turret, this.intake, this.shotCalculator, new ChassisSpeeds(0.0, 1.0, 0.0), 2.0));
+        this.autos.put("Depot From Left Trench", () -> new Depot(drivetrain, hood, flywheel, feeder, turret, intake, shotCalculator, false));
 
         for (String name : autos.keySet()) {
             autoChooser.addOption(name, name);
