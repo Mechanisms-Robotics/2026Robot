@@ -67,38 +67,10 @@ public class CONSTANTS {
     public static class FieldConstants {
         public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
             AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
         public static double WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
         public static double LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
         public static Pose2d CENTER = new Pose2d(LENGTH/2.0, WIDTH/2.0, Rotation2d.kZero);
-
-        /** X coordanite of the blue tape dividing blue alliance zone.
-         *  Uses the side of the tape on the neutral zone. */
-        public static double BLUE_ALLIANCE_ZONE = Units.inchesToMeters(158.61);
-        /** X coordanite of the red tape dividing red alliance zone.
-         *  Uses the side of the tape on the neutral zone. */
-        public static double RED_ALLIANCE_ZONE = Units.inchesToMeters(492.61);
-
-        public static Pose2d SHUTTLE_OUTPOST_BLUE_POSE = new Pose2d(1.1, 2.4, Rotation2d.kZero);
-        public static Pose2d SHUTTLE_DEPOT_BLUE_POSE = new Pose2d(SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
-        public static Pose2d SHUTTLE_OUTPOST_RED_POSE = new Pose2d(LENGTH - SHUTTLE_OUTPOST_BLUE_POSE.getX(), WIDTH - SHUTTLE_OUTPOST_BLUE_POSE.getY(), Rotation2d.kZero);
-        public static Pose2d SHUTTLE_DEPOT_RED_POSE = new Pose2d(LENGTH - SHUTTLE_DEPOT_BLUE_POSE.getX(), WIDTH - SHUTTLE_DEPOT_BLUE_POSE.getY(), Rotation2d.kZero);
-        public static class Hub {
-            // Finds the midpoint between tag 20 and 26, which are on opposite sides of the blue hub.
-            public static Pose3d CENTER_BLUE_POSE = new Pose3d(
-                (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getX()) / 2.0,
-                (APRILTAG_FIELD_LAYOUT.getTagPose(26).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(20).get().getY()) / 2.0,
-                Units.inchesToMeters(72.0),
-                Rotation3d.kZero
-            );
-    
-            // Finds the midpoint between tag 10 and 4, which are opposite sides of the red hub.
-            public static Pose3d CENTER_RED_POSE = new Pose3d(
-                (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getX() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getX()) / 2.0,
-                (APRILTAG_FIELD_LAYOUT.getTagPose(10).get().getY() + APRILTAG_FIELD_LAYOUT.getTagPose(4).get().getY()) / 2.0,
-                Units.inchesToMeters(72.0),
-                Rotation3d.kZero
-            );
-        }
     }
 
     // MARK: Vision
@@ -145,22 +117,6 @@ public class CONSTANTS {
         ? Mode.REAL
         : SIM_MODE;
 
-    
-    // MARK: Feeder
-    public static final int KICKER_MOTOR_CAN_ID = 11;
-    public static final int SPINDEXER_MOTOR_CAN_ID = 10;
-
-    // minimum (tuned)
-    public static final double FEEDER_MOTOR_KICKER_VOLTAGE = -12.0;
-    public static final double FEEDER_MOTOR_SPINDEXER_VOLTAGE = -3.0;
-    public static final double FEEDER_MOTOR_UNJAM_VOLTAGE = 1.0;
-
-    //TEST Constants
-    public static final double SPINDEXER_DELTA_VOLTS = 0.2; // volts per press. 
-    public static final double KICKER_DELTA_VOLTS = 0.2; // volts per press. 
-    public static final double FLYWHEEL_DELTA_RPM = 100; // rpm per press
-    public static final double HOOD_DELTA_DEGREES = 1.0; // degrees per press
-
     public static enum Mode {
         /** Running on a real robot. */
         REAL,
@@ -170,161 +126,6 @@ public class CONSTANTS {
 
         /** Replaying from a log file. */
         REPLAY,
-    }
-
-    // MARK: Intake
-    public static class IntakeConstants {
-        public static final double ROLLERS_DUTY_CYCLE = -1.0;
-        public static final double ROLLERS_IDLE_DUTY_CYCLE = -0.1;
-
-        public static final int ARM_CAN_ID_LEFT = 12;
-        public static final int ARM_CAN_ID_RIGHT = 13;
-        public static final int ROLLERS_CAN_ID = 14;
-
-        public static final double GEAR_RATIO_ARM = 1.0 / 75.0;//84.0 / 5.0 / 5.0 / 28.0;
-
-        public static final SparkMaxConfig CONFIG_LEFT = new SparkMaxConfig();
-        public static final Rotation2d START_ANGLE = Rotation2d.fromDegrees(120.0);
-        public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(100.0);
-        public static final Rotation2d FEED_ANGLE = Rotation2d.fromDegrees(65.0);
-        public static final Rotation2d DEPLOY_ANGLE = Rotation2d.fromDegrees(-1.0);
-        public static final Rotation2d RUN_ROLLERS_ARMS_ANGLE = Rotation2d.fromDegrees(5.0);
-        public static final Rotation2d MIN_ANGLE = DEPLOY_ANGLE;
-        public static final Rotation2d MAX_ANGLE = START_ANGLE;
-
-        public static final double kP = 8.0;
-        public static final double kD = 0.0;
-        public static final double kCos = 0.0;
-        public static final double MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI;
-        public static final double MAX_ACCELERATION_RADIANS_PER_SECOND = Math.PI * 4.0;
-
-        static {
-            CONFIG_LEFT.encoder
-                .positionConversionFactor(GEAR_RATIO_ARM)
-                .velocityConversionFactor(GEAR_RATIO_ARM);
-
-            CONFIG_LEFT
-                .inverted(true)
-                .idleMode(IdleMode.kBrake);
-        }
-
-        public static final SparkMaxConfig CONFIG_ROLLERS_SPARK = new SparkMaxConfig();
-
-        public static final TalonFXConfiguration CONFIG_ROLLERS_TALON = new TalonFXConfiguration()
-        .withMotorOutput(
-            new MotorOutputConfigs()
-                .withNeutralMode(NeutralModeValue.Coast)
-        );
-
-        static {
-            CONFIG_ROLLERS_SPARK
-                .idleMode(IdleMode.kCoast);
-        }
-    }
-
-    // MARK: Turret
-    public static class TurretConstants {
-        public static final int MOTOR_ID = 20;
-        // The zero position of the turret in degrees
-        public static final double START_DEGREES = -90.0; 
-
-        public static final double TURRET_TEETH = 202.0;
-        public static final double MOTOR_GEAR_RATIO = 10.0 / 32.0 * 30.0 / TURRET_TEETH;
-        // Clockwise and counter clockwise maximum rotation the turret should rotate
-        public static final double MIN_DEGREES = -360.0;
-        public static final double MAX_DEGREES = 170.0;
-        public static final double DUTYCYCLE_LIMIT = 0.3;
-        public static final double MAX_RPM = 30.0;
-        public static final double MAX_RPM_PER_SECOND = 30.0;
-        public static final double CENTER_TO_HOOD_PIVOT_METERS = 0.071;
-
-        // Center of the robot with z at the ground to the center of turret
-        public static final Transform3d ROBOT_TO_TURRET = new Transform3d(
-            0.0, 0.0, 0.372845, Rotation3d.kZero
-        );
-
-        public static final SparkMaxConfig CONFIG = new SparkMaxConfig();
-
-        static {
-            CONFIG.encoder
-                .positionConversionFactor(MOTOR_GEAR_RATIO)
-                .velocityConversionFactor(MOTOR_GEAR_RATIO);
-            CONFIG.closedLoop
-                .p(15.0)
-                .d(25.0)
-                .outputRange(-DUTYCYCLE_LIMIT, DUTYCYCLE_LIMIT)
-                .positionWrappingEnabled(false)
-                .allowedClosedLoopError(Units.degreesToRotations(0.75),ClosedLoopSlot.kSlot0);
-            
-            CONFIG.closedLoop.maxMotion
-                .maxAcceleration(MAX_RPM_PER_SECOND)
-                .cruiseVelocity(MAX_RPM);
-
-            CONFIG
-                .idleMode(IdleMode.kBrake);
-
-            CONFIG.softLimit
-                .reverseSoftLimitEnabled(true)
-                .forwardSoftLimitEnabled(true)
-                .reverseSoftLimit(Units.degreesToRotations(MIN_DEGREES))
-                .forwardSoftLimit(Units.degreesToRotations(MAX_DEGREES));
-        }
-    }
-
-    // MARK: Flywheel
-    public static class FlywheelConstants {
-        public static final int LEADER_ID = 21;
-        public static final int FOLLOWER_ID = 22;
-
-        public static final TalonFXConfiguration LEADER_CONFIG = new TalonFXConfiguration()
-            .withFeedback(
-                new FeedbackConfigs()
-                    .withSensorToMechanismRatio(16.0 / 18.0) 
-            )
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withSupplyCurrentLimit(Amps.of(60.0))
-            )
-            .withSlot0(
-                new Slot0Configs()
-                    .withKP(0.35)
-                    .withKV(0.1)
-                    .withKS(0.22)
-
-            )
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(InvertedValue.Clockwise_Positive)
-                    .withNeutralMode(NeutralModeValue.Coast)
-            );
-    }
-
-    // MARK: Hood
-    public static class HoodConstants {
-        // number of rotations of the hood per gear rotation
-        public static final double ENCODER_HOOD_RATIO = 1.0/9.412;
-        public static final double MIN_DEGREES = 22.0;
-        public static final double MAX_DEGREES = 52.0;
-
-        public static final double kP = 12.0;
-
-        public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
-            .withFeedback(
-                new FeedbackConfigs()
-                    .withSensorToMechanismRatio(48.0 / 12.0 / ENCODER_HOOD_RATIO)
-            )
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(InvertedValue.CounterClockwise_Positive)
-                    .withNeutralMode(NeutralModeValue.Brake)
-            )
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(60))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(2))
-                    .withSupplyCurrentLimitEnable(true)
-            );
     }
 
     // MARK: Drivetrain
@@ -648,13 +449,5 @@ public class CONSTANTS {
         public static final double STD_TIMEOUT = 0.1; // Secs
         public static final double STD_TIMEOUT_LONG = 0.25; // Secs
         public static final double SYSID_TIMEOUT = 1.0; // Secs
-    }
-
-    // MARK: Commands
-    // Manual mode constants
-    public static class ManualModeConstants {
-        public static final Rotation2d TURRET_PINNED_ANGLE = Rotation2d.fromDegrees(0.0);
-        public static final Rotation2d HOOD_PINNED_ANGLE = Rotation2d.fromDegrees(HoodConstants.MIN_DEGREES);
-        public static final double FLYWHEEL_RPM = 3300;
     }
 }
