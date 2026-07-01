@@ -153,6 +153,8 @@ public class RobotContainer {
 
     private void publishAutoNames() {
         // add commands to the autos hashmap here
+        autos.put("None", () -> Commands.none());
+        
 
         for (String name : autos.keySet()) {
             autoChooser.addOption(name, name);

@@ -82,8 +82,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     String autoName = this.robotContainer.autoChooser.getSelected();
-    if (!this.autonomousCommand.getName().equals(autoName)) {
-      this.autonomousCommand = this.robotContainer.getAutonomousCommand(autoName);
+    if (this.autonomousCommand.getName() != null) {
+      if (!this.autonomousCommand.getName().equals(autoName)) {
+        this.autonomousCommand = this.robotContainer.getAutonomousCommand(autoName);
+      }
     }
   }
 
