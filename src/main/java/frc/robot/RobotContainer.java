@@ -207,8 +207,8 @@ public class RobotContainer {
                 })
             );
 
-        double maxAcceleration = 2.0;
-        double maxVelocity = 2.5;
+        double maxAcceleration = 4.0;
+        double maxVelocity = 4.0;
         SlewRateLimiter vxLimiter = new SlewRateLimiter(maxAcceleration);
         SlewRateLimiter vyLimiter = new SlewRateLimiter(maxAcceleration);
         
@@ -260,7 +260,7 @@ public class RobotContainer {
                         robotOriented.omegaRadiansPerSecond
                     );
 
-                    if (this.controller.R2().getAsBoolean() && this.enableLimiter.getSelected().booleanValue()) {
+                    if (this.enableLimiter.getSelected().booleanValue()) {
                         double velocity = Math.hypot(limitedSpeeds.vxMetersPerSecond, limitedSpeeds.vyMetersPerSecond);
                         double slowVelocity = MathUtil.clamp(velocity, -maxVelocity, maxVelocity);
                         double scale = velocity == 0.0 ? 1.0 : slowVelocity / velocity;
