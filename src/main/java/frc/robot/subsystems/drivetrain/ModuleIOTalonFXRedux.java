@@ -1,6 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
-import static edu.wpi.first.units.Units.Fahrenheit;
+import static org.wpilib.units.Units.Fahrenheit;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -23,13 +23,13 @@ import com.reduxrobotics.frames.Frame;
 import com.reduxrobotics.frames.FrameData;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
-import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
+import org.wpilib.math.filter.Debouncer;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.util.Units;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Current;
+import org.wpilib.units.measure.Voltage;
 import frc.robot.CONSTANTS;
 import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.Timeouts;

@@ -2,8 +2,8 @@ package frc.robot.subsystems.drivetrain;
 
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import com.reduxrobotics.sensors.canandgyro.CanandgyroSettings;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.util.Units;
 import frc.robot.CONSTANTS;
 import frc.robot.CONSTANTS.DriveConstants;
 import frc.robot.CONSTANTS.Timeouts;
