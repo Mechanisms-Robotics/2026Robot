@@ -31,6 +31,8 @@ public class DriveScore extends ParallelCommandGroup {
     ) {
         Aim aim = new Aim(flywheel, turret, shotCalculator, drivetrain.poseEstimator);
 
+        drivetrain.poseEstimator.setVisionEnabled(true);
+
         addCommands(
             new WaitUntilCommand(() -> intake.getAngle().getDegrees() < IntakeConstants.STOW_ANGLE.getDegrees() + 2.0)
                 .andThen(aim),

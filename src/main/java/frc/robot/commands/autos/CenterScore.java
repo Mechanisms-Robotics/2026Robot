@@ -16,6 +16,7 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.turret.Turret;
 import frc.robot.CONSTANTS.IntakeConstants;
+import frc.robot.CONSTANTS.ManualModeConstants;
 import frc.robot.ShotCalculator;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.ShootCommands;
@@ -36,15 +37,19 @@ public class CenterScore extends ParallelCommandGroup {
                 );
 
 
-        Aim aim = new Aim(flywheel, turret, shotCalculator, drivetrain.poseEstimator);
+        drivetrain.poseEstimator.setVisionEnabled(false);
+
+        ShootCommands.ManualShoot manualShootCommand = new ShootCommands.ManualShoot(
+            flywheel,
+            feeder,
+            ManualModeConstants.FLYWHEEL_RPM
+        );
 
         addCommands(
-            new WaitUntilCommand(() -> intake.getAngle().getDegrees() < IntakeConstants.STOW_ANGLE.getDegrees() + 2.0)
-                .andThen(aim),
             Commands.sequence(
-                new FollowPath(backup.get(), drivetrain, true, false, true),
-                new WaitCommand(3),
-                new ShootCommands.Shoot(feeder, hood, aim::getShot)
+                new FollowPath(backup.get(), drivetrain, true, false, false),
+                new WaitCommand(1),
+                manualShootCommand.withTimeout(3)
             )
         );
 
